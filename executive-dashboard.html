@@ -677,8 +677,16 @@ PR
 <div id="dashboard-view" class="p-8 max-w-[1360px] mx-auto">
 <!-- Header Area -->
 <section class="mb-8">
-<h1 class="text-2xl font-normal text-on-surface tracking-tight flex items-center gap-2"><i data-lucide="sun" class="text-[#f5a623]" style="width:22px;height:22px;"></i>Good morning, <span class="font-semibold">Prasanna</span></h1>
-<p class="text-on-surface-variant mt-1">Here is what's happening with your portfolios today.</p>
+<div class="flex items-start justify-between">
+  <div>
+    <h1 class="text-2xl font-normal text-on-surface tracking-tight flex items-center gap-2"><i data-lucide="sun" class="text-[#f5a623]" style="width:22px;height:22px;"></i>Good morning, <span class="font-semibold">Prasanna</span></h1>
+    <p class="text-on-surface-variant mt-1">Here is what's happening with your portfolios today.</p>
+  </div>
+  <button onclick="toggleWidgetPanel()" class="flex items-center gap-2 px-3 py-2 border border-outline-variant rounded-lg text-sm text-secondary hover:bg-[#F6F7FB] hover:text-on-surface transition-colors shrink-0">
+    <i data-lucide="layout-grid" style="width:16px;height:16px;"></i>
+    Widgets
+  </button>
+</div>
 </section>
 
 <!-- AI Insight Banner -->
@@ -3538,7 +3546,7 @@ function wtShowStep(stepIdx) {
 // init after DOM ready
 // Ensure all overlays are hidden on load
 function hideAllOverlays() {
-  ['notif-overlay','collab-overlay','whatsnew-overlay','cta-overlay','ai-assistant-overlay'].forEach(function(id) {
+  ['notif-overlay','collab-overlay','whatsnew-overlay','cta-overlay','ai-assistant-overlay','widget-overlay'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) { el.classList.add('hidden','opacity-0'); el.style.display = 'none'; }
   });
@@ -3660,7 +3668,7 @@ function showKpiPopover(iconEl) {
       '<span style="font-size:11px;font-weight:700;color:#EF4A61;text-transform:uppercase;letter-spacing:0.05em;">AI Insight</span>' +
     '</div>' +
     '<p style="font-size:13px;color:#323338;line-height:1.5;">' + data.ai + '</p>' +
-    '<a href="#" onclick="event.preventDefault();toggleAIAssistant();document.getElementById(\'kpi-popover\').remove();" style="display:flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:600;color:#0073EA;text-decoration:none;">View More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>' +
+    '<a href="#" onclick="event.preventDefault();openKpiInAI(\'' + label.replace(/'/g,"\\'") + '\',\'' + data.ai.replace(/'/g,"\\'") + '\');document.getElementById(\'kpi-popover\').remove();" style="display:flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:600;color:#0073EA;text-decoration:none;">View More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>' +
   '</div>';
 
   document.body.appendChild(pop);
@@ -3684,6 +3692,36 @@ var projectRiskData = {
   'CX Transformation': '**Status:** Delayed | **RAI Score:** 45% | **Impact:** $5.1M\n**Client:** Apex Telecom\n\n**Key risks:**\n- Margin collapsed to 15.7% (plan was 28%)\n- 3 unapproved CRs adding unbudgeted work\n- 2 resources over 100% utilization\n- Client escalation filed last Friday\n\n**Root cause:** Poor scope definition at kickoff. 40% of current work is out-of-scope. Needs immediate governance review.',
   'IoT Fleet Management': '**Status:** At Risk | **RAI Score:** 69% | **Impact:** $2.7M\n**Client:** TransGlobal Logistics\n\n**Key risks:**\n- Vendor dependency blocking integration milestone\n- 2 SLA demands breached (avg resolution: 25 days)\n- Margin under pressure at 28.3%\n\n**Root cause:** Third-party API changes not communicated. Workaround in progress, ETA 5 business days.',
 };
+
+function toggleWidgetPanel() {
+  var panel = document.getElementById('widget-panel');
+  var overlay = document.getElementById('widget-overlay');
+  if (!panel || !overlay) return;
+  var isOpen = !panel.classList.contains('translate-x-full');
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.style.display = 'none';
+  } else {
+    var vh = document.documentElement.clientHeight || 720;
+    panel.style.height = vh + 'px';
+    overlay.style.display = 'block';
+    panel.classList.remove('translate-x-full');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+}
+
+function openKpiInAI(label, aiText) {
+  toggleAIAssistant();
+  setTimeout(function() {
+    lastQuery = 'Explain ' + label;
+    addUserMessage('Explain ' + label + ' in detail');
+    showTyping();
+    setTimeout(function() {
+      hideTyping();
+      addAIMessage('**' + label + ' — Deep Dive**\n\n' + aiText + '\n\n**What this means:**\n- This metric directly impacts your quarterly revenue target\n- Trends over the last 3 months show consistent improvement\n- Key drivers: pipeline quality, deal velocity, and forecast discipline\n\n**Recommended actions:**\n- Review the underlying accounts contributing to this metric\n- Schedule a pipeline hygiene session with sales leads\n- Set up automated alerts for threshold breaches');
+    }, 1000);
+  }, 400);
+}
 
 function openProjectReview(name, risk) {
   toggleAIAssistant();
@@ -4035,6 +4073,86 @@ function toggleAIAssistant() {
       </button>
     </div>
     <p class="text-[10px] text-secondary text-center mt-2">kais &middot; insights from this entity's data</p>
+  </div>
+</aside>
+
+<!-- Widget Panel Overlay -->
+<div id="widget-overlay" class="fixed inset-0 bg-black/10 z-[70] hidden" style="display:none" onclick="toggleWidgetPanel()"></div>
+
+<!-- Widget Side Panel -->
+<aside id="widget-panel" class="fixed top-0 right-0 w-[340px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col" style="height:100vh">
+  <!-- Header -->
+  <div class="px-5 py-4 border-b border-outline-variant flex items-center justify-between">
+    <h3 class="text-base font-semibold text-on-surface">Widgets</h3>
+    <button onclick="toggleWidgetPanel()" class="w-7 h-7 flex items-center justify-center hover:bg-surface-container rounded transition-colors">
+      <i data-lucide="x" style="width:16px;height:16px;color:#9DA0AE;"></i>
+    </button>
+  </div>
+
+  <!-- Search -->
+  <div class="px-5 py-3">
+    <div class="relative">
+      <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="width:14px;height:14px;"></i>
+      <input type="text" placeholder="Search widgets" class="w-full pl-9 pr-3 py-2 text-sm border border-outline-variant rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-secondary"/>
+    </div>
+  </div>
+
+  <!-- Widget List -->
+  <div class="flex-1 overflow-y-auto px-5 pb-5">
+    <p class="text-[10px] font-bold text-secondary uppercase tracking-wider mb-3">Recents</p>
+    <div class="space-y-1">
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#E6F0FF] flex items-center justify-center shrink-0"><i data-lucide="target" style="width:18px;height:18px;color:#0073EA;"></i></div>
+          <div><p class="text-sm font-medium text-on-surface">KPI Summary</p><p class="text-[11px] text-secondary">Forecast, Risk, RAI, Recovery</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var els=document.querySelectorAll('#wt-forecast,#wt-risk,#wt-rai,#wt-recovery');els.forEach(function(e){e.closest('section')?e.closest('section').style.display=this.checked?'':'none':0}.bind(this))"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#E8F5E9] flex items-center justify-center shrink-0"><i data-lucide="bar-chart-3" style="width:18px;height:18px;color:#258750;"></i></div>
+          <div><p class="text-sm font-medium text-on-surface">Revenue Insight</p><p class="text-[11px] text-secondary">Pipeline, gap, coverage metrics</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var s=document.getElementById('wt-revenue');if(s)s.style.display=this.checked?'':'none'"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#FEF2F2] flex items-center justify-center shrink-0"><i data-lucide="alert-triangle" style="width:18px;height:18px;color:#dc2626;"></i></div>
+          <div><p class="text-sm font-medium text-on-surface">Critical Portfolios</p><p class="text-[11px] text-secondary">At-risk project table</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var s=document.getElementById('wt-portfolios');if(s)s.style.display=this.checked?'':'none'"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#FFF3E0] flex items-center justify-center shrink-0"><i data-lucide="trending-up" style="width:18px;height:18px;color:#d97706;"></i></div>
+          <div><p class="text-sm font-medium text-on-surface">Sales Performance</p><p class="text-[11px] text-secondary">Target, velocity, win rate</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var s=document.getElementById('wt-sales');if(s){var sec=s.closest('section');if(sec)sec.style.display=this.checked?'':'none'}"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#EDE9FE] flex items-center justify-center shrink-0">
+            <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="#7c3aed"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="#a78bfa"/></svg>
+          </div>
+          <div><p class="text-sm font-medium text-on-surface">AI Insights Banner</p><p class="text-[11px] text-secondary">Kais proactive alerts</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var s=document.querySelector('.mb-6');if(s)s.style.display=this.checked?'':'none'"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+      <label class="flex items-center justify-between p-3 rounded-lg hover:bg-[#F6F7FB] cursor-pointer transition-colors">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-lg bg-[#F6F7FB] flex items-center justify-center shrink-0"><i data-lucide="navigation" style="width:18px;height:18px;color:#676879;"></i></div>
+          <div><p class="text-sm font-medium text-on-surface">Sub Navigation</p><p class="text-[11px] text-secondary">Overview, Portfolio, Resources tabs</p></div>
+        </div>
+        <div class="relative shrink-0"><input type="checkbox" checked class="sr-only peer" onchange="var s=document.getElementById('wt-tabs');if(s)s.style.display=this.checked?'':'none'"/><div class="w-10 h-[22px] bg-[#E6E9EF] rounded-full peer-checked:bg-primary transition-colors"></div><div class="absolute left-[3px] top-[3px] w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-[18px] transition-transform"></div></div>
+      </label>
+
+    </div>
   </div>
 </aside>
 
