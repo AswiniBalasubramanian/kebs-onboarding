@@ -83,6 +83,7 @@
 <style>
         body { font-family: 'Poppins', sans-serif; background-color: #F6F7FB; }
         .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
+        [data-lucide] { stroke-width: 1.75; }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
         /* Rocketlane-style thin scrollbar */
@@ -167,7 +168,8 @@
             border-radius: 20px; position: relative; transition: background 0.11s;
         }
         .vibe-btn-primary:hover { background: #0060B9; }
-        .vibe-btn-primary .material-symbols-outlined { position: absolute; right: 16px; }
+        .vibe-btn-primary .material-symbols-outlined,
+        .vibe-btn-primary [data-lucide] { position: absolute; right: 16px; }
 
         .vibe-btn-secondary {
             height: 40px; padding: 0 20px; background: #292A2E; color: #fff;
@@ -215,7 +217,8 @@
             width: 32px; height: 32px; border-radius: 8px;
             background: #0073EA; display: flex; align-items: center; justify-content: center;
         }
-        .sidebar-nav-item.nav-active .nav-icon-wrap .material-symbols-outlined { color: #fff !important; }
+        .sidebar-nav-item.nav-active .nav-icon-wrap .material-symbols-outlined,
+        .sidebar-nav-item.nav-active .nav-icon-wrap [data-lucide] { color: #fff !important; }
         .sidebar-nav-item.nav-active .nav-label-small { color: #fff; font-weight: 600; }
         .sidebar-nav-item.nav-active .nav-label-full { color: #fff !important; font-weight: 600 !important; }
 
@@ -337,45 +340,45 @@
 </div>
 
 <div class="nav-item sidebar-nav-item nav-active group relative flex flex-col items-center justify-center w-full py-2.5 cursor-pointer transition-colors duration-75" data-name="home" data-cat="project" data-pinned="true" data-subs="Overview,Analytics,Widgets" onclick="setActiveNav(this);showDashboard()">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">home</span></div>
+<div class="nav-icon-wrap"><i data-lucide="home" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Home</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Home</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="project" data-pinned="true" data-subs="Active Projects,Archived,Templates">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">assignment</span></div>
+<div class="nav-icon-wrap"><i data-lucide="clipboard-list" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Projects</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Projects</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="people allocation" data-cat="project" data-pinned="true" data-subs="Capacity Plan,Skill Matrix,Availability">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">group</span></div>
+<div class="nav-icon-wrap"><i data-lucide="users" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">People</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">People Allocation</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="resource planning" data-cat="project" data-pinned="false" data-subs="Forecasting,Utilization,Bench Report">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">event_note</span></div>
+<div class="nav-icon-wrap"><i data-lucide="calendar-range" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Planning</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Resource Planning</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="time tracking" data-cat="project" data-pinned="false" data-subs="Timesheets,Approvals,Reports">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">schedule</span></div>
+<div class="nav-icon-wrap"><i data-lucide="clock" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Time</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Time Tracking</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="gantt charts" data-cat="project" data-pinned="false" data-subs="Timeline View,Dependencies,Milestones">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">view_timeline</span></div>
+<div class="nav-icon-wrap"><i data-lucide="gantt-chart" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Gantt</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Gantt Charts</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <!-- Category: CRM -->
@@ -384,38 +387,38 @@
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="accounts" data-cat="crm" data-pinned="false" data-subs="All Accounts,Key Accounts,Account Health">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">business</span></div>
+<div class="nav-icon-wrap"><i data-lucide="building-2" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Accounts</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Accounts</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="contacts" data-cat="crm" data-pinned="false" data-subs="All Contacts,Recent,Import">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">contacts</span></div>
+<div class="nav-icon-wrap"><i data-lucide="contact" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Contacts</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Contacts</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="opportunities" data-cat="crm" data-pinned="false" data-subs="Pipeline,Won Deals,Lost Analysis">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">trending_up</span></div>
+<div class="nav-icon-wrap"><i data-lucide="trending-up" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Opps</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Opportunities</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="leads" data-cat="crm" data-pinned="false" data-subs="New Leads,Qualified,Nurturing">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">person_search</span></div>
+<div class="nav-icon-wrap"><i data-lucide="user-search" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Leads</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Leads</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="deals" data-cat="crm" data-pinned="false" data-subs="Active Deals,Closing Soon,Deal Room">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">handshake</span></div>
+<div class="nav-icon-wrap"><i data-lucide="handshake" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Deals</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Deals</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <!-- Category: Finance -->
@@ -424,38 +427,38 @@
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="financials" data-cat="finance" data-pinned="true" data-subs="Revenue Forecast,P&L Statements,Cash Flow">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">payments</span></div>
+<div class="nav-icon-wrap"><i data-lucide="wallet" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Finance</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Financials</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="invoices" data-cat="finance" data-pinned="true" data-subs="Draft,Sent,Overdue">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">summarize</span></div>
+<div class="nav-icon-wrap"><i data-lucide="file-text" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Invoices</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Invoices</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="expense tracking" data-cat="finance" data-pinned="false" data-subs="Submit Expense,Approvals,Reports">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">receipt_long</span></div>
+<div class="nav-icon-wrap"><i data-lucide="receipt" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Expenses</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Expense Tracking</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="budgets" data-cat="finance" data-pinned="false" data-subs="Annual Budget,Department,Variance">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">savings</span></div>
+<div class="nav-icon-wrap"><i data-lucide="piggy-bank" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Budgets</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Budgets</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="billing" data-cat="finance" data-pinned="false" data-subs="Subscriptions,Payment History,Plans">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">credit_card</span></div>
+<div class="nav-icon-wrap"><i data-lucide="credit-card" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Billing</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Billing</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <!-- Category: Operations -->
@@ -464,38 +467,38 @@
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="reports" data-cat="operations" data-pinned="true" data-subs="Custom Reports,Scheduled,Export">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">analytics</span></div>
+<div class="nav-icon-wrap"><i data-lucide="bar-chart-3" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Reports</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Reports</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="team" data-cat="operations" data-pinned="true" data-subs="Members,Roles,Org Chart">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">people</span></div>
+<div class="nav-icon-wrap"><i data-lucide="users" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Team</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Team</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="settings" data-cat="operations" data-pinned="true" data-subs="General,Integrations,Security" onclick="showSettings('notifications')">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">settings</span></div>
+<div class="nav-icon-wrap"><i data-lucide="settings" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Settings</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Settings</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="help desk" data-cat="operations" data-pinned="false" data-subs="Tickets,FAQ,Live Chat">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">support_agent</span></div>
+<div class="nav-icon-wrap"><i data-lucide="headset" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Help</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Help Desk</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="knowledge base" data-cat="operations" data-pinned="false" data-subs="Articles,Categories,Search">
-<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">menu_book</span></div>
+<div class="nav-icon-wrap"><i data-lucide="book-open" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">KB</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Knowledge Base</span>
-<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
 <!-- Apps toggle (always at bottom) -->
@@ -504,7 +507,7 @@
 
 <!-- Apps button pinned at bottom -->
 <div id="apps-nav" class="nav-item flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75 border-t border-[#3D3F52] shrink-0" onclick="toggleSidebar()">
-<span class="material-symbols-outlined text-[20px]">apps</span>
+<i data-lucide="grid-3x3" class="" style="width:20px;height:20px;"></i>
 <span class="nav-label-small text-[10px] mt-0.5">Apps</span>
 <span class="nav-label-full hidden text-sm font-medium">All Apps</span>
 </div>
@@ -550,63 +553,63 @@ PR
   </div>
   <div class="py-2">
     <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-      <span class="material-symbols-outlined text-[20px] text-secondary">account_circle</span>
+      <i data-lucide="user-circle" class="text-secondary" style="width:20px;height:20px;"></i>
       Profile
     </a>
     <a href="#" onclick="showSettings('plans')" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-      <span class="material-symbols-outlined text-[20px] text-secondary">credit_card</span>
+      <i data-lucide="credit-card" class="text-secondary" style="width:20px;height:20px;"></i>
       <span class="flex-1">Plans & Billing</span>
       <span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">Enterprise</span>
     </a>
     <a href="#" onclick="showSettings('notifications')" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-      <span class="material-symbols-outlined text-[20px] text-secondary">settings</span>
+      <i data-lucide="settings" class="text-secondary" style="width:20px;height:20px;"></i>
       Settings
     </a>
   </div>
   <div class="border-t border-outline-variant py-2">
     <div class="relative">
       <button onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-        <span class="material-symbols-outlined text-[20px] text-secondary">palette</span>
+        <i data-lucide="palette" class="text-secondary" style="width:20px;height:20px;"></i>
         <span class="flex-1 text-left">Change theme</span>
-        <span class="material-symbols-outlined text-[16px] text-secondary">chevron_right</span>
+        <i data-lucide="chevron-right" class="text-secondary" style="width:16px;height:16px;"></i>
       </button>
       <div class="hidden absolute right-full top-0 mr-1 w-44 bg-white border border-outline-variant rounded-lg shadow-xl z-[100] py-1">
         <button onclick="setTheme('light')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
-          <span class="material-symbols-outlined text-[18px] text-[#f5a623]">light_mode</span>
+          <i data-lucide="sun" class="text-[#f5a623]" style="width:18px;height:18px;"></i>
           Light
-          <span class="theme-check ml-auto text-primary hidden" data-theme="light"><span class="material-symbols-outlined text-[16px]">check</span></span>
+          <span class="theme-check ml-auto text-primary hidden" data-theme="light"><i data-lucide="check" class="" style="width:16px;height:16px;"></i></span>
         </button>
         <button onclick="setTheme('dark')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
-          <span class="material-symbols-outlined text-[18px] text-[#6B6F8A]">dark_mode</span>
+          <i data-lucide="moon" class="text-[#6B6F8A]" style="width:18px;height:18px;"></i>
           Dark
-          <span class="theme-check ml-auto text-primary" data-theme="dark"><span class="material-symbols-outlined text-[16px]">check</span></span>
+          <span class="theme-check ml-auto text-primary" data-theme="dark"><i data-lucide="check" class="" style="width:16px;height:16px;"></i></span>
         </button>
         <button onclick="setTheme('night')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
-          <span class="material-symbols-outlined text-[18px] text-[#7c3aed]">bedtime</span>
+          <i data-lucide="moon-star" class="text-[#7c3aed]" style="width:18px;height:18px;"></i>
           Night
-          <span class="theme-check ml-auto text-primary hidden" data-theme="night"><span class="material-symbols-outlined text-[16px]">check</span></span>
+          <span class="theme-check ml-auto text-primary hidden" data-theme="night"><i data-lucide="check" class="" style="width:16px;height:16px;"></i></span>
         </button>
         <button onclick="setTheme('system')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
-          <span class="material-symbols-outlined text-[18px] text-secondary">settings</span>
+          <i data-lucide="settings" class="text-secondary" style="width:18px;height:18px;"></i>
           System default
-          <span class="theme-check ml-auto text-primary hidden" data-theme="system"><span class="material-symbols-outlined text-[16px]">check</span></span>
+          <span class="theme-check ml-auto text-primary hidden" data-theme="system"><i data-lucide="check" class="" style="width:16px;height:16px;"></i></span>
         </button>
       </div>
     </div>
   </div>
   <div class="border-t border-outline-variant py-2">
     <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-      <span class="material-symbols-outlined text-[20px] text-secondary">school</span>
+      <i data-lucide="graduation-cap" class="text-secondary" style="width:20px;height:20px;"></i>
       Kebs Academy
     </a>
     <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
-      <span class="material-symbols-outlined text-[20px] text-secondary">help_outline</span>
+      <i data-lucide="help-circle" class="text-secondary" style="width:20px;height:20px;"></i>
       Kebs Help Center
     </a>
   </div>
   <div class="border-t border-outline-variant py-2">
     <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-error-container transition-colors">
-      <span class="material-symbols-outlined text-[20px]">logout</span>
+      <i data-lucide="log-out" class="" style="width:20px;height:20px;"></i>
       Logout
     </a>
   </div>
@@ -621,28 +624,28 @@ PR
 <div id="dashboard-view" class="p-8 max-w-[1360px] mx-auto">
 <!-- Header Area -->
 <section class="mb-8">
-<h1 class="text-3xl font-light text-on-surface tracking-tight flex items-center gap-2"><span class="material-symbols-outlined text-[28px] text-[#f5a623]" style="font-variation-settings:'FILL' 1">light_mode</span>Good morning, <span class="font-semibold">Prasanna</span></h1>
+<h1 class="text-3xl font-light text-on-surface tracking-tight flex items-center gap-2"><i data-lucide="sun" class="text-[#f5a623]" style="width:28px;height:28px;"></i>Good morning, <span class="font-semibold">Prasanna</span></h1>
 <p class="text-on-surface-variant mt-1">Here is what's happening with your portfolios today.</p>
 </section>
 <!-- Top Metrics Row -->
 <section class="grid grid-cols-4 gap-4 mb-8">
 <div id="wt-forecast" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
 <div class="flex justify-between items-start mb-4">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Forecast Accuracy <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
-<span class="material-symbols-outlined text-primary text-[18px]">track_changes</span>
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Forecast Accuracy <i data-lucide="info" class="text-secondary cursor-help" style="width:12px;height:12px;"></i></span></p>
+<i data-lucide="target" class="text-primary" style="width:18px;height:18px;"></i>
 </div>
 <div class="flex flex-col">
 <span class="text-3xl font-bold text-on-surface">94.2%</span>
 <div class="flex items-center mt-1 text-tertiary">
-<span class="material-symbols-outlined text-[14px] mr-1">trending_up</span>
+<i data-lucide="trending-up" class="mr-1" style="width:14px;height:14px;"></i>
 <span class="text-[11px] font-medium">+2.4% vs last mo</span>
 </div>
 </div>
 </div>
 <div id="wt-risk" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
 <div class="flex justify-between items-start mb-4">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Revenue at Risk <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
-<span class="material-symbols-outlined text-error text-[18px]">warning</span>
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Revenue at Risk <i data-lucide="info" class="text-secondary cursor-help" style="width:12px;height:12px;"></i></span></p>
+<i data-lucide="triangle-alert" class="text-error" style="width:18px;height:18px;"></i>
 </div>
 <div class="flex flex-col">
 <span class="text-3xl font-bold text-on-surface">$1.2M</span>
@@ -651,8 +654,8 @@ PR
 </div>
 <div id="wt-rai" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
 <div class="flex justify-between items-start mb-4">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">RAI Score <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
-<span class="material-symbols-outlined text-[#8a3ffc] text-[18px]">auto_awesome</span>
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">RAI Score <i data-lucide="info" class="text-secondary cursor-help" style="width:12px;height:12px;"></i></span></p>
+<i data-lucide="sparkles" class="text-[#8a3ffc]" style="width:18px;height:18px;"></i>
 </div>
 <div class="flex flex-col">
 <span class="text-3xl font-bold text-on-surface">8.4</span>
@@ -663,8 +666,8 @@ PR
 </div>
 <div id="wt-recovery" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
 <div class="flex justify-between items-start mb-4">
-<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Recovery Potential <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
-<span class="material-symbols-outlined text-[#F96C3C] text-[18px]">bolt</span>
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Recovery Potential <i data-lucide="info" class="text-secondary cursor-help" style="width:12px;height:12px;"></i></span></p>
+<i data-lucide="zap" class="text-[#F96C3C]" style="width:18px;height:18px;"></i>
 </div>
 <div class="flex flex-col">
 <span class="text-3xl font-bold text-on-surface">$450k</span>
@@ -682,7 +685,7 @@ PR
 </div>
 <button class="flex items-center gap-1 text-primary text-sm font-semibold hover:underline">
                         Navigate to Control Tower
-                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                        <i data-lucide="arrow-right" class="" style="width:18px;height:18px;"></i>
 </button>
 </div>
 <div class="flex flex-col lg:flex-row gap-12 items-start">
@@ -709,35 +712,35 @@ PR
 </div>
 <div class="w-full lg:w-3/5 grid grid-cols-4 gap-y-8 gap-x-4">
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Target Achievement <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Target Achievement <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold">$25.0M</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Revenue Gap <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Revenue Gap <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold text-error">$6.6M</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Revenue at Risk <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Revenue at Risk <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold text-primary">$12.4M</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Forecast Accuracy <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Forecast Accuracy <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold">91.5%</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Pipeline Coverage <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Pipeline Coverage <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold">88.2%</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Billing Realization <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Billing Realization <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold text-tertiary">$14.2M</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Collected <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Collected <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold">$22.7M</p>
 </div>
 <div>
-<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Utilisation <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Utilisation <i data-lucide="info" class="text-secondary cursor-help normal-case" style="width:11px;height:11px;"></i></span></p>
 <p class="text-xl font-semibold text-on-surface">83%</p>
 </div>
 </div>
@@ -752,7 +755,7 @@ PR
 <button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors">Financials</button>
 <button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors flex items-center gap-1">
                 AI Insights
-                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                <i data-lucide="sparkles" class="" style="width:16px;height:16px;"></i>
 </button>
 </nav>
 <!-- Main Content Area -->
@@ -761,7 +764,7 @@ PR
 <div class="flex justify-between items-center mb-4">
 <h2 class="text-xl font-semibold">Critical Portfolios at Risk</h2>
 <button class="text-primary text-sm font-semibold flex items-center hover:underline">
-                        View all <span class="material-symbols-outlined ml-1">chevron_right</span>
+                        View all <i data-lucide="chevron-right" class="ml-1" style="width:18px;height:18px;"></i>
 </button>
 </div>
 <div class="bg-white border border-outline-variant rounded-lg overflow-hidden">
@@ -790,7 +793,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">22.4%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -808,7 +811,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">34.8%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -826,7 +829,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">18.2%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -844,7 +847,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">41.5%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -862,7 +865,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">15.7%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -880,7 +883,7 @@ PR
 <td class="p-4 text-right font-medium text-sm">28.3%</td>
 <td class="p-4 text-right">
 <button class="text-secondary hover:text-primary transition-colors">
-<span class="material-symbols-outlined">more_vert</span>
+<i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i>
 </button>
 </td>
 </tr>
@@ -913,7 +916,7 @@ PR
 </div>
 </div>
 <p class="text-xs text-tertiary mt-2 flex items-center">
-<span class="material-symbols-outlined text-[14px] mr-1">trending_down</span>
+<i data-lucide="trending-down" class="mr-1" style="width:14px;height:14px;"></i>
                         4 days faster than last month
                     </p>
 </div>
@@ -944,23 +947,23 @@ PR
       </div>
       <nav class="space-y-1">
         <a href="#" onclick="showSettingsSection('notifications')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors bg-surface-container font-medium text-on-surface" data-section="notifications">
-          <span class="material-symbols-outlined text-[20px] text-secondary">notifications</span>
+          <i data-lucide="bell" class="text-secondary" style="width:20px;height:20px;"></i>
           Notifications
         </a>
         <a href="#" onclick="showSettingsSection('plans')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="plans">
-          <span class="material-symbols-outlined text-[20px] text-[#7c3aed]">credit_card</span>
+          <i data-lucide="credit-card" class="text-[#7c3aed]" style="width:20px;height:20px;"></i>
           Plans & Billing
         </a>
         <a href="#" onclick="showSettingsSection('team')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="team">
-          <span class="material-symbols-outlined text-[20px] text-[#dc2626]">people</span>
+          <i data-lucide="users" class="text-[#dc2626]" style="width:20px;height:20px;"></i>
           Team members
         </a>
         <a href="#" onclick="showSettingsSection('integrations')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="integrations">
-          <span class="material-symbols-outlined text-[20px] text-[#059669]">extension</span>
+          <i data-lucide="puzzle" class="text-[#059669]" style="width:20px;height:20px;"></i>
           Integrations
         </a>
         <a href="#" onclick="showSettingsSection('security')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="security">
-          <span class="material-symbols-outlined text-[20px] text-[#d97706]">shield</span>
+          <i data-lucide="shield" class="text-[#d97706]" style="width:20px;height:20px;"></i>
           Security
         </a>
       </nav>
@@ -971,14 +974,14 @@ PR
       <!-- Notifications Section -->
       <div id="settings-notifications" class="settings-section">
         <div class="flex items-center gap-3 mb-8">
-          <span class="material-symbols-outlined text-[24px] text-secondary">notifications</span>
+          <i data-lucide="bell" class="text-secondary" style="width:24px;height:24px;"></i>
           <h2 class="text-xl font-semibold text-on-surface">Notifications</h2>
         </div>
 
         <!-- Notify me for header -->
         <div class="flex items-center border-b border-outline-variant pb-4 mb-6">
           <div class="flex items-center gap-2 flex-1">
-            <span class="material-symbols-outlined text-[20px] text-secondary">notifications_active</span>
+            <i data-lucide="bell-ring" class="text-secondary" style="width:20px;height:20px;"></i>
             <span class="text-sm font-semibold text-on-surface">Notify me for</span>
           </div>
           <div class="flex gap-0 w-[300px]">
@@ -991,7 +994,7 @@ PR
         <!-- Messages Category -->
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-outlined text-[20px] text-secondary">forum</span>
+            <i data-lucide="message-circle" class="text-secondary" style="width:20px;height:20px;"></i>
             <h3 class="text-base font-semibold text-on-surface">Messages</h3>
           </div>
 
@@ -1034,7 +1037,7 @@ PR
         <!-- Tasks Category -->
         <div class="mb-8">
           <div class="flex items-center gap-2 mb-4">
-            <span class="material-symbols-outlined text-[20px] text-secondary">task_alt</span>
+            <i data-lucide="check-circle" class="text-secondary" style="width:20px;height:20px;"></i>
             <h3 class="text-base font-semibold text-on-surface">Tasks</h3>
           </div>
 
@@ -1090,13 +1093,13 @@ PR
       <!-- Plans & Billing Section -->
       <div id="settings-plans" class="settings-section hidden">
         <div class="flex items-center gap-3 mb-8">
-          <span class="material-symbols-outlined text-[24px] text-secondary">credit_card</span>
+          <i data-lucide="credit-card" class="text-secondary" style="width:24px;height:24px;"></i>
           <h2 class="text-xl font-semibold text-on-surface">Plans & Billing</h2>
         </div>
 
         <!-- Alert Banner -->
         <div class="bg-error-container border border-error/20 rounded-lg px-5 py-4 mb-6 flex items-start gap-3">
-          <span class="material-symbols-outlined text-error text-[20px] mt-0.5">info</span>
+          <i data-lucide="info" class="text-error  mt-0.5" style="width:20px;height:20px;"></i>
           <p class="text-sm text-on-surface"><strong>Enterprise plan subscription canceled on 02 Apr 2026.</strong> To continue, <a href="#" class="text-on-surface underline font-semibold">reactivate the subscription</a>.</p>
         </div>
 
@@ -1169,7 +1172,7 @@ PR
       <!-- Team Members Section -->
       <div id="settings-team" class="settings-section hidden">
         <div class="flex items-center gap-3 mb-8">
-          <span class="material-symbols-outlined text-[24px] text-secondary">people</span>
+          <i data-lucide="users" class="text-secondary" style="width:24px;height:24px;"></i>
           <h2 class="text-xl font-semibold text-on-surface">Team members</h2>
         </div>
 
@@ -1211,10 +1214,10 @@ PR
           <button class="pb-3 text-sm text-on-surface border border-outline-variant rounded-[6px] px-3 py-1 mb-1 hover:bg-surface-container">Filter</button>
           <div class="ml-auto flex items-center gap-2 pb-2">
             <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px]">
-              <span class="material-symbols-outlined text-secondary text-[20px]">search</span>
+              <i data-lucide="search" class="text-secondary" style="width:20px;height:20px;"></i>
             </button>
             <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px]">
-              <span class="material-symbols-outlined text-secondary text-[20px]">upload</span>
+              <i data-lucide="upload" class=" text-secondary" style="width:20px;height:20px;"></i>
             </button>
           </div>
         </div>
@@ -1224,7 +1227,7 @@ PR
           <table class="w-full text-left">
             <thead>
               <tr class="bg-surface-container-low border-b border-outline-variant">
-                <th class="p-3 text-xs font-semibold text-secondary">Team member (3) <span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span></th>
+                <th class="p-3 text-xs font-semibold text-secondary">Team member (3) <i data-lucide="arrow-up" class="align-middle" style="width:14px;height:14px;"></i></th>
                 <th class="p-3 text-xs font-semibold text-secondary">Email</th>
                 <th class="p-3 text-xs font-semibold text-secondary">Role</th>
                 <th class="p-3 text-xs font-semibold text-secondary">Permission</th>
@@ -1242,7 +1245,7 @@ PR
                 <td class="p-3 text-secondary">prasanna@kaartech.com</td>
                 <td class="p-3"><span class="px-2 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">Executive</span></td>
                 <td class="p-3 text-secondary">Account Admin</td>
-                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i></button></td>
               </tr>
               <tr class="hover:bg-surface-container-lowest">
                 <td class="p-3">
@@ -1254,7 +1257,7 @@ PR
                 <td class="p-3 text-secondary">sampleuser2@rocketlane.com</td>
                 <td class="p-3"><span class="px-2 py-0.5 border border-[#d97706] text-[#d97706] text-[11px] font-semibold rounded-full">Engineer</span></td>
                 <td class="p-3 text-secondary">Account Admin</td>
-                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i></button></td>
               </tr>
               <tr class="hover:bg-surface-container-lowest">
                 <td class="p-3">
@@ -1266,7 +1269,7 @@ PR
                 <td class="p-3 text-secondary">sampleuser1@rocketlane.com</td>
                 <td class="p-3"><span class="px-2 py-0.5 border border-[#0891b2] text-[#0891b2] text-[11px] font-semibold rounded-full">Customer success</span></td>
                 <td class="p-3 text-secondary">Account Admin</td>
-                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><i data-lucide="more-vertical" class="" style="width:18px;height:18px;"></i></button></td>
               </tr>
             </tbody>
           </table>
@@ -1296,13 +1299,13 @@ PR
       <h2 class="text-xl font-semibold text-on-surface">Notifications</h2>
       <div class="flex items-center gap-1">
         <button onclick="showSettings('notifications')" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
-          <span class="material-symbols-outlined text-secondary text-[20px]">settings</span>
+          <i data-lucide="settings" class="text-secondary" style="width:20px;height:20px;"></i>
         </button>
         <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
-          <span class="material-symbols-outlined text-secondary text-[20px]">more_horiz</span>
+          <i data-lucide="more-horizontal" class="text-secondary" style="width:20px;height:20px;"></i>
         </button>
         <button onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
-          <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+          <i data-lucide="x" class="text-secondary" style="width:20px;height:20px;"></i>
         </button>
       </div>
     </div>
@@ -1315,7 +1318,7 @@ PR
     <!-- Search & Toggle -->
     <div class="flex items-center gap-3">
       <div class="flex-1 relative">
-        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[18px]">search</span>
+        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-secondary" style="width:18px;height:18px;"></i>
         <input id="notif-search" type="text" placeholder="Search notifications by people, boards, and mo..." class="w-full pl-9 pr-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-secondary"/>
       </div>
       <label class="flex items-center gap-2 cursor-pointer select-none shrink-0">
@@ -1342,14 +1345,14 @@ PR
           <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">person_add</span> Assigned you</span> to "Q3 Revenue Forecast"</p>
+              <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><i data-lucide="user-plus" class="align-middle" style="width:14px;height:14px;"></i> Assigned you</span> to "Q3 Revenue Forecast"</p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">2h</span>
                 <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
               </div>
             </div>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">Finance Dashboard</span>
             </div>
           </div>
@@ -1371,7 +1374,7 @@ PR
             </div>
             <p class="text-sm text-secondary mt-0.5 truncate">Great progress on the Nordex pipeline! Let's schedule a review for Friday.</p>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">Sales Pipeline</span>
             </div>
           </div>
@@ -1383,14 +1386,14 @@ PR
           <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">Priya Sharma</span> <span class="text-secondary"><span class="material-symbols-outlined text-[14px] align-middle">reply</span></span> <span class="text-primary font-medium">Replied</span> to your update</p>
+              <p class="text-sm"><span class="font-semibold">Priya Sharma</span> <span class="text-secondary"><i data-lucide="reply" class="align-middle" style="width:14px;height:14px;"></i></span> <span class="text-primary font-medium">Replied</span> to your update</p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">5h</span>
               </div>
             </div>
             <p class="text-sm text-secondary mt-0.5 truncate">Updated the resource allocation for GulfCore. We now have 2 more FTEs assigned.</p>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-secondary">calendar_today</span>
+              <i data-lucide="calendar" class="text-secondary" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">Resource Planning</span>
             </div>
           </div>
@@ -1409,7 +1412,7 @@ PR
           <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">person_add</span> Assigned you</span></p>
+              <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><i data-lucide="user-plus" class="align-middle" style="width:14px;height:14px;"></i> Assigned you</span></p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">2d</span>
                 <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
@@ -1417,7 +1420,7 @@ PR
             </div>
             <p class="text-sm text-secondary mt-0.5">to "Client Onboarding – Acme"</p>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-secondary">calendar_today</span>
+              <i data-lucide="calendar" class="text-secondary" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">CRM</span>
             </div>
           </div>
@@ -1436,7 +1439,7 @@ PR
             </div>
             <p class="text-sm text-secondary mt-0.5 truncate">Yes! We spoke yesterday and they're really excited to begin onboarding.</p>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">Summitry</span>
             </div>
           </div>
@@ -1448,14 +1451,14 @@ PR
           <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#0891b2] flex items-center justify-center text-white text-xs font-semibold">JW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">Jeffrey Waters</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">inventory_2</span> Subscribed you</span> to the Board "ABC Q2 Events"</p>
+              <p class="text-sm"><span class="font-semibold">Jeffrey Waters</span> <span class="text-primary font-medium"><i data-lucide="package" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Subscribed you</span> to the Board "ABC Q2 Events"</p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">4d</span>
                 <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
               </div>
             </div>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">ABC Q2 Events</span>
             </div>
           </div>
@@ -1475,7 +1478,7 @@ PR
             </div>
             <p class="text-sm text-secondary mt-0.5 truncate">@Prasanna can you take lead on assigning teams?</p>
             <div class="flex items-center gap-1.5 mt-1.5">
-              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">ABC Q1 Events</span>
             </div>
           </div>
@@ -1485,7 +1488,7 @@ PR
 
     <!-- Empty state -->
     <div id="notif-empty" class="hidden px-6 py-16 text-center">
-      <span class="material-symbols-outlined text-[48px] text-outline mb-3">notifications_off</span>
+      <i data-lucide="bell-off" class="text-outline mb-3" style="width:48px;height:48px;"></i>
       <p class="text-sm text-secondary">No notifications match your filters</p>
     </div>
   </div>
@@ -1500,7 +1503,7 @@ PR
   <div class="px-5 pt-4 pb-3 border-b border-outline-variant">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-3">
-        <span class="material-symbols-outlined text-on-surface text-[24px]">forum</span>
+        <i data-lucide="message-circle" class="text-on-surface" style="width:24px;height:24px;"></i>
         <div>
           <h2 class="text-lg font-semibold text-on-surface leading-tight">Quick Collab</h2>
           <p class="text-xs text-secondary">ABC Corp</p>
@@ -1508,10 +1511,10 @@ PR
       </div>
       <div class="flex items-center gap-1">
         <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
-          <span class="material-symbols-outlined text-secondary text-[20px]">help_outline</span>
+          <i data-lucide="help-circle" class="text-secondary" style="width:20px;height:20px;"></i>
         </button>
         <button onclick="toggleCollab()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
-          <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+          <i data-lucide="x" class="text-secondary" style="width:20px;height:20px;"></i>
         </button>
       </div>
     </div>
@@ -1519,11 +1522,11 @@ PR
 
   <!-- Pinned Message -->
   <div class="px-5 py-2.5 bg-[#fff8f0] border-b border-[#ffd6a5] flex items-center gap-2">
-    <span class="material-symbols-outlined text-[#f5a623] text-[18px]">push_pin</span>
+    <i data-lucide="pin" class="text-[#f5a623]" style="width:18px;height:18px;"></i>
     <p class="text-sm text-on-surface flex-1 truncate">@JohnSmith I'll have the technical requirements ready by Wednesday</p>
     <button class="text-xs text-[#f5a623] font-medium hover:underline shrink-0">Unpin</button>
     <button class="text-secondary hover:text-on-surface ml-1">
-      <span class="material-symbols-outlined text-[16px]">close</span>
+      <i data-lucide="x" class="" style="width:16px;height:16px;"></i>
     </button>
   </div>
 
@@ -1710,25 +1713,25 @@ PR
     <div class="flex items-center gap-2 mb-2">
       <span class="text-xs text-secondary">Send-</span>
       <button class="flex items-center gap-1 text-xs text-secondary hover:text-on-surface">
-        <span class="material-symbols-outlined text-[14px]">alternate_email</span>
+        <i data-lucide="at-sign" class="" style="width:14px;height:14px;"></i>
         Privately
-        <span class="material-symbols-outlined text-[14px]">expand_more</span>
+        <i data-lucide="chevron-down" class="" style="width:14px;height:14px;"></i>
       </button>
     </div>
     <div class="flex items-center gap-2 bg-surface-container-low rounded-full px-2 py-2.5">
       <button class="text-secondary hover:text-on-surface">
-        <span class="material-symbols-outlined text-[20px]">sentiment_satisfied</span>
+        <i data-lucide="smile" class="" style="width:20px;height:20px;"></i>
       </button>
       <input type="text" placeholder="Type a message... Use @ to mention" class="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-secondary"/>
       <button class="text-secondary hover:text-on-surface">
-        <span class="material-symbols-outlined text-[20px]">attach_file</span>
+        <i data-lucide="paperclip" class="" style="width:20px;height:20px;"></i>
       </button>
       <button class="w-8 h-8 bg-[#f97316] hover:bg-[#ea580c] rounded-full flex items-center justify-center transition-colors">
-        <span class="material-symbols-outlined text-white text-[18px]">arrow_upward</span>
+        <i data-lucide="arrow-up" class="text-white" style="width:18px;height:18px;"></i>
       </button>
     </div>
     <p class="text-[11px] text-secondary mt-2 flex items-center gap-1">
-      <span class="material-symbols-outlined text-[14px]">alternate_email</span>
+      <i data-lucide="at-sign" class="" style="width:14px;height:14px;"></i>
       Use @ to mention team members
     </p>
   </div>
@@ -1742,7 +1745,7 @@ PR
   <div class="px-6 pt-5 pb-4 border-b border-outline-variant flex items-center justify-between">
     <h2 class="text-xl font-semibold text-on-surface">What's new</h2>
     <button onclick="toggleWhatsNew()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
-      <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+      <i data-lucide="x" class="text-secondary" style="width:20px;height:20px;"></i>
     </button>
   </div>
 
@@ -1823,7 +1826,7 @@ PR
             <div class="flex items-center gap-1"><div class="w-4 h-1.5 bg-[#6B6F8A] rounded-sm"></div><div class="w-6 h-1.5 bg-[#f5a623] rounded-sm"></div><div class="w-3 h-1.5 bg-[#da1e28] rounded-sm"></div></div>
           </div>
           <div class="flex items-center gap-1 mt-1">
-            <span class="material-symbols-outlined" style="font-size:10px;color:#525252;">check_box_outline_blank</span>
+            <i data-lucide="square" class="" style="width:18px;height:18px;font-size:10px;color:#525252;"></i>
             <span style="font-size:7px;font-weight:600;color:#1a1a2e;">Tasks</span>
           </div>
         </div>
@@ -1898,7 +1901,7 @@ PR
       <div class="flex gap-4">
         <!-- Mini UI: Speed gauge -->
         <div class="w-28 h-24 bg-white rounded-lg shrink-0 p-2 flex flex-col items-center justify-center overflow-hidden border border-[#dde3ed]">
-          <span class="material-symbols-outlined" style="font-size:28px;color:#0073EA;">speed</span>
+          <i data-lucide="gauge" class="" style="width:18px;height:18px;font-size:28px;color:#0073EA;"></i>
           <p style="font-size:8px;font-weight:700;color:#1a1a2e;margin-top:2px;">3x faster</p>
           <p style="font-size:6px;color:#6B6F8A;">load times</p>
         </div>
@@ -1921,12 +1924,12 @@ PR
   <div class="px-6 pt-5 pb-4 border-b border-outline-variant flex items-center justify-between">
     <div class="flex items-center gap-3">
       <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-        <span class="material-symbols-outlined text-primary text-[18px]">add_task</span>
+        <i data-lucide="plus-circle" class="text-primary" style="width:18px;height:18px;"></i>
       </div>
       <h2 class="text-lg font-semibold text-on-surface">Create New CTA</h2>
     </div>
     <button onclick="toggleCreateCTA()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
-      <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+      <i data-lucide="x" class="text-secondary" style="width:20px;height:20px;"></i>
     </button>
   </div>
 
@@ -1943,10 +1946,10 @@ PR
         <div class="carbon-dropdown relative" data-value="Timesheet">
           <button type="button" class="carbon-dropdown-btn w-full h-10 px-3 text-sm border border-[#C5C7D4] rounded-md bg-[#F6F7FB] text-left flex items-center justify-between cursor-pointer hover:bg-[#e8e8e8] transition-colors" onclick="toggleCarbonDropdown(this.parentElement)">
             <span class="carbon-dropdown-label text-on-surface">Timesheet</span>
-            <span class="material-symbols-outlined text-[18px] text-secondary transition-transform duration-200">expand_more</span>
+            <i data-lucide="chevron-down" class="text-secondary transition-transform duration-200" style="width:18px;height:18px;"></i>
           </button>
           <div class="carbon-dropdown-menu hidden absolute top-full left-0 w-full bg-white border border-[#C5C7D4] shadow-md z-[10] max-h-[200px] overflow-y-auto">
-            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer flex items-center justify-between" data-val="Timesheet" onclick="selectCarbonItem(this)">Timesheet<span class="material-symbols-outlined text-[16px] text-primary">check</span></div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer flex items-center justify-between" data-val="Timesheet" onclick="selectCarbonItem(this)">Timesheet<i data-lucide="check" class="text-primary" style="width:16px;height:16px;"></i></div>
             <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Project" onclick="selectCarbonItem(this)">Project</div>
             <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Finance" onclick="selectCarbonItem(this)">Finance</div>
             <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Resource" onclick="selectCarbonItem(this)">Resource</div>
@@ -1975,7 +1978,7 @@ PR
         <div class="carbon-dropdown relative" data-value="">
           <button type="button" class="carbon-dropdown-btn w-full h-10 px-3 text-sm border border-[#C5C7D4] rounded-md bg-[#F6F7FB] text-left flex items-center justify-between cursor-pointer hover:bg-[#e8e8e8] transition-colors" onclick="toggleCarbonDropdown(this.parentElement)">
             <span class="carbon-dropdown-label text-secondary">Select</span>
-            <span class="material-symbols-outlined text-[18px] text-secondary transition-transform duration-200">expand_more</span>
+            <i data-lucide="chevron-down" class="text-secondary transition-transform duration-200" style="width:18px;height:18px;"></i>
           </button>
           <div class="carbon-dropdown-menu hidden absolute top-full left-0 w-full bg-white border border-[#C5C7D4] shadow-md z-[10] max-h-[200px] overflow-y-auto">
             <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Prasanna" onclick="selectCarbonItem(this)">Prasanna</div>
@@ -2014,7 +2017,7 @@ PR
     <div>
       <label class="text-xs font-semibold text-on-surface mb-2 block">Tags</label>
       <button class="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors">
-        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        <i data-lucide="plus-circle" class="" style="width:18px;height:18px;"></i>
         Add Tags
       </button>
     </div>
@@ -2023,7 +2026,7 @@ PR
     <div>
       <label class="text-xs font-semibold text-on-surface mb-2 block">Attachment</label>
       <button class="flex items-center gap-2 text-sm text-secondary hover:text-on-surface transition-colors">
-        <span class="material-symbols-outlined text-[18px]">attach_file</span>
+        <i data-lucide="paperclip" class="" style="width:18px;height:18px;"></i>
         Add Attachment
       </button>
     </div>
@@ -2033,7 +2036,7 @@ PR
   <div class="px-6 py-4 border-t border-outline-variant flex justify-end">
     <button class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors shadow-sm">
       Create
-      <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+      <i data-lucide="arrow-right" class="" style="width:18px;height:18px;"></i>
     </button>
   </div>
 </aside>
@@ -2051,7 +2054,7 @@ let sidebarExpanded = false;
       const name = item.dataset.name;
       if (name in pinned) {
         item.dataset.pinned = pinned[name] ? 'true' : 'false';
-        const icon = item.querySelector('.pin-icon .material-symbols-outlined');
+        const icon = item.querySelector(".pin-icon [data-lucide]");
         if (icon) icon.style.fontVariationSettings = pinned[name] ? "'FILL' 1" : "'FILL' 0";
       }
     });
@@ -2070,7 +2073,7 @@ function savePins() {
 function togglePin(item) {
   const isPinned = item.dataset.pinned === 'true';
   item.dataset.pinned = isPinned ? 'false' : 'true';
-  const icon = item.querySelector('.pin-icon .material-symbols-outlined');
+  const icon = item.querySelector(".pin-icon [data-lucide]");
   if (icon) icon.style.fontVariationSettings = isPinned ? "'FILL' 0" : "'FILL' 1";
   savePins();
 }
@@ -2345,14 +2348,14 @@ function showSettingsSection(section) {
 // --- Carbon Dropdown ---
 function toggleCarbonDropdown(dropdown) {
   const menu = dropdown.querySelector('.carbon-dropdown-menu');
-  const chevron = dropdown.querySelector('.carbon-dropdown-btn .material-symbols-outlined');
+  const chevron = dropdown.querySelector(".carbon-dropdown-btn [data-lucide]");
   const isOpen = !menu.classList.contains('hidden');
 
   // Close all other dropdowns first
   document.querySelectorAll('.carbon-dropdown').forEach(d => {
     if (d !== dropdown) {
       d.querySelector('.carbon-dropdown-menu').classList.add('hidden');
-      d.querySelector('.carbon-dropdown-btn .material-symbols-outlined').style.transform = '';
+      d.querySelector(".carbon-dropdown-btn [data-lucide]").style.transform = '';
       d.querySelector('.carbon-dropdown-btn').classList.remove('border-primary');
       d.querySelector('.carbon-dropdown-btn').classList.add('border-[#C5C7D4]');
     }
@@ -2384,11 +2387,11 @@ function selectCarbonItem(item) {
 
   // Update checkmarks
   dropdown.querySelectorAll('.carbon-dropdown-item').forEach(i => {
-    const existing = i.querySelector('.material-symbols-outlined');
+    const existing = i.querySelector("[data-lucide]");
     if (existing) existing.remove();
     if (i.dataset.val === val) {
       const check = document.createElement('span');
-      check.className = 'material-symbols-outlined text-[16px] text-primary';
+      check.className = "text-primary"; check.setAttribute("data-lucide","check"); check.style.cssText="width:16px;height:16px;"; if(typeof lucide!=="undefined") lucide.createIcons({nodes:[check]});
       check.textContent = 'check';
       i.appendChild(check);
     }
@@ -2403,7 +2406,7 @@ document.addEventListener('click', (e) => {
   if (!e.target.closest('.carbon-dropdown')) {
     document.querySelectorAll('.carbon-dropdown').forEach(d => {
       d.querySelector('.carbon-dropdown-menu').classList.add('hidden');
-      const chevron = d.querySelector('.carbon-dropdown-btn .material-symbols-outlined');
+      const chevron = d.querySelector(".carbon-dropdown-btn [data-lucide]");
       if (chevron) chevron.style.transform = '';
       d.querySelector('.carbon-dropdown-btn').classList.remove('border-primary');
       d.querySelector('.carbon-dropdown-btn').classList.add('border-[#C5C7D4]');
