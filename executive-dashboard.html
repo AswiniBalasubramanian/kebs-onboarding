@@ -357,7 +357,7 @@
 <span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><i data-lucide="pin" class="" style="width:16px;height:16px;"></i></span>
 </div>
 
-<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="project" data-pinned="true" data-subs="Active Projects,Archived,Templates">
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="project" data-pinned="true" data-subs="Active Projects,Archived,Templates" onclick="setActiveNav(this);showProjects()">
 <div class="nav-icon-wrap"><i data-lucide="clipboard-list" class="" style="width:20px;height:20px;"></i></div>
 <span class="nav-label-small text-[10px] mt-0.5">Projects</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Projects</span>
@@ -946,6 +946,253 @@ PR
 </div>
 </section>
 </div>
+</div>
+
+<!-- Projects View (hidden by default) -->
+<div id="projects-view" class="hidden p-8 max-w-[1360px] mx-auto">
+  <!-- Header -->
+  <section class="mb-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-semibold text-on-surface">Projects</h1>
+        <p class="text-sm text-secondary mt-1">Portfolio overview across all active projects</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2">
+          <i data-lucide="download" style="width:14px;height:14px;"></i> Export
+        </button>
+        <button class="h-9 px-4 bg-primary text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors flex items-center gap-2">
+          <i data-lucide="plus" style="width:14px;height:14px;stroke-width:2.5;"></i> New Project
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI Cards - Row 1 -->
+  <section class="grid grid-cols-5 gap-4 mb-4">
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Total Budget</p>
+      <p class="text-2xl font-bold text-on-surface">$5.0M</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Revenue (Actual)</p>
+      <p class="text-2xl font-bold text-on-surface">$3.5M</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-primary rounded-full" style="width:70%"></div>
+        </div>
+        <span class="text-[10px] text-secondary font-medium">70%</span>
+      </div>
+      <p class="text-[10px] text-secondary mt-1">of budget</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Forecast</p>
+      <p class="text-2xl font-bold text-on-surface">$5.0M</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-tertiary rounded-full" style="width:100%"></div>
+        </div>
+        <span class="text-[10px] text-tertiary font-medium">100%</span>
+      </div>
+      <p class="text-[10px] text-secondary mt-1">of budget</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Billed</p>
+      <p class="text-2xl font-bold text-on-surface">$3.2M</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-[#0073EA] rounded-full" style="width:91%"></div>
+        </div>
+        <span class="text-[10px] text-[#0073EA] font-medium">91%</span>
+      </div>
+      <p class="text-[10px] text-secondary mt-1">realization</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Collected</p>
+      <p class="text-2xl font-bold text-on-surface">$2.7M</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-tertiary rounded-full" style="width:85%"></div>
+        </div>
+        <span class="text-[10px] text-tertiary font-medium">85%</span>
+      </div>
+      <p class="text-[10px] text-secondary mt-1">of billed</p>
+    </div>
+  </section>
+
+  <!-- KPI Cards - Row 2 -->
+  <section class="grid grid-cols-5 gap-4 mb-8">
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Portfolio Margin</p>
+      <p class="text-2xl font-bold text-on-surface">24%</p>
+      <p class="text-[10px] text-[#d97706] font-medium mt-1">Plan: 30%</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Billable Utilization</p>
+      <p class="text-2xl font-bold text-on-surface">81%</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-[#d97706] rounded-full" style="width:81%"></div>
+        </div>
+        <span class="text-[10px] text-[#d97706] font-medium">81%</span>
+      </div>
+      <p class="text-[10px] text-[#d97706] mt-1">Target: 85%</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Demand SLA Breached</p>
+      <p class="text-2xl font-bold text-error">13</p>
+      <p class="text-[10px] text-secondary mt-1">27 open demands</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">TS Compliance</p>
+      <p class="text-2xl font-bold text-on-surface">78%</p>
+      <div class="flex items-center gap-2 mt-2">
+        <div class="flex-1 h-1.5 bg-surface-container-high rounded-full overflow-hidden">
+          <div class="h-full bg-error rounded-full" style="width:78%"></div>
+        </div>
+        <span class="text-[10px] text-error font-medium">78%</span>
+      </div>
+      <p class="text-[10px] text-error mt-1">Target: 95%</p>
+    </div>
+    <div class="bg-white p-5 border border-outline-variant rounded-lg">
+      <p class="text-[10px] font-bold text-secondary uppercase tracking-widest mb-3">Bench Cost/Mo</p>
+      <p class="text-2xl font-bold text-on-surface">$22K</p>
+      <p class="text-[10px] text-secondary mt-1">2 resources</p>
+    </div>
+  </section>
+
+  <!-- Sub-Navigation Tabs -->
+  <nav class="flex border-b border-outline-variant mb-8 gap-6 overflow-x-auto no-scrollbar">
+    <button class="pb-3 border-b-2 border-primary text-primary font-semibold text-sm whitespace-nowrap">Command Center</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Revenue & Billing</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Cost & Margin</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Collections</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Resources & Skills</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Delivery</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Governance</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Service Lines</button>
+    <button class="pb-3 text-secondary hover:text-on-surface text-sm whitespace-nowrap transition-colors">Internal Projects</button>
+  </nav>
+
+  <!-- Placeholder content area -->
+  <div class="grid grid-cols-10 gap-8">
+    <section class="col-span-7">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold">Active Projects</h2>
+        <button class="text-primary text-sm font-semibold flex items-center hover:underline">
+          View all <i data-lucide="chevron-right" style="width:16px;height:16px;" class="ml-1"></i>
+        </button>
+      </div>
+      <div class="bg-white border border-outline-variant rounded-lg overflow-hidden">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-surface-container-low border-b border-outline-variant">
+              <th class="p-4 text-xs font-semibold text-secondary uppercase">Project Name</th>
+              <th class="p-4 text-xs font-semibold text-secondary uppercase">Client</th>
+              <th class="p-4 text-xs font-semibold text-secondary uppercase text-center">Status</th>
+              <th class="p-4 text-xs font-semibold text-secondary uppercase text-right">Budget</th>
+              <th class="p-4 text-xs font-semibold text-secondary uppercase text-right">Margin</th>
+              <th class="p-4 text-xs font-semibold text-secondary uppercase text-right">Util.</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-outline-variant">
+            <tr class="hover:bg-surface-container-lowest transition-colors">
+              <td class="p-4 font-semibold text-sm">Cloud Migration Ph II</td>
+              <td class="p-4 text-sm text-secondary">Global Retail Corp</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-error-container text-on-error-container text-[11px] font-semibold rounded-sm">Delayed</span></td>
+              <td class="p-4 text-right text-sm font-medium">$1.2M</td>
+              <td class="p-4 text-right text-sm font-medium text-error">18%</td>
+              <td class="p-4 text-right text-sm font-medium">76%</td>
+            </tr>
+            <tr class="hover:bg-surface-container-lowest transition-colors">
+              <td class="p-4 font-semibold text-sm">Supply Chain AI Ops</td>
+              <td class="p-4 text-sm text-secondary">LogiLink Industries</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-semibold rounded-sm">On Track</span></td>
+              <td class="p-4 text-right text-sm font-medium">$800K</td>
+              <td class="p-4 text-right text-sm font-medium text-tertiary">32%</td>
+              <td class="p-4 text-right text-sm font-medium">88%</td>
+            </tr>
+            <tr class="hover:bg-surface-container-lowest transition-colors">
+              <td class="p-4 font-semibold text-sm">ERP Modernization</td>
+              <td class="p-4 text-sm text-secondary">Nextera Financial</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-[#fff8e1] text-[#d97706] text-[11px] font-semibold rounded-sm">At Risk</span></td>
+              <td class="p-4 text-right text-sm font-medium">$1.5M</td>
+              <td class="p-4 text-right text-sm font-medium text-[#d97706]">22%</td>
+              <td class="p-4 text-right text-sm font-medium">79%</td>
+            </tr>
+            <tr class="hover:bg-surface-container-lowest transition-colors">
+              <td class="p-4 font-semibold text-sm">Data Lake Platform</td>
+              <td class="p-4 text-sm text-secondary">Meridian Health</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-semibold rounded-sm">On Track</span></td>
+              <td class="p-4 text-right text-sm font-medium">$950K</td>
+              <td class="p-4 text-right text-sm font-medium text-tertiary">28%</td>
+              <td class="p-4 text-right text-sm font-medium">85%</td>
+            </tr>
+            <tr class="hover:bg-surface-container-lowest transition-colors">
+              <td class="p-4 font-semibold text-sm">CX Transformation</td>
+              <td class="p-4 text-sm text-secondary">Apex Telecom</td>
+              <td class="p-4 text-center"><span class="px-2 py-1 bg-error-container text-on-error-container text-[11px] font-semibold rounded-sm">Delayed</span></td>
+              <td class="p-4 text-right text-sm font-medium">$550K</td>
+              <td class="p-4 text-right text-sm font-medium text-error">12%</td>
+              <td class="p-4 text-right text-sm font-medium">71%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="col-span-3 space-y-6">
+      <h2 class="text-xl font-semibold mb-4">Resource Summary</h2>
+      <div class="bg-white p-5 border border-outline-variant rounded-lg">
+        <p class="text-xs font-semibold text-secondary uppercase mb-3">Team Allocation</p>
+        <div class="space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-on-surface">Billable</span>
+            <span class="text-sm font-semibold">42</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-on-surface">Non-billable</span>
+            <span class="text-sm font-semibold">8</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-on-surface">Bench</span>
+            <span class="text-sm font-semibold text-[#d97706]">2</span>
+          </div>
+          <div class="h-[1px] bg-outline-variant"></div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm font-semibold text-on-surface">Total</span>
+            <span class="text-sm font-bold">52</span>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white p-5 border border-outline-variant rounded-lg">
+        <p class="text-xs font-semibold text-secondary uppercase mb-3">Upcoming Milestones</p>
+        <div class="space-y-3">
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 rounded-full bg-error mt-1.5 shrink-0"></div>
+            <div>
+              <p class="text-sm font-medium text-on-surface">Cloud Migration Go-Live</p>
+              <p class="text-[11px] text-secondary">Due in 3 days</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 rounded-full bg-[#d97706] mt-1.5 shrink-0"></div>
+            <div>
+              <p class="text-sm font-medium text-on-surface">ERP UAT Sign-off</p>
+              <p class="text-[11px] text-secondary">Due in 8 days</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3">
+            <div class="w-2 h-2 rounded-full bg-tertiary mt-1.5 shrink-0"></div>
+            <div>
+              <p class="text-sm font-medium text-on-surface">Data Lake Phase 2 Kickoff</p>
+              <p class="text-[11px] text-secondary">Due in 14 days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </div>
 
 <!-- Settings View (hidden by default) -->
@@ -2318,15 +2565,28 @@ function toggleNotifications() {
 }
 
 // --- Page navigation ---
-function showDashboard() {
-  document.getElementById('dashboard-view').classList.remove('hidden');
+function hideAllViews() {
+  document.getElementById('dashboard-view').classList.add('hidden');
+  document.getElementById('projects-view').classList.add('hidden');
   document.getElementById('settings-view').classList.add('hidden');
-  // Update header title
+}
+
+function showDashboard() {
+  hideAllViews();
+  document.getElementById('dashboard-view').classList.remove('hidden');
   document.querySelector('header h2').textContent = 'Command Center';
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function showProjects() {
+  hideAllViews();
+  document.getElementById('projects-view').classList.remove('hidden');
+  document.querySelector('header h2').textContent = 'Projects';
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 }
 
 function showSettings(section) {
-  document.getElementById('dashboard-view').classList.add('hidden');
+  hideAllViews();
   document.getElementById('settings-view').classList.remove('hidden');
   document.querySelector('header h2').textContent = 'Settings';
   // Set Settings nav item active
