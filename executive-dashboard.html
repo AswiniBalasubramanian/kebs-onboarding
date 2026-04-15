@@ -242,9 +242,16 @@
         #sidebar { --item-hover: #292B3D; }
         #sidebar .sidebar-nav-item:not(.nav-active):hover { background: var(--item-hover) !important; }
 
-        /* Notification hover actions */
-        .notif-item:hover .notif-actions { opacity: 1 !important; }
-        .notif-item:hover .notif-time { display: none; }
+        /* Notification hover actions — floating container bottom-right */
+        .notif-item { position: relative; }
+        .notif-actions {
+            position: absolute; bottom: 6px; right: 16px;
+            background: #fff; border: 1px solid #E6E9EF; border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 2px; display: flex; gap: 0;
+            opacity: 0; pointer-events: none; transition: opacity 0.15s;
+        }
+        .notif-item:hover .notif-actions { opacity: 1 !important; pointer-events: auto; }
         /* Separator between notification items */
         .notif-item + .notif-item { border-top: 1px solid #E6E9EF; }
     </style>
@@ -644,6 +651,26 @@ PR
 <h1 class="text-3xl font-light text-on-surface tracking-tight flex items-center gap-2"><i data-lucide="sun" class="text-[#f5a623]" style="width:28px;height:28px;"></i>Good morning, <span class="font-semibold">Prasanna</span></h1>
 <p class="text-on-surface-variant mt-1">Here is what's happening with your portfolios today.</p>
 </section>
+
+<!-- AI Insight Banner -->
+<section class="mb-6">
+  <div class="bg-[#EEF3FF] border border-[#C5D4F7] rounded-lg px-5 py-3.5 flex items-start gap-3">
+    <div class="w-6 h-6 rounded-full bg-[#0073EA] flex items-center justify-center shrink-0 mt-0.5">
+      <i data-lucide="sparkles" style="width:13px;height:13px;color:#fff;"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <p class="text-sm text-on-surface leading-relaxed"><span class="font-semibold">Nordex Systems</span> will miss its <span class="font-semibold">$320K billing milestone</span> in 9 days. The cause is 2 overloaded resources — Amit at 118% and Fatima at 112%. Moving Amit to Apex today protects the milestone. Want me to model the replan?</p>
+      <div class="flex items-center gap-4 mt-2">
+        <button onclick="toggleAIAssistant()" class="text-sm text-primary font-semibold hover:underline">Yes, show me</button>
+        <button class="text-sm text-secondary font-medium hover:text-on-surface hover:underline">What else should I know?</button>
+      </div>
+    </div>
+    <button onclick="this.closest('section').style.display='none'" class="shrink-0 w-6 h-6 flex items-center justify-center hover:bg-[#D6E2F9] rounded transition-colors mt-0.5">
+      <i data-lucide="x" style="width:14px;height:14px;color:#676879;"></i>
+    </button>
+  </div>
+</section>
+
 <!-- Top Metrics Row -->
 <section class="grid grid-cols-4 gap-4 mb-8">
 <div id="wt-forecast" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
@@ -1636,7 +1663,7 @@ PR
 <!-- Notification Panel -->
 <aside id="notif-panel" class="fixed top-0 right-0 h-full w-[480px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
   <!-- Header -->
-  <div class="px-6 pt-5 pb-4 border-b border-outline-variant">
+  <div class="px-6 pt-5 pb-4">
     <div class="flex items-center justify-between mb-4">
       <h2 class="text-xl font-semibold text-on-surface">Notifications</h2>
       <div class="flex items-center gap-1">
@@ -1652,7 +1679,7 @@ PR
       </div>
     </div>
     <!-- Tabs -->
-    <div id="notif-tabs" class="flex gap-6 mb-4">
+    <div id="notif-tabs" class="flex gap-6 mb-4 border-b border-outline-variant">
       <button data-tab="all" class="notif-tab text-sm font-semibold text-primary border-b-2 border-primary pb-1">All</button>
       <button data-tab="mentioned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Mentioned</button>
       <button data-tab="assigned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Assigned to me</button>
@@ -1683,7 +1710,7 @@ PR
         <p class="text-xs font-semibold text-secondary uppercase tracking-wider">Today</p>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="Sarah Chen" data-board="Finance Dashboard" data-text="Assigned you to Q3 Revenue Forecast">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="assigned" data-unread="true" data-person="Sarah Chen" data-board="Finance Dashboard" data-text="Assigned you to Q3 Revenue Forecast">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
           <div class="flex-1 min-w-0">
@@ -1702,7 +1729,7 @@ PR
         </div>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="reacted" data-unread="true" data-person="James Wilson" data-board="Sales Pipeline" data-text="Reacted to your update Great progress on the Nordex pipeline">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="reacted" data-unread="true" data-person="James Wilson" data-board="Sales Pipeline" data-text="Reacted to your update Great progress on the Nordex pipeline">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#2563eb] flex items-center justify-center text-white text-xs font-semibold">JW</div>
           <div class="flex-1 min-w-0">
@@ -1724,7 +1751,7 @@ PR
         </div>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Priya Sharma" data-board="Resource Planning" data-text="Replied to your update Updated the resource allocation for GulfCore">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="replied" data-unread="false" data-person="Priya Sharma" data-board="Resource Planning" data-text="Replied to your update Updated the resource allocation for GulfCore">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
           <div class="flex-1 min-w-0">
@@ -1744,7 +1771,7 @@ PR
       </div>
 
       <!-- Team: Priya assigned to GulfCore -->
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="Priya Sharma" data-board="GulfCore" data-text="Priya Sharma was assigned to GulfCore resource allocation">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="assigned-team" data-unread="true" data-person="Priya Sharma" data-board="GulfCore" data-text="Priya Sharma was assigned to GulfCore resource allocation">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
           <div class="flex-1 min-w-0">
@@ -1764,7 +1791,7 @@ PR
       </div>
 
       <!-- Team: David assigned to Cloud Migration -->
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="David Park" data-board="Cloud Migration" data-text="David Park was assigned to Cloud Migration sprint review">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="assigned-team" data-unread="true" data-person="David Park" data-board="Cloud Migration" data-text="David Park was assigned to Cloud Migration sprint review">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
           <div class="flex-1 min-w-0">
@@ -1784,7 +1811,7 @@ PR
       </div>
 
       <!-- Team: Lisa assigned to ERP -->
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="false" data-person="Lisa Wong" data-board="ERP Modernization" data-text="Lisa Wong was assigned to ERP UAT testing">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="assigned-team" data-unread="false" data-person="Lisa Wong" data-board="ERP Modernization" data-text="Lisa Wong was assigned to ERP UAT testing">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
           <div class="flex-1 min-w-0">
@@ -1809,7 +1836,7 @@ PR
         <p class="text-xs font-semibold text-secondary uppercase tracking-wider">Last 7 Days</p>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="David Park" data-board="CRM" data-text="Assigned you to Client Onboarding Acme">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="assigned" data-unread="true" data-person="David Park" data-board="CRM" data-text="Assigned you to Client Onboarding Acme">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
           <div class="flex-1 min-w-0">
@@ -1829,7 +1856,7 @@ PR
         </div>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Lisa Wong" data-board="Summitry" data-text="Replied to your update Yes We spoke yesterday and they are really excited to begin onboarding">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="replied" data-unread="false" data-person="Lisa Wong" data-board="Summitry" data-text="Replied to your update Yes We spoke yesterday and they are really excited to begin onboarding">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
           <div class="flex-1 min-w-0">
@@ -1848,7 +1875,7 @@ PR
         </div>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="subscribed" data-unread="true" data-person="Jeffrey Waters" data-board="ABC Q2 Events" data-text="Subscribed you to the Board ABC Q2 Events">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="subscribed" data-unread="true" data-person="Jeffrey Waters" data-board="ABC Q2 Events" data-text="Subscribed you to the Board ABC Q2 Events">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#0891b2] flex items-center justify-center text-white text-xs font-semibold">JW</div>
           <div class="flex-1 min-w-0">
@@ -1867,7 +1894,7 @@ PR
         </div>
       </div>
 
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="mentioned" data-unread="true" data-person="Amber Waken" data-board="ABC Q1 Events" data-text="Mentioned you in an update Prasanna can you take lead on assigning teams">
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer " data-type="mentioned" data-unread="true" data-person="Amber Waken" data-board="ABC Q1 Events" data-text="Mentioned you in an update Prasanna can you take lead on assigning teams">
         <div class="flex gap-3">
           <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#e11d48] flex items-center justify-center text-white text-xs font-semibold">AW</div>
           <div class="flex-1 min-w-0">
@@ -3536,37 +3563,172 @@ window.addEventListener('load', function() {
     item.addEventListener('click', () => setActiveNav(item));
   });
 
-  // Inject inline hover actions into each notification item
+  // Inject inline hover actions below the board label row (right-aligned)
   document.querySelectorAll('.notif-item').forEach(item => {
-    // Add notif-time class to the timestamp span for hide-on-hover
-    const timeSpan = item.querySelector('.text-xs.text-secondary');
-    if (timeSpan && timeSpan.textContent.match(/\d+[hmd]/)) {
-      timeSpan.classList.add('notif-time');
-    }
-
-    // Find the timestamp container and add action buttons
-    const timeContainer = item.querySelector('.flex.items-center.gap-2.shrink-0');
-    if (!timeContainer) return;
+    const contentDiv = item.querySelector('.flex-1.min-w-0');
+    if (!contentDiv) return;
 
     const actions = document.createElement('div');
-    actions.className = 'notif-actions flex items-center gap-0.5 opacity-0 transition-opacity';
+    actions.className = 'notif-actions';
     actions.innerHTML = `
-      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Delete">
-        <i data-lucide="trash-2" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      <button onclick="event.stopPropagation()" class="w-6 h-6 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Delete">
+        <i data-lucide="trash-2" style="width:13px;height:13px;color:#9DA0AE;"></i>
       </button>
-      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Mark as read">
-        <i data-lucide="check-circle" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      <button onclick="event.stopPropagation()" class="w-6 h-6 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Mark as read">
+        <i data-lucide="check-circle" style="width:13px;height:13px;color:#9DA0AE;"></i>
       </button>
-      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="More">
-        <i data-lucide="more-horizontal" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      <button onclick="event.stopPropagation()" class="w-6 h-6 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="More">
+        <i data-lucide="more-horizontal" style="width:13px;height:13px;color:#9DA0AE;"></i>
       </button>
     `;
-    timeContainer.appendChild(actions);
+    contentDiv.appendChild(actions);
   });
   // Re-render lucide for the new icons
   if (typeof lucide !== 'undefined') lucide.createIcons();
 });
+// Toggle AI Assistant panel
+function toggleAIAssistant() {
+  var panel = document.getElementById('ai-assistant-panel');
+  var overlay = document.getElementById('ai-assistant-overlay');
+  if (!panel || !overlay) return;
+  var isOpen = !panel.classList.contains('translate-x-full');
+
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.style.display = 'none';
+  } else {
+    // Close other panels first
+    ['notif-panel','collab-panel','whatsnew-panel','cta-panel'].forEach(function(id) {
+      var p = document.getElementById(id);
+      if (p && !p.classList.contains('translate-x-full')) p.classList.add('translate-x-full');
+    });
+    var um = document.getElementById('user-menu');
+    if (um) um.classList.add('hidden');
+
+    // Force pixel height
+    var vh = document.documentElement.clientHeight || 720;
+    panel.style.height = vh + 'px';
+    overlay.style.display = 'block';
+    overlay.style.opacity = '1';
+    panel.classList.remove('translate-x-full');
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+  }
+}
 </script>
+
+<!-- AI Assistant Overlay -->
+<div id="ai-assistant-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleAIAssistant()"></div>
+
+<!-- AI Assistant Panel -->
+<aside id="ai-assistant-panel" class="fixed right-0 w-[400px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col" style="top:0;bottom:0">
+  <!-- Header -->
+  <div class="px-6 pt-6 pb-4 text-center border-b border-outline-variant">
+    <button onclick="toggleAIAssistant()" class="absolute top-4 right-4 w-7 h-7 flex items-center justify-center hover:bg-surface-container rounded transition-colors">
+      <i data-lucide="x" style="width:16px;height:16px;color:#9DA0AE;"></i>
+    </button>
+    <div class="w-12 h-12 rounded-full bg-[#0073EA] flex items-center justify-center mx-auto mb-3">
+      <i data-lucide="sparkles" style="width:22px;height:22px;color:#fff;"></i>
+    </div>
+    <h2 class="text-lg font-semibold text-on-surface">AI Assistant</h2>
+    <p class="text-xs text-secondary mt-1">Here's what needs your attention today:</p>
+  </div>
+
+  <!-- Content -->
+  <div class="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+
+    <!-- Alert 1: Nordex billing -->
+    <div class="p-4 bg-[#FEF9F0] border border-[#F5DEB3] rounded-lg">
+      <p class="text-sm font-semibold text-on-surface mb-1">Nordex Systems — $320K milestone at risk</p>
+      <p class="text-xs text-secondary leading-relaxed mb-3">2 overloaded resources (Amit 118%, Fatima 112%). Moving Amit to Apex today protects the milestone.</p>
+      <a href="#" class="text-xs text-primary font-semibold flex items-center gap-1 hover:underline">View Replan <i data-lucide="arrow-right" style="width:12px;height:12px;"></i></a>
+    </div>
+
+    <!-- Alert 2: Overdue collections -->
+    <div class="p-4 bg-[#FEF2F2] border border-[#FECACA] rounded-lg">
+      <p class="text-sm font-semibold text-on-surface mb-1">3 invoices overdue by 30+ days</p>
+      <p class="text-xs text-secondary leading-relaxed mb-3">$145K in unbilled T&M across Cloud Migration and ERP Modernization. Escalating now reduces DSO.</p>
+      <a href="#" class="text-xs text-primary font-semibold flex items-center gap-1 hover:underline">Review Invoices <i data-lucide="arrow-right" style="width:12px;height:12px;"></i></a>
+    </div>
+
+    <!-- Alert 3: Utilization -->
+    <div class="p-4 bg-[#EEF3FF] border border-[#C5D4F7] rounded-lg">
+      <p class="text-sm font-semibold text-on-surface mb-1">5 resources dropping below 70% next sprint</p>
+      <p class="text-xs text-secondary leading-relaxed mb-3">Start renewal conversations now to avoid bench costs. 2 already flagged for reassignment.</p>
+      <a href="#" class="text-xs text-primary font-semibold flex items-center gap-1 hover:underline">Review Allocations <i data-lucide="arrow-right" style="width:12px;height:12px;"></i></a>
+    </div>
+
+    <!-- Separator -->
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Quick Insights -->
+    <div>
+      <h3 class="text-sm font-semibold text-on-surface mb-3">Quick Insights</h3>
+      <div class="space-y-2.5">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-on-surface">Forecast accuracy</span>
+          <span class="text-sm font-semibold text-tertiary">+3.5%</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-on-surface">Revenue target</span>
+          <span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">On track</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-on-surface">SLA breaches</span>
+          <span class="px-2 py-0.5 bg-[#FEF2F2] text-[#dc2626] text-[10px] font-bold rounded-full">8 Pending</span>
+        </div>
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-on-surface">Pipeline coverage</span>
+          <span class="text-sm font-semibold text-on-surface">1.17x</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Separator -->
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Suggested next steps -->
+    <div>
+      <h3 class="text-sm font-semibold text-on-surface mb-3">Suggested next steps:</h3>
+      <div class="space-y-2">
+        <div class="flex items-center gap-3 p-2.5 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+          <div class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center shrink-0">
+            <i data-lucide="check" style="width:12px;height:12px;color:transparent;"></i>
+          </div>
+          <span class="text-sm text-on-surface">Review pending invoices (8)</span>
+        </div>
+        <div class="flex items-center gap-3 p-2.5 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+          <div class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center shrink-0">
+            <i data-lucide="check" style="width:12px;height:12px;color:transparent;"></i>
+          </div>
+          <span class="text-sm text-on-surface">Follow up on lease renewals (5)</span>
+        </div>
+        <div class="flex items-center gap-3 p-2.5 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+          <div class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center shrink-0">
+            <i data-lucide="check" style="width:12px;height:12px;color:transparent;"></i>
+          </div>
+          <span class="text-sm text-on-surface">Check overdue payments (3)</span>
+        </div>
+        <div class="flex items-center gap-3 p-2.5 hover:bg-surface-container rounded-lg cursor-pointer transition-colors">
+          <div class="w-5 h-5 rounded border border-outline-variant flex items-center justify-center shrink-0">
+            <i data-lucide="check" style="width:12px;height:12px;color:transparent;"></i>
+          </div>
+          <span class="text-sm text-on-surface">Approve resource transfers (2)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="px-6 py-4 border-t border-outline-variant">
+    <div class="flex items-center gap-2 bg-[#F6F7FB] rounded-lg px-3 py-2.5">
+      <i data-lucide="sparkles" style="width:16px;height:16px;color:#9DA0AE;"></i>
+      <input type="text" placeholder="Ask Kebs AI anything..." class="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-secondary"/>
+      <button class="w-7 h-7 bg-[#0073EA] hover:bg-[#0060B9] rounded-full flex items-center justify-center transition-colors">
+        <i data-lucide="arrow-up" style="width:14px;height:14px;color:#fff;"></i>
+      </button>
+    </div>
+  </div>
+</aside>
 
 <!-- Get Started FAB -->
 <button onclick="toggleGSPanel()" style="position:fixed;bottom:24px;right:24px;z-index:60;display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;background:#0073EA;color:#fff;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;border:none;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,115,234,0.4);transition:background 0.15s;" onmouseenter="this.style.background='#0060B9'" onmouseleave="this.style.background='#0073EA'">
@@ -3582,5 +3744,6 @@ window.addEventListener('load', function() {
   #sidebar.expanded { width: 280px !important; min-width: 280px !important; }
   header.header-expanded { left: 280px !important; }
   main.main-expanded { margin-left: 280px !important; }
+  #ai-assistant-panel { height: 100vh !important; min-height: 100vh !important; }
 </style>
 </body></html>
