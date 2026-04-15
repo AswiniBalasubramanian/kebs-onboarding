@@ -84,6 +84,17 @@
         body { font-family: 'Poppins', sans-serif; background-color: #F6F7FB; }
         .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
         [data-lucide] { stroke-width: 1.75; }
+
+        /* Logo twirl animation */
+        .logo-twirl svg {
+            animation: logoTwirl 3s ease-in-out infinite;
+            transform-origin: center center;
+        }
+        @keyframes logoTwirl {
+            0% { transform: rotateY(0deg); }
+            20% { transform: rotateY(360deg); }
+            100% { transform: rotateY(360deg); }
+        }
         .no-scrollbar::-webkit-scrollbar { display: none; }
 
         /* Rocketlane-style thin scrollbar */
@@ -237,7 +248,7 @@
 <aside id="sidebar" class="fixed left-0 top-0 h-full flex flex-col w-16 border-r border-[#3D3F52] bg-[#1E1F2B] font-poppins text-[14px] leading-tight z-50">
 <!-- Brand Header -->
 <div class="p-3 mb-4 flex items-center gap-3 sidebar-header">
-<div class="w-10 h-10 flex items-center justify-center shrink-0">
+<div class="w-10 h-10 flex items-center justify-center shrink-0 logo-twirl">
 <svg width="32" height="36" viewBox="0 0 48 54" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_3206_6189)">
 <path d="M15.8334 6.77103V15.9966C15.8334 17.6047 14.3889 18.8178 12.8333 18.5075L5.66667 17.0686L0 22.8522L12.5 25.335C15.2778 25.8991 18.1389 24.9965 20.1111 22.937C21.6388 21.3288 22.5 19.1845 22.5 16.9558V0L15.8334 6.77103Z" fill="#0073EA"/>
