@@ -546,6 +546,9 @@
 <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary">
   <i data-lucide="search"></i>
 </button>
+<button onclick="toggleAIAssistant()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors" title="Ask Kebs AI">
+  <svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#hdr_g1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#hdr_g2)"/><path d="M8.22 0L9.51 4.08L13.59 5.37L9.51 6.66L8.22 10.73L6.93 6.66L2.86 5.37L6.93 4.08L8.22 0Z" fill="url(#hdr_g3)"/><path d="M2.68 7.51L3.33 9.55L5.37 10.19L3.33 10.84L2.68 12.88L2.04 10.84L0 10.19L2.04 9.55L2.68 7.51Z" fill="#F27A6C"/><defs><linearGradient id="hdr_g1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="hdr_g2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="hdr_g3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>
+</button>
 <button id="whatsnew-btn" onclick="toggleWhatsNew()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary relative">
   <i data-lucide="gift"></i>
   <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
@@ -661,7 +664,7 @@ PR
     <div class="flex-1 min-w-0">
       <p class="text-sm text-on-surface leading-relaxed"><span class="font-semibold">Nordex Systems</span> will miss its <span class="font-semibold">$320K billing milestone</span> in 9 days. The cause is 2 overloaded resources — Amit at 118% and Fatima at 112%. Moving Amit to Apex today protects the milestone. Want me to model the replan?</p>
       <div class="flex items-center gap-4 mt-2">
-        <button onclick="toggleAIAssistant()" class="text-sm text-primary font-semibold hover:underline">Yes, show me</button>
+        <button onclick="openAIWithNordex()" class="text-sm text-primary font-semibold hover:underline">Yes, show me</button>
         <button class="text-sm text-secondary font-medium hover:text-on-surface hover:underline">What else should I know?</button>
       </div>
     </div>
@@ -3678,6 +3681,99 @@ function showKpiPopover(iconEl) {
   }, 10);
 }
 
+function openAIWithNordex() {
+  // Show default view first, then swap to conversation
+  var panel = document.getElementById('ai-assistant-panel');
+  var content = document.getElementById('ai-assistant-content');
+  if (content) {
+    content.innerHTML = '' +
+    '<div class="px-6 py-5">' +
+      '<!-- User query -->' +
+      '<div class="flex items-start gap-3 mb-5">' +
+        '<div class="w-7 h-7 rounded-full bg-[#7c3aed] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>' +
+        '<div class="bg-[#F6F7FB] rounded-xl rounded-tl-none px-4 py-3 max-w-[300px]">' +
+          '<p class="text-sm text-on-surface">Show me the Nordex Systems billing milestone risk</p>' +
+        '</div>' +
+      '</div>' +
+      '<!-- AI response -->' +
+      '<div class="flex items-start gap-3">' +
+        '<div class="w-7 h-7 flex items-center justify-center shrink-0 mt-0.5">' +
+          '<svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#nr1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#nr2)"/><path d="M8.22 0L9.51 4.08L13.59 5.37L9.51 6.66L8.22 10.73L6.93 6.66L2.86 5.37L6.93 4.08L8.22 0Z" fill="url(#nr3)"/><defs><linearGradient id="nr1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="nr2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="nr3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>' +
+        '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<!-- Warning badge -->' +
+          '<div class="flex items-center gap-2 mb-3">' +
+            '<span class="flex items-center gap-1 px-2 py-0.5 bg-[#FEF2F2] text-[#dc2626] text-[10px] font-bold rounded-full"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> RECOMMENDATION</span>' +
+          '</div>' +
+          '<p class="text-sm text-on-surface leading-relaxed mb-4">' +
+            '<strong>Nordex Systems</strong> will miss its <strong>$320K billing milestone</strong> in 9 days. The cause is 2 overloaded resources — <strong>Amit at 118%</strong> and <strong>Fatima at 112%</strong>. Moving Amit to Apex today protects the milestone.' +
+          '</p>' +
+          '<!-- Suggestion box -->' +
+          '<div class="bg-[#F6F7FB] rounded-xl p-4 mb-4">' +
+            '<p class="text-xs font-semibold text-secondary uppercase tracking-wider mb-2">Alternative suggestion</p>' +
+            '<p class="text-sm text-on-surface leading-relaxed">Redistribute Amit\'s 3 active tasks across Fatima (1 task) and bench resource Ravi (2 tasks). This brings both below 100% utilization and keeps the milestone on track.</p>' +
+            '<ul class="mt-2 space-y-1 text-sm text-on-surface">' +
+              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Amit: 118% → 85% (moved to Apex)</li>' +
+              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Fatima: 112% → 95% (1 task redistributed)</li>' +
+              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Ravi: 0% → 40% (from bench)</li>' +
+            '</ul>' +
+          '</div>' +
+          '<!-- Question -->' +
+          '<p class="text-sm font-medium text-on-surface mb-4">How would you like to proceed?</p>' +
+          '<!-- Action buttons -->' +
+          '<div class="space-y-2">' +
+            '<button class="w-full flex items-center gap-2 px-4 py-3 bg-[#dc2626] text-white text-sm font-semibold rounded-xl hover:bg-[#b91c1c] transition-colors">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
+              'Yes, move Amit to Apex now' +
+            '</button>' +
+            '<button class="w-full flex items-center gap-2 px-4 py-3 border border-outline-variant text-sm font-medium text-on-surface rounded-xl hover:bg-[#F6F7FB] transition-colors">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M21 21v-5h-5"/></svg>' +
+              'Redistribute tasks instead' +
+            '</button>' +
+            '<button class="w-full flex items-center gap-2 px-4 py-3 border border-outline-variant text-sm font-medium text-on-surface rounded-xl hover:bg-[#F6F7FB] transition-colors">' +
+              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
+              'Defer milestone by 1 week' +
+            '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  toggleAIAssistant();
+}
+
+function resetAIPanel() {
+  var content = document.getElementById('ai-assistant-content');
+  if (!content) return;
+  content.innerHTML = '' +
+    '<div class="mb-6">' +
+      '<p class="text-secondary text-sm">Hi Prasanna &#x1F44B;</p>' +
+      '<h2 class="text-xl font-semibold text-on-surface mt-1">How can I help you today?</h2>' +
+    '</div>' +
+    '<div class="mb-5">' +
+      '<div class="flex items-center justify-between mb-3">' +
+        '<p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Try Asking</p>' +
+        '<button class="w-6 h-6 flex items-center justify-center hover:bg-surface-container rounded transition-colors" title="Refresh"><i data-lucide="refresh-cw" style="width:13px;height:13px;color:#0073EA;"></i></button>' +
+      '</div>' +
+      '<div class="space-y-2.5">' +
+        ['Why is the base license forecast dropping?|Root cause analysis|FEF3C7|D97706',
+         'What are the key risk indicators?|Risk & health signals|FEF3C7|D97706',
+         'Compare to last quarter|Period comparison|EDE9FE|7C3AED',
+         'Employee utilization insights|Resource analysis|EDE9FE|7C3AED',
+         'Monthly forecast trends|Forecast analysis|DBEAFE|2563EB'
+        ].map(function(s) {
+          var p = s.split('|');
+          return '<button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors">' +
+            '<div class="flex items-start gap-3">' +
+              '<div class="w-5 h-5 rounded-full bg-[#' + p[2] + '] flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="lightbulb" style="width:11px;height:11px;color:#' + p[3] + ';"></i></div>' +
+              '<div><p class="text-sm font-medium text-on-surface">' + p[0] + '</p><p class="text-xs text-secondary mt-0.5">' + p[1] + '</p></div>' +
+            '</div></button>';
+        }).join('') +
+      '</div>' +
+    '</div>';
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
 function toggleAIAssistant() {
   var panel = document.getElementById('ai-assistant-panel');
   var overlay = document.getElementById('ai-assistant-overlay');
@@ -3687,6 +3783,7 @@ function toggleAIAssistant() {
   if (isOpen) {
     panel.classList.add('translate-x-full');
     overlay.style.display = 'none';
+    resetAIPanel();
   } else {
     // Close other panels first
     ['notif-panel','collab-panel','whatsnew-panel','cta-panel'].forEach(function(id) {
@@ -3730,7 +3827,7 @@ function toggleAIAssistant() {
   </div>
 
   <!-- Content -->
-  <div class="flex-1 overflow-y-auto px-6 py-6">
+  <div id="ai-assistant-content" class="flex-1 overflow-y-auto px-6 py-6">
 
     <!-- Greeting -->
     <div class="mb-6">
