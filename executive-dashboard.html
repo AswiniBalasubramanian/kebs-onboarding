@@ -3585,8 +3585,99 @@ window.addEventListener('load', function() {
   });
   // Re-render lucide for the new icons
   if (typeof lucide !== 'undefined') lucide.createIcons();
+
+  // Add click handlers to all info icons for KPI popovers
+  document.querySelectorAll('[data-lucide="info"]').forEach(function(icon) {
+    var svg = icon.tagName === 'svg' ? icon : icon;
+    svg.style.cursor = 'pointer';
+    svg.addEventListener('click', function(e) {
+      e.stopPropagation();
+      showKpiPopover(svg);
+    });
+  });
 });
 // Toggle AI Assistant panel
+// === KPI Info Popover ===
+var kpiData = {
+  'Forecast Accuracy': { value: '94.2%', def: 'Measures how closely actual revenue matches forecasted figures over a given period.', formula: 'f = (Actual Revenue / Forecasted Revenue) × 100', calc: [['Actual Revenue','$37.16M'],['Forecasted Revenue','$39.45M'],['Forecast Accuracy','94.2%']], ai: 'Accuracy improved 2.4% MoM. Current trajectory suggests 95%+ by quarter end if pipeline conversion holds.' },
+  'Revenue at Risk': { value: '$1.2M', def: 'Total revenue from projects flagged with delivery, billing, or resource issues that may impact realization.', formula: 'f = Σ (Flagged Project Revenue)', calc: [['Cloud Migration','$520K'],['ERP Modernization','$410K'],['CX Transformation','$270K'],['Total at Risk','$1.2M']], ai: 'Revenue at risk dropped 15% this month. Cloud Migration is the primary driver — escalate resource gap to reduce further.' },
+  'RAI Score': { value: '8.4', def: 'Resource Allocation Index — a composite score measuring efficiency of resource deployment across projects.', formula: 'f = weighted(Utilization, Bench%, SLA, Margin)', calc: [['Utilization Score','8.1'],['Bench Score','9.2'],['SLA Score','7.8'],['Margin Score','8.5'],['RAI Composite','8.4']], ai: 'RAI is "Optimal" (>7.0). SLA score is the weakest signal — 13 breached demands are pulling it down.' },
+  'Recovery Potential': { value: '$450K', def: 'Estimated revenue recoverable through corrective actions on at-risk projects.', formula: 'f = Σ (Recoverable Amount per Project)', calc: [['Cloud Migration','$200K'],['ERP Modernization','$150K'],['CX Transformation','$100K'],['Total Recovery','$450K']], ai: 'High efficiency — 38% of at-risk revenue is recoverable. Prioritize Cloud Migration replan for maximum impact.' },
+  'Target Achievement': { value: '$25.0M', def: 'Percentage of revenue achieved so far against the total annual target for the financial year.', formula: 'f = (Actual Revenue / Total Annual Target) × 100', calc: [['Actual Revenue (LE)','$37.16M'],['Total Annual Target','$45.0M'],['Target Achievement %','82.6%']], ai: 'At 82.6% with 3 months remaining, a run-rate of $2.61M/month is needed to close the $7.84M gap.' },
+  'Revenue Gap': { value: '$6.6M', def: 'Difference between target revenue and current collected + pipeline revenue.', formula: 'f = Target − (Collected + Pipeline)', calc: [['Target','$25.0M'],['Collected','$14.2M'],['Pipeline','$4.2M'],['Revenue Gap','$6.6M']], ai: 'Gap widening by $200K/month. Focus on converting pipeline deals and accelerating milestone billing.' },
+  'Revenue at Risk': { value: '$12.4M', def: 'Revenue exposure from projects with active risk flags.', formula: 'f = Σ (At-risk Project Revenue)', calc: [['Total Flagged','$12.4M']], ai: 'Concentration risk — 3 projects account for 78% of exposure.' },
+  'Forecast Accuracy': { value: '91.5%', def: 'Rolling accuracy of revenue forecasts vs actuals.', formula: 'f = (Actual / Forecast) × 100', calc: [['Actual','$18.4M'],['Forecast','$20.1M'],['Accuracy','91.5%']], ai: 'Trending upward. Model confidence is improving with more data points.' },
+  'Pipeline Coverage': { value: '88.2%', def: 'Ratio of weighted pipeline to remaining target.', formula: 'f = (Weighted Pipeline / Remaining Target) × 100', calc: [['Pipeline','$5.8M'],['Remaining Target','$6.6M'],['Coverage','88.2%']], ai: 'Below 1.0x threshold — need to generate $800K in new pipeline to reach safe coverage.' },
+  'Billing Realization': { value: '$14.2M', def: 'Percentage of recognized revenue that has been successfully billed.', formula: 'f = (Billed / Recognized) × 100', calc: [['Recognized','$18.4M'],['Billed','$14.2M'],['Realization','77.2%']], ai: '$4.2M unbilled. Largest gaps in milestone-based contracts — review approval queue.' },
+  'Collected': { value: '$22.7M', def: 'Total cash collected against billed invoices.', formula: 'f = Σ (Paid Invoices)', calc: [['Total Billed','$26.7M'],['Total Collected','$22.7M'],['Collection Rate','85%']], ai: 'DSO improved to 42 days from 48. 3 invoices > 30 days overdue need escalation.' },
+  'Utilisation': { value: '83%', def: 'Percentage of available hours spent on billable work.', formula: 'f = (Billable Hours / Available Hours) × 100', calc: [['Billable Hours','4,980'],['Available Hours','6,000'],['Utilisation','83%']], ai: 'Trending toward 85% target. 2 bench resources identified for reassignment next sprint.' },
+};
+
+function showKpiPopover(iconEl) {
+  // Find the label text
+  var label = iconEl.closest('span')?.textContent?.trim()?.replace(/\s*info\s*$/, '').trim();
+  var data = kpiData[label];
+  if (!data) return;
+
+  // Remove existing popover
+  var old = document.getElementById('kpi-popover');
+  if (old) old.remove();
+
+  var rect = iconEl.getBoundingClientRect();
+  var pop = document.createElement('div');
+  pop.id = 'kpi-popover';
+  pop.style.cssText = 'position:fixed;z-index:9999;width:340px;background:#fff;border:1px solid #E6E9EF;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.15);font-family:Poppins,sans-serif;padding:0;overflow:hidden;';
+
+  // Position below the icon
+  var top = rect.bottom + 8;
+  var left = rect.left - 150;
+  if (left < 16) left = 16;
+  if (left + 340 > window.innerWidth - 16) left = window.innerWidth - 356;
+  if (top + 400 > window.innerHeight) top = rect.top - 408;
+  pop.style.top = top + 'px';
+  pop.style.left = left + 'px';
+
+  pop.innerHTML = '<div style="padding:20px 20px 16px;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:start;">' +
+      '<div><p style="font-size:10px;font-weight:700;color:#676879;text-transform:uppercase;letter-spacing:0.08em;">' + label + '</p>' +
+      '<p style="font-size:24px;font-weight:700;color:#323338;margin-top:4px;">' + data.value + '</p></div>' +
+      '<button onclick="document.getElementById(\'kpi-popover\').remove()" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;border:none;background:transparent;cursor:pointer;color:#9DA0AE;font-size:18px;border-radius:4px;" onmouseenter="this.style.background=\'#F6F7FB\'" onmouseleave="this.style.background=\'transparent\'">&times;</button>' +
+    '</div>' +
+    '<p style="font-size:10px;font-weight:700;color:#676879;text-transform:uppercase;letter-spacing:0.08em;margin-top:16px;">Definition</p>' +
+    '<p style="font-size:13px;color:#676879;margin-top:4px;line-height:1.5;">' + data.def + '</p>' +
+    '<p style="font-size:10px;font-weight:700;color:#676879;text-transform:uppercase;letter-spacing:0.08em;margin-top:14px;">Derived</p>' +
+    '<div style="margin-top:6px;padding:10px 12px;background:#F6F7FB;border-radius:8px;font-size:13px;color:#323338;font-style:italic;">' + data.formula + '</div>' +
+    '<p style="font-size:10px;font-weight:700;color:#676879;text-transform:uppercase;letter-spacing:0.08em;margin-top:14px;">Calculation</p>' +
+    '<div style="margin-top:6px;border:1px solid #E6E9EF;border-radius:8px;overflow:hidden;">' +
+    data.calc.map(function(row, i) {
+      var isLast = i === data.calc.length - 1;
+      return '<div style="display:flex;justify-content:space-between;padding:8px 12px;font-size:13px;' + (isLast ? 'font-weight:600;color:#323338;border-top:1px solid #E6E9EF;' : 'color:#676879;') + '">' +
+        '<span>' + row[0] + '</span><span style="font-weight:600;color:#323338;">' + row[1] + '</span></div>';
+    }).join('') +
+    '</div>' +
+  '</div>' +
+  '<div style="margin:0 20px 20px;padding:14px 16px;background:linear-gradient(135deg,#FFF8F0,#FFF3E8);border:1px solid #FFD6A5;border-radius:10px;">' +
+    '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">' +
+      '<svg width="14" height="14" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#pg1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#pg2)"/><defs><linearGradient id="pg1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="pg2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset="0.06" stop-color="#FFC328"/><stop offset="0.49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>' +
+      '<span style="font-size:11px;font-weight:700;color:#EF4A61;text-transform:uppercase;letter-spacing:0.05em;">AI Insight</span>' +
+    '</div>' +
+    '<p style="font-size:13px;color:#323338;line-height:1.5;">' + data.ai + '</p>' +
+    '<a href="#" onclick="event.preventDefault();toggleAIAssistant();document.getElementById(\'kpi-popover\').remove();" style="display:flex;align-items:center;gap:4px;margin-top:8px;font-size:12px;font-weight:600;color:#0073EA;text-decoration:none;">View More <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>' +
+  '</div>';
+
+  document.body.appendChild(pop);
+
+  // Close on outside click
+  setTimeout(function() {
+    document.addEventListener('click', function closeKpi(e) {
+      if (!pop.contains(e.target) && !iconEl.contains(e.target)) {
+        pop.remove();
+        document.removeEventListener('click', closeKpi);
+      }
+    });
+  }, 10);
+}
+
 function toggleAIAssistant() {
   var panel = document.getElementById('ai-assistant-panel');
   var overlay = document.getElementById('ai-assistant-overlay');
@@ -3625,8 +3716,8 @@ function toggleAIAssistant() {
   <!-- Header bar -->
   <div class="px-5 py-3 flex items-center justify-between border-b border-outline-variant">
     <div class="flex items-center gap-2.5">
-      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-[#FF6B6B] to-[#FFB347] flex items-center justify-center">
-        <i data-lucide="sparkles" style="width:14px;height:14px;color:#fff;"></i>
+      <div class="w-8 h-8 flex items-center justify-center">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.46263 19.9707C6.38086 18.0971 7.02283 15.7012 8.89652 14.6194L24.8417 5.41344C27.0053 9.16082 25.7213 13.9526 21.9739 16.1161L12.814 21.4046C10.9403 22.4864 8.54441 21.8444 7.46263 19.9707Z" fill="url(#askkebs_g1)"/><path d="M7.51375 15.8778C8.69918 13.8246 11.3246 13.1211 13.3778 14.3066L21.8269 19.1846C25.9334 21.5555 27.3403 26.8064 24.9695 30.9128L9.08503 21.7419C7.03181 20.5565 6.32832 17.9311 7.51375 15.8778Z" fill="url(#askkebs_g2)"/><path d="M8.22417 0L9.51424 4.07594L13.5902 5.36601L9.51424 6.65609L8.22417 10.732L6.93409 6.65609L2.85815 5.36601L6.93409 4.07594L8.22417 0Z" fill="url(#askkebs_g3)"/><path d="M2.68301 7.51172L3.32804 9.54969L5.36601 10.1947L3.32804 10.8398L2.68301 12.8777L2.03797 10.8398L0 10.1947L2.03797 9.54969L2.68301 7.51172Z" fill="#F27A6C"/><defs><linearGradient id="askkebs_g1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="askkebs_g2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset="0.06" stop-color="#FFC328"/><stop offset="0.49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="askkebs_g3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>
       </div>
       <div>
         <p class="text-sm font-semibold text-on-surface leading-tight">Ask Kebs</p>
