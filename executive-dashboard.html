@@ -241,6 +241,9 @@
         /* Theme-aware hover — uses CSS variable set by JS */
         #sidebar { --item-hover: #292B3D; }
         #sidebar .sidebar-nav-item:not(.nav-active):hover { background: var(--item-hover) !important; }
+
+        /* Notification arrow on hover */
+        .notif-item:hover .notif-arrow { opacity: 1 !important; }
     </style>
 </head>
 <body class="text-on-surface bg-background">
@@ -1628,7 +1631,7 @@ PR
 <div id="notif-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleNotifications()"></div>
 
 <!-- Notification Panel -->
-<aside id="notif-panel" class="fixed top-0 right-0 h-full w-[420px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
+<aside id="notif-panel" class="fixed top-0 right-0 h-full w-[480px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
   <!-- Header -->
   <div class="px-6 pt-5 pb-4 border-b border-outline-variant">
     <div class="flex items-center justify-between mb-4">
@@ -1650,6 +1653,7 @@ PR
       <button data-tab="all" class="notif-tab text-sm font-semibold text-primary border-b-2 border-primary pb-1">All</button>
       <button data-tab="mentioned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Mentioned</button>
       <button data-tab="assigned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Assigned to me</button>
+      <button data-tab="assigned-team" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Assigned to team</button>
     </div>
     <!-- Search & Toggle -->
     <div class="flex items-center gap-3">
@@ -1731,6 +1735,46 @@ PR
             <div class="flex items-center gap-1.5 mt-1.5">
               <i data-lucide="calendar" class="text-secondary" style="width:14px;height:14px;"></i>
               <span class="text-xs text-secondary">Resource Planning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+      <!-- Team assigned: Cloud Migration -->
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="David Park" data-board="Cloud Migration" data-text="Assigned your team to Cloud Migration Ph II sprint review">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><i data-lucide="users" class="align-middle" style="width:14px;height:14px;"></i> Assigned your team</span> to "Cloud Migration Sprint Review"</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">4h</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
+              <span class="text-xs text-secondary">Cloud Migration</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team assigned: ERP -->
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="false" data-person="Sarah Chen" data-board="ERP Modernization" data-text="Assigned your team to ERP UAT testing phase">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><i data-lucide="users" class="align-middle" style="width:14px;height:14px;"></i> Assigned your team</span> to "ERP UAT Testing Phase"</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">6h</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
+              <span class="text-xs text-secondary">ERP Modernization</span>
             </div>
           </div>
         </div>
@@ -3014,7 +3058,8 @@ function filterNotifications() {
   const tabTypes = {
     all: null,
     mentioned: ['mentioned'],
-    assigned: ['assigned']
+    assigned: ['assigned'],
+    'assigned-team': ['assigned-team']
   };
   const allowedTypes = tabTypes[activeTab];
 
@@ -3468,6 +3513,18 @@ window.addEventListener('load', function() {
   document.querySelectorAll('.sidebar-nav-item').forEach(item => {
     item.addEventListener('click', () => setActiveNav(item));
   });
+
+  // Inject redirect arrow into each notification item
+  document.querySelectorAll('.notif-item').forEach(item => {
+    const flexRow = item.querySelector('.flex.gap-3');
+    if (!flexRow) return;
+    const arrow = document.createElement('div');
+    arrow.className = 'notif-arrow shrink-0 self-center ml-1 opacity-0 transition-opacity';
+    arrow.innerHTML = '<i data-lucide="arrow-right" style="width:14px;height:14px;color:#9DA0AE;"></i>';
+    flexRow.appendChild(arrow);
+  });
+  // Re-render lucide for the new arrow icons
+  if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 </script>
 
