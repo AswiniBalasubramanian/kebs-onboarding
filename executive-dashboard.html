@@ -242,8 +242,11 @@
         #sidebar { --item-hover: #292B3D; }
         #sidebar .sidebar-nav-item:not(.nav-active):hover { background: var(--item-hover) !important; }
 
-        /* Notification arrow on hover */
-        .notif-item:hover .notif-arrow { opacity: 1 !important; }
+        /* Notification hover actions */
+        .notif-item:hover .notif-actions { opacity: 1 !important; }
+        .notif-item:hover .notif-time { display: none; }
+        /* Separator between notification items */
+        .notif-item + .notif-item { border-top: 1px solid #E6E9EF; }
     </style>
 </head>
 <body class="text-on-surface bg-background">
@@ -1673,7 +1676,7 @@ PR
   </div>
 
   <!-- Notification List -->
-  <div id="notif-list" class="flex-1 overflow-y-auto">
+  <div id="notif-list" class="flex-1 overflow-y-auto overflow-x-hidden">
     <!-- Today group -->
     <div class="notif-group" data-group="today">
       <div class="px-6 pt-4 pb-2 notif-group-header">
@@ -1682,7 +1685,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="Sarah Chen" data-board="Finance Dashboard" data-text="Assigned you to Q3 Revenue Forecast">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><i data-lucide="user-plus" class="align-middle" style="width:14px;height:14px;"></i> Assigned you</span> to "Q3 Revenue Forecast"</p>
@@ -1701,7 +1704,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="reacted" data-unread="true" data-person="James Wilson" data-board="Sales Pipeline" data-text="Reacted to your update Great progress on the Nordex pipeline">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#2563eb] flex items-center justify-center text-white text-xs font-semibold">JW</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#2563eb] flex items-center justify-center text-white text-xs font-semibold">JW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <div class="text-sm">
@@ -1723,7 +1726,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Priya Sharma" data-board="Resource Planning" data-text="Replied to your update Updated the resource allocation for GulfCore">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">Priya Sharma</span> <span class="text-secondary"><i data-lucide="reply" class="align-middle" style="width:14px;height:14px;"></i></span> <span class="text-primary font-medium">Replied</span> to your update</p>
@@ -1739,17 +1742,36 @@ PR
           </div>
         </div>
       </div>
-    </div>
 
-      <!-- Team assigned: Cloud Migration -->
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="David Park" data-board="Cloud Migration" data-text="Assigned your team to Cloud Migration Ph II sprint review">
+      <!-- Team: Priya assigned to GulfCore -->
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="Priya Sharma" data-board="GulfCore" data-text="Priya Sharma was assigned to GulfCore resource allocation">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><i data-lucide="users" class="align-middle" style="width:14px;height:14px;"></i> Assigned your team</span> to "Cloud Migration Sprint Review"</p>
+              <p class="text-sm"><span class="font-semibold">Priya Sharma</span> was <span class="text-primary font-medium">assigned</span> to "GulfCore Resource Allocation"</p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">4h</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <i data-lucide="layout-grid" class="text-[#6929c4]" style="width:14px;height:14px;"></i>
+              <span class="text-xs text-secondary">GulfCore</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Team: David assigned to Cloud Migration -->
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="true" data-person="David Park" data-board="Cloud Migration" data-text="David Park was assigned to Cloud Migration sprint review">
+        <div class="flex gap-3">
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">David Park</span> was <span class="text-primary font-medium">assigned</span> to "Cloud Migration Sprint Review"</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">5h</span>
                 <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
               </div>
             </div>
@@ -1761,13 +1783,13 @@ PR
         </div>
       </div>
 
-      <!-- Team assigned: ERP -->
-      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="false" data-person="Sarah Chen" data-board="ERP Modernization" data-text="Assigned your team to ERP UAT testing phase">
+      <!-- Team: Lisa assigned to ERP -->
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned-team" data-unread="false" data-person="Lisa Wong" data-board="ERP Modernization" data-text="Lisa Wong was assigned to ERP UAT testing">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
-              <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><i data-lucide="users" class="align-middle" style="width:14px;height:14px;"></i> Assigned your team</span> to "ERP UAT Testing Phase"</p>
+              <p class="text-sm"><span class="font-semibold">Lisa Wong</span> was <span class="text-primary font-medium">assigned</span> to "ERP UAT Testing"</p>
               <div class="flex items-center gap-2 shrink-0 ml-2">
                 <span class="text-xs text-secondary">6h</span>
               </div>
@@ -1789,7 +1811,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="David Park" data-board="CRM" data-text="Assigned you to Client Onboarding Acme">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><i data-lucide="user-plus" class="align-middle" style="width:14px;height:14px;"></i> Assigned you</span></p>
@@ -1809,7 +1831,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Lisa Wong" data-board="Summitry" data-text="Replied to your update Yes We spoke yesterday and they are really excited to begin onboarding">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">Lisa Wong</span> <span class="text-primary font-medium">Replied</span> to your update</p>
@@ -1828,7 +1850,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="subscribed" data-unread="true" data-person="Jeffrey Waters" data-board="ABC Q2 Events" data-text="Subscribed you to the Board ABC Q2 Events">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#0891b2] flex items-center justify-center text-white text-xs font-semibold">JW</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#0891b2] flex items-center justify-center text-white text-xs font-semibold">JW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">Jeffrey Waters</span> <span class="text-primary font-medium"><i data-lucide="package" style="width:14px;height:14px;display:inline;vertical-align:middle;"></i> Subscribed you</span> to the Board "ABC Q2 Events"</p>
@@ -1847,7 +1869,7 @@ PR
 
       <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="mentioned" data-unread="true" data-person="Amber Waken" data-board="ABC Q1 Events" data-text="Mentioned you in an update Prasanna can you take lead on assigning teams">
         <div class="flex gap-3">
-          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#e11d48] flex items-center justify-center text-white text-xs font-semibold">AW</div>
+          <div class="w-7 h-7 rounded-full shrink-0 mt-0.5 bg-[#e11d48] flex items-center justify-center text-white text-xs font-semibold">AW</div>
           <div class="flex-1 min-w-0">
             <div class="flex items-center justify-between">
               <p class="text-sm"><span class="font-semibold">Amber Waken</span> <span class="text-primary font-medium">@ Mentioned you</span> in an update</p>
@@ -3514,16 +3536,34 @@ window.addEventListener('load', function() {
     item.addEventListener('click', () => setActiveNav(item));
   });
 
-  // Inject redirect arrow into each notification item
+  // Inject inline hover actions into each notification item
   document.querySelectorAll('.notif-item').forEach(item => {
-    const flexRow = item.querySelector('.flex.gap-3');
-    if (!flexRow) return;
-    const arrow = document.createElement('div');
-    arrow.className = 'notif-arrow shrink-0 self-center ml-1 opacity-0 transition-opacity';
-    arrow.innerHTML = '<i data-lucide="arrow-right" style="width:14px;height:14px;color:#9DA0AE;"></i>';
-    flexRow.appendChild(arrow);
+    // Add notif-time class to the timestamp span for hide-on-hover
+    const timeSpan = item.querySelector('.text-xs.text-secondary');
+    if (timeSpan && timeSpan.textContent.match(/\d+[hmd]/)) {
+      timeSpan.classList.add('notif-time');
+    }
+
+    // Find the timestamp container and add action buttons
+    const timeContainer = item.querySelector('.flex.items-center.gap-2.shrink-0');
+    if (!timeContainer) return;
+
+    const actions = document.createElement('div');
+    actions.className = 'notif-actions flex items-center gap-0.5 opacity-0 transition-opacity';
+    actions.innerHTML = `
+      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Delete">
+        <i data-lucide="trash-2" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      </button>
+      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="Mark as read">
+        <i data-lucide="check-circle" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      </button>
+      <button onclick="event.stopPropagation()" class="w-7 h-7 flex items-center justify-center hover:bg-[#E6E9EF] rounded transition-colors" title="More">
+        <i data-lucide="more-horizontal" style="width:14px;height:14px;color:#9DA0AE;"></i>
+      </button>
+    `;
+    timeContainer.appendChild(actions);
   });
-  // Re-render lucide for the new arrow icons
+  // Re-render lucide for the new icons
   if (typeof lucide !== 'undefined') lucide.createIcons();
 });
 </script>
