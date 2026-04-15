@@ -3684,7 +3684,8 @@ function showKpiPopover(iconEl) {
 function openAIWithNordex() {
   toggleAIAssistant();
   setTimeout(function() {
-    addUserMessage('Show me the Nordex Systems billing milestone risk');
+    lastQuery = 'Show me the Nordex Systems billing milestone risk';
+    addUserMessage(lastQuery);
     showTyping();
     setTimeout(function() {
       hideTyping();
@@ -3736,26 +3737,81 @@ function addUserMessage(text) {
   scrollAIChat();
 }
 
+// Suggested follow-ups per topic
+var aiSuggestions = {
+  'default': ['Show me key risk indicators', 'Compare to last quarter'],
+  'forecast': ['What deals were pushed?', 'How to improve pipeline?'],
+  'risk': ['Drill into Nordex Systems', 'Show SLA breach details'],
+  'quarter': ['Break down by project', 'Show margin trends'],
+  'utilization': ['Show bench resources', 'Forecast next sprint'],
+  'nordex': ['Move Amit to Apex now', 'Show full replan model'],
+};
+
+function getFollowUps(query) {
+  var q = query.toLowerCase();
+  if (q.includes('forecast') || q.includes('dropping')) return aiSuggestions.forecast;
+  if (q.includes('risk') || q.includes('indicator')) return aiSuggestions.risk;
+  if (q.includes('quarter') || q.includes('compare')) return aiSuggestions.quarter;
+  if (q.includes('utilization') || q.includes('utilisation') || q.includes('resource') || q.includes('employee')) return aiSuggestions.utilization;
+  if (q.includes('nordex') || q.includes('milestone') || q.includes('amit')) return aiSuggestions.nordex;
+  return aiSuggestions['default'];
+}
+
+var lastQuery = '';
+
 function addAIMessage(text) {
   var container = document.getElementById('ai-chat-messages');
+
+  // Parse text into proper HTML blocks
+  var lines = text.split('\n');
+  var htmlParts = [];
+  var inList = false;
+
+  lines.forEach(function(line) {
+    var trimmed = line.trim();
+    if (!trimmed) { if (inList) { htmlParts.push('</ul>'); inList = false; } return; }
+
+    // Bold
+    trimmed = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Bullet
+    if (trimmed.match(/^- /)) {
+      if (!inList) { htmlParts.push('<ul class="mt-2 mb-2 space-y-1.5 ml-1">'); inList = true; }
+      htmlParts.push('<li class="flex items-start gap-2 text-[13px] text-on-surface"><span class="text-secondary shrink-0">&bull;</span><span>' + trimmed.substring(2) + '</span></li>');
+      return;
+    }
+    // Numbered
+    var numMatch = trimmed.match(/^(\d+)\. /);
+    if (numMatch) {
+      if (!inList) { htmlParts.push('<ol class="mt-2 mb-2 space-y-1.5 ml-1">'); inList = true; }
+      htmlParts.push('<li class="flex items-start gap-2 text-[13px] text-on-surface"><span class="text-secondary shrink-0">' + numMatch[1] + '.</span><span>' + trimmed.substring(numMatch[0].length) + '</span></li>');
+      return;
+    }
+
+    if (inList) { htmlParts.push('</ul>'); inList = false; }
+    htmlParts.push('<p class="text-[13px] text-on-surface leading-relaxed mt-2">' + trimmed + '</p>');
+  });
+  if (inList) htmlParts.push('</ul>');
+
+  // Build message
   var msg = document.createElement('div');
   msg.className = 'flex items-start gap-2.5';
-
-  // Parse markdown-like formatting
-  var html = text
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-    .replace(/\n\n/g, '</p><p class="mt-2">')
-    .replace(/\n- /g, '</p><div class="flex items-start gap-2 mt-1"><span class="text-secondary mt-0.5 shrink-0">&bull;</span><span>')
-    .replace(/\n(\d+)\. /g, '</p><div class="flex items-start gap-2 mt-1"><span class="text-secondary mt-0.5 shrink-0">$1.</span><span>');
-
-  // Close any open spans from bullets
-  var openSpans = (html.match(/<span>/g) || []).length - (html.match(/<\/span>/g) || []).length;
-  for (var i = 0; i < openSpans; i++) html += '</span></div>';
-
-  msg.innerHTML = '<div class="w-6 h-6 shrink-0 flex items-center justify-center">' +
+  msg.innerHTML = '<div class="w-6 h-6 shrink-0 flex items-center justify-center mt-0.5">' +
     '<svg width="16" height="16" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#am1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#am2)"/><path d="M8.22 0L9.51 4.08L13.59 5.37L9.51 6.66L8.22 10.73L6.93 6.66L2.86 5.37L6.93 4.08L8.22 0Z" fill="url(#am3)"/><defs><linearGradient id="am1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="am2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="am3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg></div>' +
-    '<div class="flex-1 min-w-0"><p class="text-[13px] text-on-surface leading-relaxed">' + html + '</p></div>';
+    '<div class="flex-1 min-w-0">' + htmlParts.join('') + '</div>';
   container.appendChild(msg);
+
+  // Add follow-up suggestions
+  var followUps = getFollowUps(lastQuery);
+  if (followUps && followUps.length) {
+    var sugDiv = document.createElement('div');
+    sugDiv.className = 'ml-8 mt-2 flex flex-wrap gap-2';
+    followUps.forEach(function(s) {
+      sugDiv.innerHTML += '<button onclick="document.getElementById(\'ai-chat-input\').value=\'' + s.replace(/'/g,"\\'") + '\';sendAIMessage();" class="px-3 py-1.5 text-xs font-medium text-primary border border-[#C5D4F7] bg-[#F0F4FF] rounded-full hover:bg-[#E0EAFF] transition-colors">' + s + '</button>';
+    });
+    container.appendChild(sugDiv);
+  }
+
   scrollAIChat();
 }
 
@@ -3777,6 +3833,7 @@ function sendAIMessage() {
   var text = input.value.trim();
   if (!text) return;
   input.value = '';
+  lastQuery = text;
   addUserMessage(text);
   showTyping();
   // Simulate AI thinking
