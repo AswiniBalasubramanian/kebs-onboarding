@@ -3551,7 +3551,7 @@ function wtShowStep(stepIdx) {
 // Add CSS animation for tooltip
 (function() {
   const style = document.createElement('style');
-  style.textContent = '@keyframes wtFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } @keyframes gsShimmer { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }';
+  style.textContent = '@keyframes wtFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } @keyframes gsShimmer { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } } @keyframes aiDot { 0%,80%,100% { opacity:0.3; transform:scale(0.8); } 40% { opacity:1; transform:scale(1.2); } }';
   document.head.appendChild(style);
 })();
 
@@ -3682,97 +3682,120 @@ function showKpiPopover(iconEl) {
 }
 
 function openAIWithNordex() {
-  // Show default view first, then swap to conversation
-  var panel = document.getElementById('ai-assistant-panel');
-  var content = document.getElementById('ai-assistant-content');
-  if (content) {
-    content.innerHTML = '' +
-    '<div class="px-6 py-5">' +
-      '<!-- User query -->' +
-      '<div class="flex items-start gap-3 mb-5">' +
-        '<div class="w-7 h-7 rounded-full bg-[#7c3aed] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>' +
-        '<div class="bg-[#F6F7FB] rounded-xl rounded-tl-none px-4 py-3 max-w-[300px]">' +
-          '<p class="text-sm text-on-surface">Show me the Nordex Systems billing milestone risk</p>' +
-        '</div>' +
-      '</div>' +
-      '<!-- AI response -->' +
-      '<div class="flex items-start gap-3">' +
-        '<div class="w-7 h-7 flex items-center justify-center shrink-0 mt-0.5">' +
-          '<svg width="18" height="18" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#nr1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#nr2)"/><path d="M8.22 0L9.51 4.08L13.59 5.37L9.51 6.66L8.22 10.73L6.93 6.66L2.86 5.37L6.93 4.08L8.22 0Z" fill="url(#nr3)"/><defs><linearGradient id="nr1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="nr2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="nr3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>' +
-        '</div>' +
-        '<div class="flex-1 min-w-0">' +
-          '<!-- Warning badge -->' +
-          '<div class="flex items-center gap-2 mb-3">' +
-            '<span class="flex items-center gap-1 px-2 py-0.5 bg-[#FEF2F2] text-[#dc2626] text-[10px] font-bold rounded-full"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> RECOMMENDATION</span>' +
-          '</div>' +
-          '<p class="text-sm text-on-surface leading-relaxed mb-4">' +
-            '<strong>Nordex Systems</strong> will miss its <strong>$320K billing milestone</strong> in 9 days. The cause is 2 overloaded resources — <strong>Amit at 118%</strong> and <strong>Fatima at 112%</strong>. Moving Amit to Apex today protects the milestone.' +
-          '</p>' +
-          '<!-- Suggestion box -->' +
-          '<div class="bg-[#F6F7FB] rounded-xl p-4 mb-4">' +
-            '<p class="text-xs font-semibold text-secondary uppercase tracking-wider mb-2">Alternative suggestion</p>' +
-            '<p class="text-sm text-on-surface leading-relaxed">Redistribute Amit\'s 3 active tasks across Fatima (1 task) and bench resource Ravi (2 tasks). This brings both below 100% utilization and keeps the milestone on track.</p>' +
-            '<ul class="mt-2 space-y-1 text-sm text-on-surface">' +
-              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Amit: 118% → 85% (moved to Apex)</li>' +
-              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Fatima: 112% → 95% (1 task redistributed)</li>' +
-              '<li class="flex items-start gap-2"><span class="text-secondary mt-0.5">&bull;</span> Ravi: 0% → 40% (from bench)</li>' +
-            '</ul>' +
-          '</div>' +
-          '<!-- Question -->' +
-          '<p class="text-sm font-medium text-on-surface mb-4">How would you like to proceed?</p>' +
-          '<!-- Action buttons -->' +
-          '<div class="space-y-2">' +
-            '<button class="w-full flex items-center gap-2 px-4 py-3 bg-[#dc2626] text-white text-sm font-semibold rounded-xl hover:bg-[#b91c1c] transition-colors">' +
-              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>' +
-              'Yes, move Amit to Apex now' +
-            '</button>' +
-            '<button class="w-full flex items-center gap-2 px-4 py-3 border border-outline-variant text-sm font-medium text-on-surface rounded-xl hover:bg-[#F6F7FB] transition-colors">' +
-              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M21 21v-5h-5"/></svg>' +
-              'Redistribute tasks instead' +
-            '</button>' +
-            '<button class="w-full flex items-center gap-2 px-4 py-3 border border-outline-variant text-sm font-medium text-on-surface rounded-xl hover:bg-[#F6F7FB] transition-colors">' +
-              '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' +
-              'Defer milestone by 1 week' +
-            '</button>' +
-          '</div>' +
-        '</div>' +
-      '</div>' +
-    '</div>';
-  }
   toggleAIAssistant();
+  setTimeout(function() {
+    addUserMessage('Show me the Nordex Systems billing milestone risk');
+    showTyping();
+    setTimeout(function() {
+      hideTyping();
+      addAIMessage('**Nordex Systems** will miss its **$320K billing milestone** in 9 days. The cause is 2 overloaded resources — Amit at 118% and Fatima at 112%.\n\nMoving Amit to Apex today protects the milestone.\n\n**Alternative suggestion:** Redistribute Amit\'s 3 tasks:\n- Move Amit to Apex — reduces to 85%\n- Redistribute 1 task to Fatima — reduces to 95%\n- Pull Ravi from bench (0% → 40%)\n\nThis preserves the milestone while addressing resource overload.');
+    }, 1200);
+  }, 400);
 }
 
 function resetAIPanel() {
-  var content = document.getElementById('ai-assistant-content');
-  if (!content) return;
-  content.innerHTML = '' +
-    '<div class="mb-6">' +
-      '<p class="text-secondary text-sm">Hi Prasanna &#x1F44B;</p>' +
-      '<h2 class="text-xl font-semibold text-on-surface mt-1">How can I help you today?</h2>' +
-    '</div>' +
-    '<div class="mb-5">' +
-      '<div class="flex items-center justify-between mb-3">' +
-        '<p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Try Asking</p>' +
-        '<button class="w-6 h-6 flex items-center justify-center hover:bg-surface-container rounded transition-colors" title="Refresh"><i data-lucide="refresh-cw" style="width:13px;height:13px;color:#0073EA;"></i></button>' +
-      '</div>' +
-      '<div class="space-y-2.5">' +
-        ['Why is the base license forecast dropping?|Root cause analysis|FEF3C7|D97706',
-         'What are the key risk indicators?|Risk & health signals|FEF3C7|D97706',
-         'Compare to last quarter|Period comparison|EDE9FE|7C3AED',
-         'Employee utilization insights|Resource analysis|EDE9FE|7C3AED',
-         'Monthly forecast trends|Forecast analysis|DBEAFE|2563EB'
-        ].map(function(s) {
-          var p = s.split('|');
-          return '<button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors">' +
-            '<div class="flex items-start gap-3">' +
-              '<div class="w-5 h-5 rounded-full bg-[#' + p[2] + '] flex items-center justify-center shrink-0 mt-0.5"><i data-lucide="lightbulb" style="width:11px;height:11px;color:#' + p[3] + ';"></i></div>' +
-              '<div><p class="text-sm font-medium text-on-surface">' + p[0] + '</p><p class="text-xs text-secondary mt-0.5">' + p[1] + '</p></div>' +
-            '</div></button>';
-        }).join('') +
-      '</div>' +
-    '</div>';
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  var welcome = document.getElementById('ai-welcome');
+  var msgs = document.getElementById('ai-chat-messages');
+  var typing = document.getElementById('ai-typing');
+  if (welcome) welcome.style.display = '';
+  if (msgs) msgs.innerHTML = '';
+  if (typing) typing.classList.add('hidden');
 }
+
+// === Interactive AI Chat ===
+var aiResponses = {
+  'default': 'I can help you analyze revenue trends, resource utilization, project health, and more. Try asking about specific metrics or projects.',
+  'forecast': 'Base license forecast is dropping due to 3 factors:\n\n1. **2 deals pushed to Q4** ($180K combined)\n2. **Churn risk** on Meridian account ($95K ARR)\n3. **Delayed expansion** on LogiLink ($120K)\n\nNet impact: -$395K vs. plan. Pipeline coverage at 0.88x needs attention.',
+  'risk': 'Key risk indicators this week:\n\n- **Revenue at Risk**: $1.2M across 3 projects\n- **SLA Breaches**: 13 demands breached (target: <5)\n- **TS Compliance**: 78% (target: 95%)\n- **Utilization**: 81% (target: 85%)\n\nHighest priority: Nordex Systems milestone and Cloud Migration resourcing.',
+  'quarter': 'Q3 vs Q2 comparison:\n\n- **Revenue**: $18.4M vs $16.2M (+13.6%)\n- **Margin**: 24% vs 28% (-4pp)\n- **Utilization**: 83% vs 81% (+2pp)\n- **Collection**: 85% vs 79% (+6pp)\n\nRevenue up but margins compressed due to higher bench costs and 2 fixed-price overruns.',
+  'utilization': 'Current utilization breakdown:\n\n- **Billable**: 42 resources at 83% avg\n- **Bench**: 2 resources (Ravi, Deepak)\n- **Below 70%**: 5 resources flagged for next sprint\n- **Over 100%**: Amit (118%), Fatima (112%)\n\nRecommendation: Move Amit to Apex, pull Ravi from bench to GulfCore.',
+  'nordex': '**Nordex Systems** — $320K billing milestone at risk.\n\n- **Root cause**: Amit at 118%, Fatima at 112%\n- **Impact**: 9 days to milestone\n- **Fix**: Move Amit to Apex (118% → 85%), redistribute 1 task to Ravi from bench\n\nThis preserves the milestone with zero scope change.',
+};
+
+function getAIResponse(query) {
+  var q = query.toLowerCase();
+  if (q.includes('forecast') || q.includes('dropping') || q.includes('license')) return aiResponses.forecast;
+  if (q.includes('risk') || q.includes('indicator')) return aiResponses.risk;
+  if (q.includes('quarter') || q.includes('compare') || q.includes('q2') || q.includes('q3')) return aiResponses.quarter;
+  if (q.includes('utilization') || q.includes('utilisation') || q.includes('resource') || q.includes('employee')) return aiResponses.utilization;
+  if (q.includes('nordex') || q.includes('milestone') || q.includes('billing')) return aiResponses.nordex;
+  return aiResponses['default'];
+}
+
+function addUserMessage(text) {
+  var container = document.getElementById('ai-chat-messages');
+  var welcome = document.getElementById('ai-welcome');
+  if (welcome) welcome.style.display = 'none';
+
+  var msg = document.createElement('div');
+  msg.className = 'flex items-start gap-2.5 justify-end';
+  msg.innerHTML = '<div class="bg-[#F6F7FB] rounded-lg rounded-tr-none px-3.5 py-2.5 max-w-[280px]">' +
+    '<p class="text-[13px] text-on-surface">' + text.replace(/</g,'&lt;') + '</p></div>' +
+    '<div class="w-6 h-6 rounded-full bg-[#7c3aed] flex items-center justify-center text-white shrink-0" style="font-size:9px;font-weight:600;">PR</div>';
+  container.appendChild(msg);
+  scrollAIChat();
+}
+
+function addAIMessage(text) {
+  var container = document.getElementById('ai-chat-messages');
+  var msg = document.createElement('div');
+  msg.className = 'flex items-start gap-2.5';
+
+  // Parse markdown-like formatting
+  var html = text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\n\n/g, '</p><p class="mt-2">')
+    .replace(/\n- /g, '</p><div class="flex items-start gap-2 mt-1"><span class="text-secondary mt-0.5 shrink-0">&bull;</span><span>')
+    .replace(/\n(\d+)\. /g, '</p><div class="flex items-start gap-2 mt-1"><span class="text-secondary mt-0.5 shrink-0">$1.</span><span>');
+
+  // Close any open spans from bullets
+  var openSpans = (html.match(/<span>/g) || []).length - (html.match(/<\/span>/g) || []).length;
+  for (var i = 0; i < openSpans; i++) html += '</span></div>';
+
+  msg.innerHTML = '<div class="w-6 h-6 shrink-0 flex items-center justify-center">' +
+    '<svg width="16" height="16" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#am1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#am2)"/><path d="M8.22 0L9.51 4.08L13.59 5.37L9.51 6.66L8.22 10.73L6.93 6.66L2.86 5.37L6.93 4.08L8.22 0Z" fill="url(#am3)"/><defs><linearGradient id="am1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="am2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient><linearGradient id="am3" x1="13.6" y1="5.4" x2="2.3" y2="5.4" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg></div>' +
+    '<div class="flex-1 min-w-0"><p class="text-[13px] text-on-surface leading-relaxed">' + html + '</p></div>';
+  container.appendChild(msg);
+  scrollAIChat();
+}
+
+function showTyping() {
+  document.getElementById('ai-typing').classList.remove('hidden');
+  scrollAIChat();
+}
+function hideTyping() {
+  document.getElementById('ai-typing').classList.add('hidden');
+}
+
+function scrollAIChat() {
+  var c = document.getElementById('ai-assistant-content');
+  if (c) setTimeout(function() { c.scrollTop = c.scrollHeight; }, 50);
+}
+
+function sendAIMessage() {
+  var input = document.getElementById('ai-chat-input');
+  var text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  addUserMessage(text);
+  showTyping();
+  // Simulate AI thinking
+  setTimeout(function() {
+    hideTyping();
+    addAIMessage(getAIResponse(text));
+  }, 800 + Math.random() * 800);
+}
+
+// Make Try Asking cards clickable
+document.addEventListener('click', function(e) {
+  var card = e.target.closest('#ai-welcome button[class*="rounded-xl"]');
+  if (!card) return;
+  var title = card.querySelector('.text-sm.font-medium');
+  if (title) {
+    var input = document.getElementById('ai-chat-input');
+    if (input) { input.value = title.textContent; sendAIMessage(); }
+  }
+});
 
 function toggleAIAssistant() {
   var panel = document.getElementById('ai-assistant-panel');
@@ -3826,15 +3849,14 @@ function toggleAIAssistant() {
     </button>
   </div>
 
-  <!-- Content -->
-  <div id="ai-assistant-content" class="flex-1 overflow-y-auto px-6 py-6">
-
-    <!-- Greeting -->
-    <div class="mb-6">
-      <p class="text-secondary text-sm">Hi Prasanna &#x1F44B;</p>
-      <h2 class="text-xl font-semibold text-on-surface mt-1">How can I help you today?</h2>
-    </div>
-
+  <!-- Chat Content -->
+  <div id="ai-assistant-content" class="flex-1 overflow-y-auto px-5 py-5">
+    <!-- Welcome + suggestions (shown when no messages) -->
+    <div id="ai-welcome">
+      <div class="mb-5">
+        <p class="text-secondary text-sm">Hi Prasanna &#x1F44B;</p>
+        <h2 class="text-xl font-semibold text-on-surface mt-1">How can I help you today?</h2>
+      </div>
     <!-- Try Asking -->
     <div class="mb-5">
       <div class="flex items-center justify-between mb-3">
@@ -3848,9 +3870,7 @@ function toggleAIAssistant() {
         <!-- Card 1 -->
         <button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors group">
           <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-[#FEF3C7] flex items-center justify-center shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" style="width:11px;height:11px;color:#D97706;"></i>
-            </div>
+            <span class="text-sm shrink-0 mt-0.5">&#x1F4A1;</span>
             <div>
               <p class="text-sm font-medium text-on-surface">Why is the base license forecast dropping?</p>
               <p class="text-xs text-secondary mt-0.5">Root cause analysis</p>
@@ -3861,9 +3881,7 @@ function toggleAIAssistant() {
         <!-- Card 2 -->
         <button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors group">
           <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-[#FEF3C7] flex items-center justify-center shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" style="width:11px;height:11px;color:#D97706;"></i>
-            </div>
+            <span class="text-sm shrink-0 mt-0.5">&#x1F4A1;</span>
             <div>
               <p class="text-sm font-medium text-on-surface">What are the key risk indicators?</p>
               <p class="text-xs text-secondary mt-0.5">Risk & health signals</p>
@@ -3874,9 +3892,7 @@ function toggleAIAssistant() {
         <!-- Card 3 -->
         <button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors group">
           <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" style="width:11px;height:11px;color:#7C3AED;"></i>
-            </div>
+            <span class="text-sm shrink-0 mt-0.5">&#x1F4A1;</span>
             <div>
               <p class="text-sm font-medium text-on-surface">Compare to last quarter</p>
               <p class="text-xs text-secondary mt-0.5">Period comparison</p>
@@ -3887,9 +3903,7 @@ function toggleAIAssistant() {
         <!-- Card 4 -->
         <button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors group">
           <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-[#EDE9FE] flex items-center justify-center shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" style="width:11px;height:11px;color:#7C3AED;"></i>
-            </div>
+            <span class="text-sm shrink-0 mt-0.5">&#x1F4A1;</span>
             <div>
               <p class="text-sm font-medium text-on-surface">Employee utilization insights</p>
               <p class="text-xs text-secondary mt-0.5">Resource analysis</p>
@@ -3897,27 +3911,31 @@ function toggleAIAssistant() {
           </div>
         </button>
 
-        <!-- Card 5 -->
-        <button class="w-full text-left p-4 border border-outline-variant rounded-xl hover:bg-[#F6F7FB] hover:border-[#C5C7D4] transition-colors group">
-          <div class="flex items-start gap-3">
-            <div class="w-5 h-5 rounded-full bg-[#DBEAFE] flex items-center justify-center shrink-0 mt-0.5">
-              <i data-lucide="lightbulb" style="width:11px;height:11px;color:#2563EB;"></i>
-            </div>
-            <div>
-              <p class="text-sm font-medium text-on-surface">Monthly forecast trends</p>
-              <p class="text-xs text-secondary mt-0.5">Forecast analysis</p>
-            </div>
-          </div>
-        </button>
+      </div>
+    </div>
+    </div><!-- /ai-welcome -->
+
+    <!-- Chat messages container (populated by JS) -->
+    <div id="ai-chat-messages" class="space-y-4"></div>
+
+    <!-- Typing indicator (hidden by default) -->
+    <div id="ai-typing" class="hidden flex items-start gap-2.5 mt-4">
+      <div class="w-6 h-6 shrink-0 flex items-center justify-center">
+        <svg width="16" height="16" viewBox="0 0 32 32" fill="none"><path d="M7.46 19.97C6.38 18.1 7.02 15.7 8.9 14.62L24.84 5.41C27 9.16 25.72 13.95 21.97 16.12L12.81 21.4C10.94 22.49 8.54 21.84 7.46 19.97Z" fill="url(#tp1)"/><path d="M7.51 15.88C8.7 13.82 11.32 13.12 13.38 14.31L21.83 19.18C25.93 21.56 27.34 26.81 24.97 30.91L9.09 21.74C7.03 20.56 6.33 17.93 7.51 15.88Z" fill="url(#tp2)"/><defs><linearGradient id="tp1" x1="26.8" y1="8.8" x2="6.4" y2="20.6" gradientUnits="userSpaceOnUse"><stop stop-color="#EF4A61"/><stop offset="1" stop-color="#F6A198"/></linearGradient><linearGradient id="tp2" x1="27.1" y1="27.2" x2="6.5" y2="15.3" gradientUnits="userSpaceOnUse"><stop offset=".06" stop-color="#FFC328"/><stop offset=".49" stop-color="#FD6D81"/><stop offset="1" stop-color="#F27A6C"/></linearGradient></defs></svg>
+      </div>
+      <div class="flex items-center gap-1 px-3 py-2 bg-[#F6F7FB] rounded-lg">
+        <div class="w-1.5 h-1.5 bg-[#9DA0AE] rounded-full" style="animation:aiDot 1.4s infinite 0s"></div>
+        <div class="w-1.5 h-1.5 bg-[#9DA0AE] rounded-full" style="animation:aiDot 1.4s infinite 0.2s"></div>
+        <div class="w-1.5 h-1.5 bg-[#9DA0AE] rounded-full" style="animation:aiDot 1.4s infinite 0.4s"></div>
       </div>
     </div>
   </div>
 
   <!-- Input -->
-  <div class="px-5 py-4 border-t border-outline-variant">
-    <div class="flex items-center gap-2 border border-outline-variant rounded-xl px-4 py-3 focus-within:border-primary transition-colors">
-      <input type="text" placeholder="Ask about revenue, margins..." class="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-secondary"/>
-      <button class="w-8 h-8 bg-[#323338] hover:bg-[#1E1F2B] rounded-lg flex items-center justify-center transition-colors shrink-0">
+  <div class="px-5 py-3 border-t border-outline-variant">
+    <div class="flex items-center gap-2 border border-outline-variant rounded-xl px-4 py-2.5 focus-within:border-primary transition-colors">
+      <input id="ai-chat-input" type="text" placeholder="Ask about revenue, margins..." class="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-secondary" onkeydown="if(event.key==='Enter')sendAIMessage()"/>
+      <button onclick="sendAIMessage()" class="w-8 h-8 bg-[#323338] hover:bg-[#1E1F2B] rounded-lg flex items-center justify-center transition-colors shrink-0">
         <i data-lucide="arrow-right" style="width:14px;height:14px;color:#fff;"></i>
       </button>
     </div>
