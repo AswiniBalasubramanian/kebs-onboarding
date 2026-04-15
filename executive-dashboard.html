@@ -1,0 +1,3137 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PSA Executive Dashboard - Kebs</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-tint": "#0073EA",
+                        "on-tertiary-container": "#1A5C2A",
+                        "on-surface": "#323338",
+                        "primary-fixed-dim": "#5093E2",
+                        "primary-fixed": "#E6F0FF",
+                        "on-background": "#323338",
+                        "surface-dim": "#E6E9EF",
+                        "primary-container": "#E6F0FF",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#676879",
+                        "outline": "#C5C7D4",
+                        "on-error-container": "#A01E2C",
+                        "on-error": "#ffffff",
+                        "error-container": "#FDECEA",
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary-fixed": "#0D3318",
+                        "on-secondary-fixed": "#323338",
+                        "tertiary-fixed-dim": "#3CB371",
+                        "secondary": "#676879",
+                        "surface-bright": "#ffffff",
+                        "error": "#D83A52",
+                        "secondary-fixed-dim": "#C5C7D4",
+                        "on-primary-fixed-variant": "#0060B9",
+                        "outline-variant": "#E6E9EF",
+                        "on-primary-fixed": "#003B7A",
+                        "surface-container": "#F6F7FB",
+                        "inverse-on-surface": "#F6F7FB",
+                        "secondary-container": "#E6E9EF",
+                        "on-secondary": "#ffffff",
+                        "on-secondary-fixed-variant": "#676879",
+                        "tertiary-container": "#B8EFC8",
+                        "background": "#F6F7FB",
+                        "inverse-primary": "#5093E2",
+                        "inverse-surface": "#292A2E",
+                        "surface": "#ffffff",
+                        "surface-container-low": "#F6F7FB",
+                        "surface-variant": "#F6F7FB",
+                        "on-tertiary-fixed-variant": "#1A5C2A",
+                        "tertiary-fixed": "#B8EFC8",
+                        "on-primary": "#ffffff",
+                        "on-secondary-container": "#676879",
+                        "secondary-fixed": "#E6E9EF",
+                        "tertiary": "#258750",
+                        "primary": "#0073EA",
+                        "surface-container-highest": "#C5C7D4",
+                        "surface-container-high": "#E6E9EF",
+                        "on-primary-container": "#323338"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "6px",
+                        "sm": "4px",
+                        "md": "6px",
+                        "lg": "8px",
+                        "xl": "12px",
+                        "2xl": "16px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Poppins"],
+                        "body": ["Poppins"],
+                        "label": ["Poppins"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Poppins', sans-serif; background-color: #F6F7FB; }
+        .material-symbols-outlined { font-size: 20px; vertical-align: middle; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+
+        /* Rocketlane-style thin scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C5C7D4; border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9DA0AE; }
+        * { scrollbar-width: thin; scrollbar-color: #C5C7D4 transparent; }
+
+        /* Lucide icons sizing */
+        [data-lucide] { width: 18px; height: 18px; stroke-width: 1.75; display: inline-block; vertical-align: middle; }
+
+        /* Sidebar: all nav items reserve the same left-border space so icons align in expanded mode */
+        .sidebar-nav-item { border-left: 4px solid transparent; }
+
+        /* Expanded sidebar — overrides injected at end of body to beat Tailwind CDN */
+
+        /* Dark-themed sidebar search input */
+        .sidebar-search-input {
+            width: 100%; height: 34px;
+            padding: 0 10px 0 32px !important;
+            background: #2C2E3E !important; color: #D5D8E8 !important;
+            border: 1px solid #3D3F52 !important;
+            border-radius: 6px !important; outline: none; font-family: 'Poppins', sans-serif;
+            font-size: 12px; line-height: 34px;
+            transition: border-color 0.15s; box-shadow: none !important;
+        }
+        .sidebar-search-input::placeholder { color: #6B6F8A !important; font-size: 12px; }
+        .sidebar-search-input:focus { border-color: #0073EA !important; outline: none !important; box-shadow: none !important; }
+        /* Search icon vertical centering */
+        .sidebar-search-icon {
+            position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+            pointer-events: none; display: flex; align-items: center;
+        }
+
+        /* Expanded sidebar item row layout */
+        #sidebar.expanded .sidebar-nav-item {
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            padding: 0 10px !important;
+            height: 36px;
+            gap: 10px;
+        }
+        #sidebar.expanded .sidebar-nav-item .nav-label-full { font-size: 13px; font-weight: 500; flex: 1; }
+        #sidebar.expanded .sidebar-category p { color: #6B6F8A; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; }
+
+        /* Flyout Menu Logic */
+        .nav-item:hover .flyout-menu {
+            display: flex;
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+        .flyout-menu {
+            display: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-10px);
+            transition: all 0.2s cubic-bezier(0.2, 0, 0.38, 0.9);
+        }
+
+        /* === Monday.com Vibe Design System === */
+        .vibe-input, .vibe-textarea, .vibe-search {
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px; color: #323338; background: #F6F7FB;
+            border: 1px solid #C5C7D4;
+            border-radius: 6px; outline: none; width: 100%;
+            transition: border-color 0.11s cubic-bezier(0.2,0,0.38,0.9);
+        }
+        .vibe-input:focus, .vibe-textarea:focus, .vibe-search:focus { border-color: #0073EA; }
+        .vibe-input { height: 40px; padding: 0 16px; }
+        .vibe-textarea { padding: 11px 16px; min-height: 80px; resize: vertical; }
+        .vibe-search { height: 40px; padding: 0 16px 0 40px; }
+        .vibe-input::placeholder, .vibe-textarea::placeholder, .vibe-search::placeholder { color: #AFAEBE; }
+        .vibe-input[readonly] { background: #E6E9EF; border-color: transparent; color: #676879; cursor: not-allowed; }
+
+        .vibe-btn-primary {
+            height: 40px; padding: 0 20px; background: #0073EA; color: #fff;
+            font-size: 14px; font-weight: 600; font-family: 'Poppins', sans-serif;
+            border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            border-radius: 20px; position: relative; transition: background 0.11s;
+        }
+        .vibe-btn-primary:hover { background: #0060B9; }
+        .vibe-btn-primary .material-symbols-outlined { position: absolute; right: 16px; }
+
+        .vibe-btn-secondary {
+            height: 40px; padding: 0 20px; background: #292A2E; color: #fff;
+            font-size: 14px; font-weight: 600; font-family: 'Poppins', sans-serif;
+            border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+            border-radius: 20px; position: relative; transition: background 0.11s;
+        }
+        .vibe-btn-secondary:hover { background: #4c4c4c; }
+
+        .vibe-btn-ghost {
+            background: transparent; border: none; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: background 0.11s; border-radius: 6px;
+        }
+        .vibe-btn-ghost:hover { background: #EDF0F7; }
+
+        .vibe-checkbox { width: 16px; height: 16px; accent-color: #0073EA; cursor: pointer; border-radius: 0 !important; -webkit-appearance: none; appearance: none; border: 1px solid #323338; background: #fff; position: relative; }
+        .vibe-checkbox:checked { background: #0073EA; border-color: #0073EA; }
+        .vibe-checkbox:checked::after { content: ''; position: absolute; left: 4px; top: 1px; width: 5px; height: 9px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+
+        .vibe-radio { width: 18px; height: 18px; accent-color: #0073EA; cursor: pointer; }
+
+        .vibe-toggle { position: relative; width: 48px; height: 24px; background: #C5C7D4; border-radius: 12px; cursor: pointer; transition: background 0.11s; border: none; padding: 0; }
+        .vibe-toggle::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; background: #fff; border-radius: 50%; transition: transform 0.11s; }
+        .vibe-toggle.active { background: #0073EA; }
+        .vibe-toggle.active::after { transform: translateX(24px); }
+
+        .vibe-table { width: 100%; border-collapse: collapse; font-family: 'Poppins', sans-serif; }
+        .vibe-table thead tr { background: #E6E9EF; }
+        .vibe-table th { padding: 12px 16px; font-size: 12px; font-weight: 600; color: #676879; text-transform: uppercase; letter-spacing: 0.32px; text-align: left; border-bottom: 1px solid #C5C7D4; }
+        .vibe-table td { padding: 12px 16px; font-size: 14px; border-bottom: 1px solid #E6E9EF; color: #323338; }
+        .vibe-table tbody tr { transition: background 0.11s; }
+        .vibe-table tbody tr:hover { background: #EDF0F7; }
+
+        .vibe-tag { display: inline-flex; align-items: center; height: 24px; padding: 0 8px; font-size: 12px; font-weight: 600; border-radius: 9999px; white-space: nowrap; }
+
+        .vibe-card { border: 1px solid #E6E9EF; background: #fff; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+        /* Active nav item — filled icon container */
+        .sidebar-nav-item.nav-active {
+            background: transparent !important;
+            border-left-color: transparent !important;
+        }
+        .sidebar-nav-item.nav-active .nav-icon-wrap {
+            width: 32px; height: 32px; border-radius: 8px;
+            background: #0073EA; display: flex; align-items: center; justify-content: center;
+        }
+        .sidebar-nav-item.nav-active .nav-icon-wrap .material-symbols-outlined { color: #fff !important; }
+        .sidebar-nav-item.nav-active .nav-label-small { color: #fff; font-weight: 600; }
+        .sidebar-nav-item.nav-active .nav-label-full { color: #fff !important; font-weight: 600 !important; }
+
+        /* Inactive nav icon wrap — transparent bg */
+        .sidebar-nav-item:not(.nav-active) .nav-icon-wrap {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+        }
+
+        /* Theme-aware hover — uses CSS variable set by JS */
+        #sidebar { --item-hover: #292B3D; }
+        #sidebar .sidebar-nav-item:not(.nav-active):hover { background: var(--item-hover) !important; }
+    </style>
+</head>
+<body class="text-on-surface bg-background">
+<!-- SideNavBar -->
+<aside id="sidebar" class="fixed left-0 top-0 h-full flex flex-col w-16 border-r border-[#3D3F52] bg-[#1E1F2B] font-poppins text-[14px] leading-tight z-50">
+<!-- Brand Header -->
+<div class="p-3 mb-4 flex items-center gap-3 sidebar-header">
+<div class="w-10 h-10 flex items-center justify-center shrink-0">
+<svg width="32" height="36" viewBox="0 0 48 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_3206_6189)">
+<path d="M15.8334 6.77103V15.9966C15.8334 17.6047 14.3889 18.8178 12.8333 18.5075L5.66667 17.0686L0 22.8522L12.5 25.335C15.2778 25.8991 18.1389 24.9965 20.1111 22.937C21.6388 21.3288 22.5 19.1845 22.5 16.9558V0L15.8334 6.77103Z" fill="#0073EA"/>
+<path d="M32.1585 6.77103V15.8554C32.1585 17.5482 33.6843 18.8178 35.2935 18.4792L42.3126 17.0686L48 22.8522L35.5154 25.335C32.7411 25.8991 29.8835 24.9965 27.9137 22.937C26.3601 21.357 25.5 19.2127 25.5 16.984V0L32.1585 6.77103Z" fill="#0073EA"/>
+<path d="M15.8334 47.2365V37.7956C15.8334 36.3021 14.5 35.1748 13.0278 35.4565L5.66667 36.922L0 31.1448L12.5 28.6648C15.2778 28.1013 18.1389 29.0031 20.1111 31.0603C21.6388 32.6667 22.5 34.8084 22.5 37.0347V54L15.8334 47.2365Z" fill="#0073EA"/>
+<path d="M32.1666 47.229V37.6367C32.1666 36.1979 33.4445 35.1258 34.8333 35.4078L42.3333 36.9032L48 31.1478L35.5001 28.665C32.7222 28.1009 29.8611 29.0036 27.8889 31.0631C26.3611 32.6712 25.5 34.8155 25.5 37.0442V54L32.1666 47.229Z" fill="#0073EA"/>
+</g>
+<defs>
+<clipPath id="clip0_3206_6189">
+<rect width="48" height="54" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+</div>
+<span class="sidebar-label text-lg font-semibold text-white hidden whitespace-nowrap">Kebs</span>
+<button id="collapse-btn" onclick="toggleSidebar()" class="sidebar-label hidden ml-auto w-7 h-7 flex items-center justify-center hover:bg-[#292B3D] rounded-[6px] transition-colors shrink-0 text-[#9DA0AE]">
+  <i data-lucide="chevron-left" style="width:16px;height:16px;"></i>
+</button>
+</div>
+<!-- Quick Actions (hidden when collapsed) -->
+<div id="sidebar-quickactions" class="px-3 mb-3 hidden">
+  <div class="flex items-center gap-1.5">
+    <button class="flex items-center gap-1.5 h-8 px-3 bg-[#0073EA] hover:bg-[#0060B9] text-white text-[11px] font-semibold rounded-full transition-colors shrink-0">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Timer
+    </button>
+    <button class="w-8 h-8 flex items-center justify-center hover:bg-[#292B3D] rounded-full transition-colors text-[#9DA0AE] hover:text-white" title="Recent">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></svg>
+    </button>
+    <button class="w-8 h-8 flex items-center justify-center hover:bg-[#292B3D] rounded-full transition-colors text-[#9DA0AE] hover:text-white" title="Track expenses">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+    </button>
+    <button class="w-8 h-8 flex items-center justify-center hover:bg-[#292B3D] rounded-full transition-colors text-[#9DA0AE] hover:text-white" title="Approvals">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    </button>
+    <button class="w-8 h-8 flex items-center justify-center hover:bg-[#292B3D] rounded-full transition-colors text-[#9DA0AE] hover:text-white" title="Invoices">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 2v20l4-2 4 2 4-2 4 2V2l-4 2-4-2-4 2z"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+    </button>
+    <div class="relative">
+      <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="w-8 h-8 flex items-center justify-center hover:bg-[#292B3D] rounded-full transition-colors text-[#9DA0AE] hover:text-white" title="More">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+      </button>
+      <!-- Quick Actions dropdown -->
+      <div class="hidden absolute left-0 top-full mt-1 w-52 bg-white rounded-lg shadow-xl border border-[#E6E9EF] z-[100] py-1">
+        <p class="px-3 py-1.5 text-[10px] font-semibold text-[#676879] uppercase tracking-wider">Quick Actions</p>
+        <div class="flex items-center px-3 py-2 hover:bg-[#F6F7FB] group">
+          <a href="#" class="flex items-center gap-2.5 flex-1 text-[13px] text-[#323338]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0073EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+            Create Project
+          </a>
+          <button onclick="event.stopPropagation();this.classList.toggle('text-[#0073EA]');this.classList.toggle('text-[#C5C7D4]')" class="text-[#C5C7D4] hover:text-[#0073EA] opacity-0 group-hover:opacity-100 transition-opacity" title="Pin to sidebar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6l1 1 1-1v-6h5v-2z"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center px-3 py-2 hover:bg-[#F6F7FB] group">
+          <a href="#" class="flex items-center gap-2.5 flex-1 text-[13px] text-[#323338]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0073EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            Opportunity
+          </a>
+          <button onclick="event.stopPropagation();this.classList.toggle('text-[#0073EA]');this.classList.toggle('text-[#C5C7D4]')" class="text-[#C5C7D4] hover:text-[#0073EA] opacity-0 group-hover:opacity-100 transition-opacity" title="Pin to sidebar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6l1 1 1-1v-6h5v-2z"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center px-3 py-2 hover:bg-[#F6F7FB] group">
+          <a href="#" class="flex items-center gap-2.5 flex-1 text-[13px] text-[#323338]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0073EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Account
+          </a>
+          <button onclick="event.stopPropagation();this.classList.toggle('text-[#0073EA]');this.classList.toggle('text-[#C5C7D4]')" class="text-[#C5C7D4] hover:text-[#0073EA] opacity-0 group-hover:opacity-100 transition-opacity" title="Pin to sidebar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6l1 1 1-1v-6h5v-2z"/></svg>
+          </button>
+        </div>
+        <div class="flex items-center px-3 py-2 hover:bg-[#F6F7FB] group">
+          <a href="#" class="flex items-center gap-2.5 flex-1 text-[13px] text-[#323338]">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0073EA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+            Lead
+          </a>
+          <button onclick="event.stopPropagation();this.classList.toggle('text-[#0073EA]');this.classList.toggle('text-[#C5C7D4]')" class="text-[#C5C7D4] hover:text-[#0073EA] opacity-0 group-hover:opacity-100 transition-opacity" title="Pin to sidebar">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M16 12V4h1V2H7v2h1v8l-2 2v2h5v6l1 1 1-1v-6h5v-2z"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Sidebar Search (hidden when collapsed) -->
+<div id="sidebar-search" class="px-3 mb-3 hidden">
+  <div class="relative">
+    <div class="sidebar-search-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6F8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    </div>
+    <input type="text" placeholder="Search..." oninput="filterSidebarApps(this.value)" class="sidebar-search-input"/>
+  </div>
+</div>
+<nav id="sidebar-nav" class="flex-1 space-y-0.5 px-0 overflow-hidden">
+
+<!-- Category: Project Management -->
+<div class="sidebar-category hidden px-4 pt-4 pb-1">
+  <p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Project Management</p>
+</div>
+
+<div class="nav-item sidebar-nav-item nav-active group relative flex flex-col items-center justify-center w-full py-2.5 cursor-pointer transition-colors duration-75" data-name="home" data-cat="project" data-pinned="true" data-subs="Overview,Analytics,Widgets" onclick="setActiveNav(this);showDashboard()">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">home</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Home</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Home</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="project" data-pinned="true" data-subs="Active Projects,Archived,Templates">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">assignment</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Projects</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Projects</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="people allocation" data-cat="project" data-pinned="true" data-subs="Capacity Plan,Skill Matrix,Availability">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">group</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">People</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">People Allocation</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="resource planning" data-cat="project" data-pinned="false" data-subs="Forecasting,Utilization,Bench Report">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">event_note</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Planning</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Resource Planning</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="time tracking" data-cat="project" data-pinned="false" data-subs="Timesheets,Approvals,Reports">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">schedule</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Time</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Time Tracking</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="gantt charts" data-cat="project" data-pinned="false" data-subs="Timeline View,Dependencies,Milestones">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">view_timeline</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Gantt</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Gantt Charts</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<!-- Category: CRM -->
+<div class="sidebar-category hidden px-4 pt-4 pb-1">
+  <p class="text-[10px] font-bold text-secondary uppercase tracking-widest">CRM</p>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="accounts" data-cat="crm" data-pinned="false" data-subs="All Accounts,Key Accounts,Account Health">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">business</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Accounts</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Accounts</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="contacts" data-cat="crm" data-pinned="false" data-subs="All Contacts,Recent,Import">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">contacts</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Contacts</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Contacts</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="opportunities" data-cat="crm" data-pinned="false" data-subs="Pipeline,Won Deals,Lost Analysis">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">trending_up</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Opps</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Opportunities</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="leads" data-cat="crm" data-pinned="false" data-subs="New Leads,Qualified,Nurturing">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">person_search</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Leads</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Leads</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="deals" data-cat="crm" data-pinned="false" data-subs="Active Deals,Closing Soon,Deal Room">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">handshake</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Deals</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Deals</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<!-- Category: Finance -->
+<div class="sidebar-category hidden px-4 pt-4 pb-1">
+  <p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Finance</p>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="financials" data-cat="finance" data-pinned="true" data-subs="Revenue Forecast,P&L Statements,Cash Flow">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">payments</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Finance</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Financials</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="invoices" data-cat="finance" data-pinned="true" data-subs="Draft,Sent,Overdue">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">summarize</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Invoices</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Invoices</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="expense tracking" data-cat="finance" data-pinned="false" data-subs="Submit Expense,Approvals,Reports">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">receipt_long</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Expenses</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Expense Tracking</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="budgets" data-cat="finance" data-pinned="false" data-subs="Annual Budget,Department,Variance">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">savings</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Budgets</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Budgets</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="billing" data-cat="finance" data-pinned="false" data-subs="Subscriptions,Payment History,Plans">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">credit_card</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Billing</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Billing</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<!-- Category: Operations -->
+<div class="sidebar-category hidden px-4 pt-4 pb-1">
+  <p class="text-[10px] font-bold text-secondary uppercase tracking-widest">Operations</p>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="reports" data-cat="operations" data-pinned="true" data-subs="Custom Reports,Scheduled,Export">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">analytics</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Reports</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Reports</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="team" data-cat="operations" data-pinned="true" data-subs="Members,Roles,Org Chart">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">people</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Team</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Team</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="settings" data-cat="operations" data-pinned="true" data-subs="General,Integrations,Security" onclick="showSettings('notifications')">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">settings</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Settings</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Settings</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]" style="font-variation-settings:'FILL' 1">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="help desk" data-cat="operations" data-pinned="false" data-subs="Tickets,FAQ,Live Chat">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">support_agent</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">Help</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Help Desk</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75" data-name="knowledge base" data-cat="operations" data-pinned="false" data-subs="Articles,Categories,Search">
+<div class="nav-icon-wrap"><span class="material-symbols-outlined text-[20px]">menu_book</span></div>
+<span class="nav-label-small text-[10px] mt-0.5">KB</span>
+<span class="nav-label-full hidden text-sm font-medium flex-1">Knowledge Base</span>
+<span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined text-[16px]">push_pin</span></span>
+</div>
+
+<!-- Apps toggle (always at bottom) -->
+<div class="mt-auto"></div>
+</nav>
+
+<!-- Apps button pinned at bottom -->
+<div id="apps-nav" class="nav-item flex flex-col items-center justify-center w-full py-2.5 text-[#9DA0AE] hover:bg-[#292B3D] cursor-pointer transition-colors duration-75 border-t border-[#3D3F52] shrink-0" onclick="toggleSidebar()">
+<span class="material-symbols-outlined text-[20px]">apps</span>
+<span class="nav-label-small text-[10px] mt-0.5">Apps</span>
+<span class="nav-label-full hidden text-sm font-medium">All Apps</span>
+</div>
+</aside>
+<!-- TopNavBar -->
+<header class="fixed top-0 right-0 left-16 h-12 flex justify-between items-center px-4 z-40 bg-white border-b border-[#E6E9EF] font-poppins text-[14px]">
+<div class="flex items-center flex-1">
+<h2 class="text-sm font-medium text-on-surface">Command Center</h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-1">
+<button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary">
+  <i data-lucide="search"></i>
+</button>
+<button id="whatsnew-btn" onclick="toggleWhatsNew()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary relative">
+  <i data-lucide="gift"></i>
+  <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+<button id="create-cta-btn" onclick="toggleCreateCTA()" class="flex items-center gap-1.5 h-8 px-3 bg-primary text-white rounded-full text-[13px] font-semibold hover:bg-[#0060B9] transition-colors">
+  <i data-lucide="plus" style="width:14px;height:14px;stroke-width:2.5;"></i>
+  <span>New</span>
+</button>
+<button id="notif-bell" onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary relative">
+  <i data-lucide="bell"></i>
+  <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+</button>
+<button id="collab-btn" onclick="toggleCollab()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary">
+  <i data-lucide="message-circle"></i>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant mx-1"></div>
+<div class="relative ml-2">
+<button id="user-menu-btn" onclick="toggleUserMenu()" class="w-8 h-8 rounded-full bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold hover:ring-2 hover:ring-[#7c3aed]/30 transition-all">
+PR
+</button>
+<!-- User Menu Dropdown -->
+<div id="user-menu" class="hidden absolute right-0 top-full mt-2 w-64 bg-white border border-outline-variant rounded-lg shadow-xl z-[90]">
+  <div class="px-4 py-4 border-b border-outline-variant flex items-center gap-3">
+    <div class="flex-1">
+      <p class="text-sm font-semibold text-on-surface">Prasanna</p>
+      <p class="text-xs text-primary">prasanna@kaartech.com</p>
+    </div>
+    <div class="w-10 h-10 rounded-full bg-[#7c3aed] flex items-center justify-center text-white text-sm font-semibold shrink-0">PR</div>
+  </div>
+  <div class="py-2">
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px] text-secondary">account_circle</span>
+      Profile
+    </a>
+    <a href="#" onclick="showSettings('plans')" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px] text-secondary">credit_card</span>
+      <span class="flex-1">Plans & Billing</span>
+      <span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">Enterprise</span>
+    </a>
+    <a href="#" onclick="showSettings('notifications')" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px] text-secondary">settings</span>
+      Settings
+    </a>
+  </div>
+  <div class="border-t border-outline-variant py-2">
+    <div class="relative">
+      <button onclick="event.stopPropagation();this.nextElementSibling.classList.toggle('hidden')" class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+        <span class="material-symbols-outlined text-[20px] text-secondary">palette</span>
+        <span class="flex-1 text-left">Change theme</span>
+        <span class="material-symbols-outlined text-[16px] text-secondary">chevron_right</span>
+      </button>
+      <div class="hidden absolute right-full top-0 mr-1 w-44 bg-white border border-outline-variant rounded-lg shadow-xl z-[100] py-1">
+        <button onclick="setTheme('light')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
+          <span class="material-symbols-outlined text-[18px] text-[#f5a623]">light_mode</span>
+          Light
+          <span class="theme-check ml-auto text-primary hidden" data-theme="light"><span class="material-symbols-outlined text-[16px]">check</span></span>
+        </button>
+        <button onclick="setTheme('dark')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
+          <span class="material-symbols-outlined text-[18px] text-[#6B6F8A]">dark_mode</span>
+          Dark
+          <span class="theme-check ml-auto text-primary" data-theme="dark"><span class="material-symbols-outlined text-[16px]">check</span></span>
+        </button>
+        <button onclick="setTheme('night')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
+          <span class="material-symbols-outlined text-[18px] text-[#7c3aed]">bedtime</span>
+          Night
+          <span class="theme-check ml-auto text-primary hidden" data-theme="night"><span class="material-symbols-outlined text-[16px]">check</span></span>
+        </button>
+        <button onclick="setTheme('system')" class="theme-opt w-full flex items-center gap-2.5 px-3 py-2 text-sm text-on-surface hover:bg-surface-container text-left">
+          <span class="material-symbols-outlined text-[18px] text-secondary">settings</span>
+          System default
+          <span class="theme-check ml-auto text-primary hidden" data-theme="system"><span class="material-symbols-outlined text-[16px]">check</span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="border-t border-outline-variant py-2">
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px] text-secondary">school</span>
+      Kebs Academy
+    </a>
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container transition-colors">
+      <span class="material-symbols-outlined text-[20px] text-secondary">help_outline</span>
+      Kebs Help Center
+    </a>
+  </div>
+  <div class="border-t border-outline-variant py-2">
+    <a href="#" class="flex items-center gap-3 px-4 py-2.5 text-sm text-error hover:bg-error-container transition-colors">
+      <span class="material-symbols-outlined text-[20px]">logout</span>
+      Logout
+    </a>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Canvas -->
+<main class="ml-16 mt-12 min-h-screen">
+<!-- Dashboard View -->
+<div id="dashboard-view" class="p-8 max-w-[1360px] mx-auto">
+<!-- Header Area -->
+<section class="mb-8">
+<h1 class="text-3xl font-light text-on-surface tracking-tight flex items-center gap-2"><span class="material-symbols-outlined text-[28px] text-[#f5a623]" style="font-variation-settings:'FILL' 1">light_mode</span>Good morning, <span class="font-semibold">Prasanna</span></h1>
+<p class="text-on-surface-variant mt-1">Here is what's happening with your portfolios today.</p>
+</section>
+<!-- Top Metrics Row -->
+<section class="grid grid-cols-4 gap-4 mb-8">
+<div id="wt-forecast" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Forecast Accuracy <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
+<span class="material-symbols-outlined text-primary text-[18px]">track_changes</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-on-surface">94.2%</span>
+<div class="flex items-center mt-1 text-tertiary">
+<span class="material-symbols-outlined text-[14px] mr-1">trending_up</span>
+<span class="text-[11px] font-medium">+2.4% vs last mo</span>
+</div>
+</div>
+</div>
+<div id="wt-risk" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Revenue at Risk <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
+<span class="material-symbols-outlined text-error text-[18px]">warning</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-on-surface">$1.2M</span>
+<span class="text-[11px] text-secondary mt-1">3 projects flagged</span>
+</div>
+</div>
+<div id="wt-rai" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">RAI Score <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
+<span class="material-symbols-outlined text-[#8a3ffc] text-[18px]">psychology</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-on-surface">8.4</span>
+<div class="mt-2">
+<span class="px-2 py-0.5 bg-[#e8daff] text-[#8a3ffc] text-[10px] font-bold rounded uppercase tracking-wider">Optimal</span>
+</div>
+</div>
+</div>
+<div id="wt-recovery" class="bg-white p-5 border border-outline-variant rounded-[6px] shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<p class="text-[10px] font-bold text-secondary uppercase tracking-widest"><span class="inline-flex items-center gap-1">Recovery Potential <span class="material-symbols-outlined text-[12px] text-secondary cursor-help">info</span></span></p>
+<span class="material-symbols-outlined text-[#F96C3C] text-[18px]">bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="text-3xl font-bold text-on-surface">$450k</span>
+<span class="text-[11px] text-[#8a3ffc] font-medium mt-1">High Efficiency</span>
+</div>
+</div>
+</section>
+<!-- Revenue Insight Widget -->
+<section id="wt-revenue" class="mb-8">
+<div class="bg-white border border-outline-variant rounded-lg p-6">
+<div class="flex justify-between items-start mb-8">
+<div>
+<h2 class="text-2xl font-semibold text-on-surface">Revenue Insight</h2>
+<p class="text-sm text-secondary">Q3 Performance Tracking</p>
+</div>
+<button class="flex items-center gap-1 text-primary text-sm font-semibold hover:underline">
+                        Navigate to Control Tower
+                        <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+<div class="flex flex-col lg:flex-row gap-12 items-start">
+<div class="w-full lg:w-2/5">
+<div class="mb-6">
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-medium">Current Progress ($18.4M)</span>
+<span class="text-sm font-medium">74% of Target ($25M)</span>
+</div>
+<div class="h-4 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 74%"></div>
+</div>
+<div class="flex gap-6 mt-4">
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary rounded-sm"></div>
+<span class="text-xs text-secondary">Collected</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-3 h-3 bg-primary-fixed rounded-sm"></div>
+<span class="text-xs text-secondary">Pipeline</span>
+</div>
+</div>
+</div>
+</div>
+<div class="w-full lg:w-3/5 grid grid-cols-4 gap-y-8 gap-x-4">
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Target <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold">$25.0M</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Gap <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold text-error">$6.6M</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Pipeline <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold text-primary">$12.4M</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Accuracy <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold">91.5%</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Realization <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold">88.2%</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Collected <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold text-tertiary">$14.2M</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Utilization <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold">82.1%</p>
+</div>
+<div>
+<p class="text-[11px] font-semibold text-secondary uppercase tracking-wider mb-1"><span class="inline-flex items-center gap-1">Unbilled <span class="material-symbols-outlined text-[11px] text-secondary cursor-help normal-case">info</span></span></p>
+<p class="text-xl font-semibold text-on-surface">$2.1M</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Sub-Navigation -->
+<nav id="wt-tabs" class="flex border-b border-outline-variant mb-8 gap-8 overflow-x-auto no-scrollbar">
+<button class="pb-3 border-b-2 border-primary text-primary font-semibold text-sm">Overview</button>
+<button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors">Portfolio</button>
+<button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors">Resources</button>
+<button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors">Financials</button>
+<button class="pb-3 text-secondary hover:text-on-surface text-sm transition-colors flex items-center gap-1">
+                AI Insights
+                <span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</button>
+</nav>
+<!-- Main Content Area -->
+<div class="grid grid-cols-10 gap-8">
+<section id="wt-portfolios" class="col-span-7">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-semibold">Critical Portfolios at Risk</h2>
+<button class="text-primary text-sm font-semibold flex items-center hover:underline">
+                        View all <span class="material-symbols-outlined ml-1">chevron_right</span>
+</button>
+</div>
+<div class="bg-white border border-outline-variant rounded-lg overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant">
+<th class="p-4 text-xs font-semibold text-secondary uppercase">Portfolio Name</th>
+<th class="p-4 text-xs font-semibold text-secondary uppercase">Status</th>
+<th class="p-4 text-xs font-semibold text-secondary uppercase text-center">Risk Level</th>
+<th class="p-4 text-xs font-semibold text-secondary uppercase text-right">Exp. Margin</th>
+<th class="p-4 text-xs font-semibold text-secondary uppercase text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">Cloud Migration Ph II</p>
+<p class="text-xs text-secondary">Global Retail Corp</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[11px] font-semibold rounded-sm">Delayed</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-error"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">22.4%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">Supply Chain AI Ops</p>
+<p class="text-xs text-secondary">LogiLink Industries</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-semibold rounded-sm">In Progress</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">34.8%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">ERP Modernization</p>
+<p class="text-xs text-secondary">Nextera Financial</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-[#fff8e1] text-[#d97706] text-[11px] font-semibold rounded-sm">At Risk</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-[#d97706]"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">18.2%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">Data Lake Platform</p>
+<p class="text-xs text-secondary">Meridian Health</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-tertiary-container text-on-tertiary-container text-[11px] font-semibold rounded-sm">On Track</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">41.5%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">CX Transformation</p>
+<p class="text-xs text-secondary">Apex Telecom</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-error-container text-on-error-container text-[11px] font-semibold rounded-sm">Delayed</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-error"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">15.7%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-lowest transition-colors">
+<td class="p-4">
+<p class="font-semibold text-sm">IoT Fleet Management</p>
+<p class="text-xs text-secondary">TransGlobal Logistics</p>
+</td>
+<td class="p-4">
+<span class="px-2 py-1 bg-[#fff8e1] text-[#d97706] text-[11px] font-semibold rounded-sm">At Risk</span>
+</td>
+<td class="p-4 text-center">
+<span class="inline-block w-2.5 h-2.5 rounded-full bg-[#d97706]"></span>
+</td>
+<td class="p-4 text-right font-medium text-sm">28.3%</td>
+<td class="p-4 text-right">
+<button class="text-secondary hover:text-primary transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section class="col-span-3 space-y-6">
+<h2 id="wt-sales" class="text-xl font-semibold mb-4">Sales Performance</h2>
+<div class="bg-white p-5 rounded-lg border border-outline-variant">
+<p class="text-xs font-semibold text-secondary uppercase mb-4">Target vs Actual</p>
+<div class="flex justify-between items-end mb-2">
+<span class="text-2xl font-semibold">$8.4M</span>
+<span class="text-sm text-secondary">Target $10M</span>
+</div>
+<div class="h-2 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary" style="width: 84%"></div>
+</div>
+</div>
+<div class="bg-white p-5 rounded-lg border border-outline-variant">
+<p class="text-xs font-semibold text-secondary uppercase mb-4">Pipeline Velocity</p>
+<div class="flex items-center gap-4">
+<div class="text-2xl font-semibold">18 Days</div>
+<div class="flex items-end gap-1 h-8">
+<div class="w-2 bg-primary h-[40%]"></div>
+<div class="w-2 bg-primary h-[60%]"></div>
+<div class="w-2 bg-primary h-[30%]"></div>
+<div class="w-2 bg-primary h-[80%]"></div>
+<div class="w-2 bg-primary h-[100%]"></div>
+</div>
+</div>
+<p class="text-xs text-tertiary mt-2 flex items-center">
+<span class="material-symbols-outlined text-[14px] mr-1">trending_down</span>
+                        4 days faster than last month
+                    </p>
+</div>
+<div class="bg-white p-5 rounded-lg border border-outline-variant relative flex flex-col items-center">
+<p class="text-xs font-semibold text-secondary uppercase mb-4 self-start w-full">Win Rate</p>
+<div class="relative w-32 h-32">
+<svg class="w-full h-full transform -rotate-90" viewbox="0 0 100 100">
+<circle class="text-surface-container-high" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary" cx="50" cy="50" fill="transparent" r="45" stroke="currentColor" stroke-dasharray="282.7" stroke-dashoffset="98.9" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex items-center justify-center">
+<span class="text-2xl font-semibold">65%</span>
+</div>
+</div>
+<p class="text-xs text-secondary mt-4 text-center">Exceeding benchmark by 5%</p>
+</div>
+</section>
+</div>
+</div>
+
+<!-- Settings View (hidden by default) -->
+<div id="settings-view" class="hidden">
+  <div class="flex h-[calc(100vh-48px)]">
+    <!-- Settings Sidebar -->
+    <div class="w-64 border-r border-outline-variant bg-white pt-4 px-4 shrink-0">
+      <div class="mb-3 px-1">
+        <input type="text" placeholder="Search settings..." class="w-full px-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-secondary"/>
+      </div>
+      <nav class="space-y-1">
+        <a href="#" onclick="showSettingsSection('notifications')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors bg-surface-container font-medium text-on-surface" data-section="notifications">
+          <span class="material-symbols-outlined text-[20px] text-secondary">notifications</span>
+          Notifications
+        </a>
+        <a href="#" onclick="showSettingsSection('plans')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="plans">
+          <span class="material-symbols-outlined text-[20px] text-[#7c3aed]">credit_card</span>
+          Plans & Billing
+        </a>
+        <a href="#" onclick="showSettingsSection('team')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="team">
+          <span class="material-symbols-outlined text-[20px] text-[#dc2626]">people</span>
+          Team members
+        </a>
+        <a href="#" onclick="showSettingsSection('integrations')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="integrations">
+          <span class="material-symbols-outlined text-[20px] text-[#059669]">extension</span>
+          Integrations
+        </a>
+        <a href="#" onclick="showSettingsSection('security')" class="settings-nav flex items-center gap-3 px-3 py-2.5 text-sm rounded-lg transition-colors hover:bg-surface-container text-secondary" data-section="security">
+          <span class="material-symbols-outlined text-[20px] text-[#d97706]">shield</span>
+          Security
+        </a>
+      </nav>
+    </div>
+
+    <!-- Settings Content -->
+    <div class="flex-1 overflow-y-auto p-8">
+      <!-- Notifications Section -->
+      <div id="settings-notifications" class="settings-section">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="material-symbols-outlined text-[24px] text-secondary">notifications</span>
+          <h2 class="text-xl font-semibold text-on-surface">Notifications</h2>
+        </div>
+
+        <!-- Notify me for header -->
+        <div class="flex items-center border-b border-outline-variant pb-4 mb-6">
+          <div class="flex items-center gap-2 flex-1">
+            <span class="material-symbols-outlined text-[20px] text-secondary">notifications_active</span>
+            <span class="text-sm font-semibold text-on-surface">Notify me for</span>
+          </div>
+          <div class="flex gap-0 w-[300px]">
+            <span class="w-[100px] text-center text-sm font-semibold text-on-surface">Email</span>
+            <span class="w-[100px] text-center text-sm font-semibold text-on-surface">In-App</span>
+            <span class="w-[100px] text-center text-sm font-semibold text-on-surface">Slack</span>
+          </div>
+        </div>
+
+        <!-- Messages Category -->
+        <div class="mb-8">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[20px] text-secondary">forum</span>
+            <h3 class="text-base font-semibold text-on-surface">Messages</h3>
+          </div>
+
+          <div class="space-y-0 divide-y divide-outline-variant">
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">New messages in the documents or tasks that I follow</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Messages mentioning me</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Messages reactions</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Someone replies to my messages</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tasks Category -->
+        <div class="mb-8">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="material-symbols-outlined text-[20px] text-secondary">task_alt</span>
+            <h3 class="text-base font-semibold text-on-surface">Tasks</h3>
+          </div>
+
+          <div class="space-y-0 divide-y divide-outline-variant">
+            <div class="py-3.5">
+              <p class="text-sm font-medium text-on-surface mb-3">New tasks created</p>
+              <div class="space-y-2.5 ml-1">
+                <label class="flex items-center py-2 cursor-pointer">
+                  <input type="radio" name="task-notify" class="w-4 h-4 accent-primary cursor-pointer"/>
+                  <span class="text-sm text-on-surface ml-3">Notify me and follow all tasks created in the projects that I'm a part of</span>
+                </label>
+                <div class="flex items-center py-2">
+                  <label class="flex items-center cursor-pointer flex-1">
+                    <input type="radio" name="task-notify" class="w-4 h-4 accent-primary cursor-pointer" checked/>
+                    <span class="text-sm text-on-surface ml-3">Notify me when new tasks are created in the projects that I'm a part of</span>
+                  </label>
+                  <div class="flex gap-0 w-[300px]">
+                    <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+                    <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                    <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Task assignments</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Task status changes</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer"/></div>
+              </div>
+            </div>
+            <div class="flex items-center py-3.5">
+              <span class="text-sm text-on-surface flex-1">Task due date reminders</span>
+              <div class="flex gap-0 w-[300px]">
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+                <div class="w-[100px] flex justify-center"><input type="checkbox" class="w-4 h-4 rounded border-outline accent-primary cursor-pointer" checked/></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans & Billing Section -->
+      <div id="settings-plans" class="settings-section hidden">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="material-symbols-outlined text-[24px] text-secondary">credit_card</span>
+          <h2 class="text-xl font-semibold text-on-surface">Plans & Billing</h2>
+        </div>
+
+        <!-- Alert Banner -->
+        <div class="bg-error-container border border-error/20 rounded-lg px-5 py-4 mb-6 flex items-start gap-3">
+          <span class="material-symbols-outlined text-error text-[20px] mt-0.5">info</span>
+          <p class="text-sm text-on-surface"><strong>Enterprise plan subscription canceled on 02 Apr 2026.</strong> To continue, <a href="#" class="text-on-surface underline font-semibold">reactivate the subscription</a>.</p>
+        </div>
+
+        <!-- Current Plan -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <span class="text-sm text-secondary">Current plan:</span>
+            <span class="px-2.5 py-0.5 bg-[#e8f5e9] text-[#258750] text-xs font-bold rounded-full">Enterprise</span>
+            <span class="text-sm text-secondary">(billed annually)</span>
+          </div>
+          <p class="text-sm text-secondary">Have a question about pricing or billing? <a href="#" class="text-on-surface underline font-medium">Chat with us</a></p>
+        </div>
+
+        <!-- Billing Info Card -->
+        <div class="border border-outline-variant rounded-lg mb-8 grid grid-cols-2 divide-x divide-outline-variant">
+          <div class="p-5">
+            <p class="text-xs text-secondary mb-1">Send invoices to</p>
+            <p class="text-sm font-semibold text-on-surface mb-4">prasanna@kaartech.com</p>
+            <a href="#" class="text-sm text-primary font-medium hover:underline">Edit emails...</a>
+          </div>
+          <div class="p-5">
+            <p class="text-xs text-secondary mb-2">More options</p>
+            <div class="space-y-1.5">
+              <a href="#" class="block text-sm text-primary font-medium hover:underline">Change payment method...</a>
+              <a href="#" class="block text-sm text-primary font-medium hover:underline">Change plan...</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Invoices Table -->
+        <h3 class="text-base font-semibold text-on-surface mb-4">Invoices</h3>
+        <div class="border border-outline-variant rounded-lg overflow-hidden">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-surface-container-low border-b border-outline-variant">
+                <th class="p-3 text-xs font-semibold text-secondary">Date</th>
+                <th class="p-3 text-xs font-semibold text-secondary">Details</th>
+                <th class="p-3 text-xs font-semibold text-secondary text-center">Licenses</th>
+                <th class="p-3 text-xs font-semibold text-secondary text-right">Amount (USD)</th>
+                <th class="p-3 text-xs font-semibold text-secondary text-center">Status</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant text-sm">
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3 text-secondary">02 Apr 2026</td>
+                <td class="p-3">Enterprise Plan - Annual</td>
+                <td class="p-3 text-center">5</td>
+                <td class="p-3 text-right font-medium">$4,500.00</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">Paid</span></td>
+              </tr>
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3 text-secondary">02 Mar 2026</td>
+                <td class="p-3">Enterprise Plan - Annual</td>
+                <td class="p-3 text-center">5</td>
+                <td class="p-3 text-right font-medium">$4,500.00</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">Paid</span></td>
+              </tr>
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3 text-secondary">02 Feb 2026</td>
+                <td class="p-3">Enterprise Plan - Annual</td>
+                <td class="p-3 text-center">3</td>
+                <td class="p-3 text-right font-medium">$2,700.00</td>
+                <td class="p-3 text-center"><span class="px-2 py-0.5 bg-[#e8f5e9] text-[#258750] text-[10px] font-bold rounded-full">Paid</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Team Members Section -->
+      <div id="settings-team" class="settings-section hidden">
+        <div class="flex items-center gap-3 mb-8">
+          <span class="material-symbols-outlined text-[24px] text-secondary">people</span>
+          <h2 class="text-xl font-semibold text-on-surface">Team members</h2>
+        </div>
+
+        <!-- License Cards -->
+        <div class="border border-outline-variant rounded-lg mb-6 grid grid-cols-3 divide-x divide-outline-variant">
+          <div class="p-5">
+            <p class="text-xs text-secondary mb-1">Total licenses</p>
+            <p class="text-2xl font-bold text-on-surface">5</p>
+            <p class="text-[11px] text-secondary mt-2">Number of licenses purchased, including add-ons.</p>
+          </div>
+          <div class="p-5">
+            <div class="flex justify-between items-start">
+              <p class="text-xs text-secondary mb-1">Available user licenses</p>
+              <span class="text-lg font-bold text-primary">4</span>
+            </div>
+            <p class="text-[11px] text-secondary mt-2">New licenses will be purchased only when the available licenses are exceeded.</p>
+          </div>
+          <div class="p-5 space-y-3">
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-on-surface">Used by kaartech</span>
+              <span class="text-sm font-bold text-primary">1</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-on-surface">Used by Partners</span>
+              <span class="text-sm font-bold text-on-surface">0</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-on-surface">Used by client partners</span>
+              <span class="text-sm font-bold text-on-surface">0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="flex items-center gap-6 border-b border-outline-variant mb-4">
+          <button class="pb-3 border-b-2 border-primary text-primary font-semibold text-sm">Active (3)</button>
+          <button class="pb-3 text-secondary hover:text-on-surface text-sm">Invited</button>
+          <button class="pb-3 text-secondary hover:text-on-surface text-sm">Deactivated</button>
+          <button class="pb-3 text-sm text-on-surface border border-outline-variant rounded-[6px] px-3 py-1 mb-1 hover:bg-surface-container">Filter</button>
+          <div class="ml-auto flex items-center gap-2 pb-2">
+            <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px]">
+              <span class="material-symbols-outlined text-secondary text-[20px]">search</span>
+            </button>
+            <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px]">
+              <span class="material-symbols-outlined text-secondary text-[20px]">upload</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Team Table -->
+        <div class="border border-outline-variant rounded-lg overflow-hidden">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="bg-surface-container-low border-b border-outline-variant">
+                <th class="p-3 text-xs font-semibold text-secondary">Team member (3) <span class="material-symbols-outlined text-[14px] align-middle">arrow_upward</span></th>
+                <th class="p-3 text-xs font-semibold text-secondary">Email</th>
+                <th class="p-3 text-xs font-semibold text-secondary">Role</th>
+                <th class="p-3 text-xs font-semibold text-secondary">Permission</th>
+                <th class="p-3 w-10"></th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant text-sm">
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">PR</div>
+                    <span class="font-medium">Prasanna</span>
+                  </div>
+                </td>
+                <td class="p-3 text-secondary">prasanna@kaartech.com</td>
+                <td class="p-3"><span class="px-2 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">Executive</span></td>
+                <td class="p-3 text-secondary">Account Admin</td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+              </tr>
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PA</div>
+                    <span class="font-medium">Paul</span>
+                  </div>
+                </td>
+                <td class="p-3 text-secondary">sampleuser2@rocketlane.com</td>
+                <td class="p-3"><span class="px-2 py-0.5 border border-[#d97706] text-[#d97706] text-[11px] font-semibold rounded-full">Engineer</span></td>
+                <td class="p-3 text-secondary">Account Admin</td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+              </tr>
+              <tr class="hover:bg-surface-container-lowest">
+                <td class="p-3">
+                  <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">RA</div>
+                    <span class="font-medium">Rachel</span>
+                  </div>
+                </td>
+                <td class="p-3 text-secondary">sampleuser1@rocketlane.com</td>
+                <td class="p-3"><span class="px-2 py-0.5 border border-[#0891b2] text-[#0891b2] text-[11px] font-semibold rounded-full">Customer success</span></td>
+                <td class="p-3 text-secondary">Account Admin</td>
+                <td class="p-3 text-center"><button class="text-secondary hover:text-on-surface"><span class="material-symbols-outlined text-[18px]">more_vert</span></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="settings-integrations" class="settings-section hidden">
+        <h2 class="text-xl font-semibold text-on-surface mb-4">Integrations</h2>
+        <p class="text-sm text-secondary">Connect with Slack, Jira, Google Calendar, and more.</p>
+      </div>
+      <div id="settings-security" class="settings-section hidden">
+        <h2 class="text-xl font-semibold text-on-surface mb-4">Security</h2>
+        <p class="text-sm text-secondary">Manage authentication, SSO, and access controls.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</main>
+
+<!-- Notification Panel Overlay -->
+<div id="notif-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleNotifications()"></div>
+
+<!-- Notification Panel -->
+<aside id="notif-panel" class="fixed top-0 right-0 h-full w-[420px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
+  <!-- Header -->
+  <div class="px-6 pt-5 pb-4 border-b border-outline-variant">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-xl font-semibold text-on-surface">Notifications</h2>
+      <div class="flex items-center gap-1">
+        <button onclick="showSettings('notifications')" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
+          <span class="material-symbols-outlined text-secondary text-[20px]">settings</span>
+        </button>
+        <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
+          <span class="material-symbols-outlined text-secondary text-[20px]">more_horiz</span>
+        </button>
+        <button onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors">
+          <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+        </button>
+      </div>
+    </div>
+    <!-- Tabs -->
+    <div id="notif-tabs" class="flex gap-6 mb-4">
+      <button data-tab="all" class="notif-tab text-sm font-semibold text-primary border-b-2 border-primary pb-1">All</button>
+      <button data-tab="mentioned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Mentioned</button>
+      <button data-tab="assigned" class="notif-tab text-sm text-secondary hover:text-on-surface pb-1 transition-colors border-b-2 border-transparent">Assigned to me</button>
+    </div>
+    <!-- Search & Toggle -->
+    <div class="flex items-center gap-3">
+      <div class="flex-1 relative">
+        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[18px]">search</span>
+        <input id="notif-search" type="text" placeholder="Search notifications by people, boards, and mo..." class="w-full pl-9 pr-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-secondary"/>
+      </div>
+      <label class="flex items-center gap-2 cursor-pointer select-none shrink-0">
+        <div class="relative">
+          <input id="unread-toggle" type="checkbox" class="sr-only peer"/>
+          <div class="w-9 h-5 bg-outline-variant rounded-full peer-checked:bg-primary transition-colors"></div>
+          <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow peer-checked:translate-x-4 transition-transform"></div>
+        </div>
+        <span class="text-xs font-medium text-secondary whitespace-nowrap">Unread only</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Notification List -->
+  <div id="notif-list" class="flex-1 overflow-y-auto">
+    <!-- Today group -->
+    <div class="notif-group" data-group="today">
+      <div class="px-6 pt-4 pb-2 notif-group-header">
+        <p class="text-xs font-semibold text-secondary uppercase tracking-wider">Today</p>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="Sarah Chen" data-board="Finance Dashboard" data-text="Assigned you to Q3 Revenue Forecast">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#7c3aed] flex items-center justify-center text-white text-xs font-semibold">SC</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Sarah Chen</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">person_add</span> Assigned you</span> to "Q3 Revenue Forecast"</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">2h</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <span class="text-xs text-secondary">Finance Dashboard</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="reacted" data-unread="true" data-person="James Wilson" data-board="Sales Pipeline" data-text="Reacted to your update Great progress on the Nordex pipeline">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#2563eb] flex items-center justify-center text-white text-xs font-semibold">JW</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <div class="text-sm">
+                <span class="font-semibold">James Wilson</span> <span class="text-primary font-medium">Reacted</span> &#x1F44D; to your update
+              </div>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">3h</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <p class="text-sm text-secondary mt-0.5 truncate">Great progress on the Nordex pipeline! Let's schedule a review for Friday.</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <span class="text-xs text-secondary">Sales Pipeline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Priya Sharma" data-board="Resource Planning" data-text="Replied to your update Updated the resource allocation for GulfCore">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#059669] flex items-center justify-center text-white text-xs font-semibold">PS</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Priya Sharma</span> <span class="text-secondary"><span class="material-symbols-outlined text-[14px] align-middle">reply</span></span> <span class="text-primary font-medium">Replied</span> to your update</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">5h</span>
+              </div>
+            </div>
+            <p class="text-sm text-secondary mt-0.5 truncate">Updated the resource allocation for GulfCore. We now have 2 more FTEs assigned.</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-secondary">calendar_today</span>
+              <span class="text-xs text-secondary">Resource Planning</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Last 7 Days group -->
+    <div class="notif-group" data-group="week">
+      <div class="px-6 pt-5 pb-2 border-t border-outline-variant notif-group-header">
+        <p class="text-xs font-semibold text-secondary uppercase tracking-wider">Last 7 Days</p>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="assigned" data-unread="true" data-person="David Park" data-board="CRM" data-text="Assigned you to Client Onboarding Acme">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#dc2626] flex items-center justify-center text-white text-xs font-semibold">DP</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">David Park</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">person_add</span> Assigned you</span></p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">2d</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <p class="text-sm text-secondary mt-0.5">to "Client Onboarding – Acme"</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-secondary">calendar_today</span>
+              <span class="text-xs text-secondary">CRM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="replied" data-unread="false" data-person="Lisa Wong" data-board="Summitry" data-text="Replied to your update Yes We spoke yesterday and they are really excited to begin onboarding">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#d97706] flex items-center justify-center text-white text-xs font-semibold">LW</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Lisa Wong</span> <span class="text-primary font-medium">Replied</span> to your update</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">3d</span>
+              </div>
+            </div>
+            <p class="text-sm text-secondary mt-0.5 truncate">Yes! We spoke yesterday and they're really excited to begin onboarding.</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <span class="text-xs text-secondary">Summitry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="subscribed" data-unread="true" data-person="Jeffrey Waters" data-board="ABC Q2 Events" data-text="Subscribed you to the Board ABC Q2 Events">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#0891b2] flex items-center justify-center text-white text-xs font-semibold">JW</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Jeffrey Waters</span> <span class="text-primary font-medium"><span class="material-symbols-outlined text-[14px] align-middle">inventory_2</span> Subscribed you</span> to the Board "ABC Q2 Events"</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">4d</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <span class="text-xs text-secondary">ABC Q2 Events</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="notif-item px-6 py-3 hover:bg-[#edf5ff] transition-colors cursor-pointer border-l-2 border-transparent hover:border-primary" data-type="mentioned" data-unread="true" data-person="Amber Waken" data-board="ABC Q1 Events" data-text="Mentioned you in an update Prasanna can you take lead on assigning teams">
+        <div class="flex gap-3">
+          <div class="w-9 h-9 rounded-full shrink-0 mt-0.5 bg-[#e11d48] flex items-center justify-center text-white text-xs font-semibold">AW</div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between">
+              <p class="text-sm"><span class="font-semibold">Amber Waken</span> <span class="text-primary font-medium">@ Mentioned you</span> in an update</p>
+              <div class="flex items-center gap-2 shrink-0 ml-2">
+                <span class="text-xs text-secondary">4d</span>
+                <span class="unread-dot w-2 h-2 bg-primary rounded-full"></span>
+              </div>
+            </div>
+            <p class="text-sm text-secondary mt-0.5 truncate">@Prasanna can you take lead on assigning teams?</p>
+            <div class="flex items-center gap-1.5 mt-1.5">
+              <span class="material-symbols-outlined text-[14px] text-[#6929c4]">grid_view</span>
+              <span class="text-xs text-secondary">ABC Q1 Events</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty state -->
+    <div id="notif-empty" class="hidden px-6 py-16 text-center">
+      <span class="material-symbols-outlined text-[48px] text-outline mb-3">notifications_off</span>
+      <p class="text-sm text-secondary">No notifications match your filters</p>
+    </div>
+  </div>
+</aside>
+
+<!-- Quick Collab Overlay -->
+<div id="collab-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleCollab()"></div>
+
+<!-- Quick Collab Panel -->
+<aside id="collab-panel" class="fixed top-0 right-0 h-full w-[420px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
+  <!-- Header -->
+  <div class="px-5 pt-4 pb-3 border-b border-outline-variant">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <span class="material-symbols-outlined text-on-surface text-[24px]">forum</span>
+        <div>
+          <h2 class="text-lg font-semibold text-on-surface leading-tight">Quick Collab</h2>
+          <p class="text-xs text-secondary">ABC Corp</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
+          <span class="material-symbols-outlined text-secondary text-[20px]">help_outline</span>
+        </button>
+        <button onclick="toggleCollab()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
+          <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pinned Message -->
+  <div class="px-5 py-2.5 bg-[#fff8f0] border-b border-[#ffd6a5] flex items-center gap-2">
+    <span class="material-symbols-outlined text-[#f5a623] text-[18px]">push_pin</span>
+    <p class="text-sm text-on-surface flex-1 truncate">@JohnSmith I'll have the technical requirements ready by Wednesday</p>
+    <button class="text-xs text-[#f5a623] font-medium hover:underline shrink-0">Unpin</button>
+    <button class="text-secondary hover:text-on-surface ml-1">
+      <span class="material-symbols-outlined text-[16px]">close</span>
+    </button>
+  </div>
+
+  <!-- Chat Messages -->
+  <div class="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+    <!-- Sarah Johnson -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#7c3aed] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">SJ</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Sarah Johnson</span>
+          <span class="text-[10px] text-secondary">2h ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Hey team! I wanted to discuss the proposal timeline for this opportunity.</p>
+      </div>
+    </div>
+
+    <!-- You reply -->
+    <div class="flex items-start gap-2 flex-row-reverse">
+      <div class="w-6 h-6 rounded-full bg-[#0073EA] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>
+      <div class="min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5 justify-end">
+          <span class="text-[10px] text-secondary">1h ago</span>
+          <span class="text-xs font-semibold text-on-surface">You</span>
+        </div>
+        <div class="bg-[#E6F0FF] rounded-lg px-3 py-2 max-w-[280px]">
+          <p class="text-[13px] text-on-surface leading-snug">Perfect! I've scheduled a client call for Thursday to review everything before submission.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aswini Bala -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#f97316] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">AB</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Aswini Bala</span>
+          <span class="text-[10px] text-secondary">6m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Client meeting scheduled for next week to discuss contract terms.</p>
+      </div>
+    </div>
+
+    <!-- You reply with quote -->
+    <div class="flex items-start gap-2 flex-row-reverse">
+      <div class="w-6 h-6 rounded-full bg-[#0073EA] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>
+      <div class="min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5 justify-end">
+          <span class="text-[10px] text-secondary">1h ago</span>
+          <span class="text-xs font-semibold text-on-surface">You</span>
+        </div>
+        <div class="border-l-2 border-[#f97316] pl-2 mb-1">
+          <p class="text-[10px] text-[#f97316] font-medium">Replying to Aswini Bala</p>
+          <p class="text-[10px] text-secondary leading-snug">Client meeting scheduled for next week...</p>
+        </div>
+        <div class="bg-[#E6F0FF] rounded-lg px-3 py-2 max-w-[280px]">
+          <p class="text-[13px] text-on-surface leading-snug">Perfect! I've scheduled a client call for Thursday to review everything before submission.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- David Park -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#dc2626] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">DP</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">David Park</span>
+          <span class="text-[10px] text-secondary">45m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">The GulfCore resource allocation looks tight. Can we pull in 2 more from the bench?</p>
+      </div>
+    </div>
+
+    <!-- You reply -->
+    <div class="flex items-start gap-2 flex-row-reverse">
+      <div class="w-6 h-6 rounded-full bg-[#0073EA] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>
+      <div class="min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5 justify-end">
+          <span class="text-[10px] text-secondary">40m ago</span>
+          <span class="text-xs font-semibold text-on-surface">You</span>
+        </div>
+        <div class="bg-[#E6F0FF] rounded-lg px-3 py-2 max-w-[280px]">
+          <p class="text-[13px] text-on-surface leading-snug">Yes, I've flagged it. Priya is checking availability for next sprint.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priya Sharma -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#059669] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PS</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Priya Sharma</span>
+          <span class="text-[10px] text-secondary">30m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Good news — we have 2 FTEs available from the CloudOps bench starting Monday. I'll assign them to GulfCore.</p>
+      </div>
+    </div>
+
+    <!-- Sarah Johnson -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#7c3aed] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">SJ</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Sarah Johnson</span>
+          <span class="text-[10px] text-secondary">25m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Also, the Nordex pipeline review is confirmed for Friday 2pm. <span class="text-primary font-medium">@Prasanna</span> can you prep the deck?</p>
+      </div>
+    </div>
+
+    <!-- Last Read divider -->
+    <div class="flex items-center gap-3 py-1">
+      <div class="flex-1 h-[1px] bg-outline-variant"></div>
+      <span class="text-[10px] text-secondary font-medium">Last Read</span>
+      <div class="flex-1 h-[1px] bg-outline-variant"></div>
+    </div>
+
+    <!-- Prasanna -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#06b6d4] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Prasanna</span>
+          <span class="text-[10px] text-secondary">20m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug"><span class="text-primary font-medium">@JohnSmith</span> <span class="text-primary font-medium">@aswini</span> I'll have the requirements ready by Wednesday.</p>
+      </div>
+    </div>
+
+    <!-- Aswini reply -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#f97316] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">AB</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Aswini Bala</span>
+          <span class="text-[10px] text-secondary">15m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Thanks <span class="text-primary font-medium">@Prasanna</span>! Also shared the updated SOW in the project docs folder.</p>
+      </div>
+    </div>
+
+    <!-- David Park -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#dc2626] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">DP</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">David Park</span>
+          <span class="text-[10px] text-secondary">10m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Quick update — Cloud Migration Ph II kickoff moved to next Tuesday. Updated the Gantt chart.</p>
+      </div>
+    </div>
+
+    <!-- You reply -->
+    <div class="flex items-start gap-2 flex-row-reverse">
+      <div class="w-6 h-6 rounded-full bg-[#0073EA] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PR</div>
+      <div class="min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5 justify-end">
+          <span class="text-[10px] text-secondary">5m ago</span>
+          <span class="text-xs font-semibold text-on-surface">You</span>
+        </div>
+        <div class="bg-[#E6F0FF] rounded-lg px-3 py-2 max-w-[280px]">
+          <p class="text-[13px] text-on-surface leading-snug">Got it. I'll update the stakeholder deck and send out the revised timeline by EOD.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priya -->
+    <div class="flex items-start gap-2">
+      <div class="w-6 h-6 rounded-full bg-[#059669] flex items-center justify-center text-white shrink-0 mt-0.5" style="font-size:9px;font-weight:600;">PS</div>
+      <div class="flex-1 min-w-0">
+        <div class="flex items-baseline gap-2 mb-0.5">
+          <span class="text-xs font-semibold text-on-surface">Priya Sharma</span>
+          <span class="text-[10px] text-secondary">2m ago</span>
+        </div>
+        <p class="text-[13px] text-on-surface leading-snug">Utilization report for this week is attached. We're at 83% — slightly above target. &#x1F389;</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Input -->
+  <div class="px-5 py-3 border-t border-outline-variant">
+    <div class="flex items-center gap-2 mb-2">
+      <span class="text-xs text-secondary">Send-</span>
+      <button class="flex items-center gap-1 text-xs text-secondary hover:text-on-surface">
+        <span class="material-symbols-outlined text-[14px]">alternate_email</span>
+        Privately
+        <span class="material-symbols-outlined text-[14px]">expand_more</span>
+      </button>
+    </div>
+    <div class="flex items-center gap-2 bg-surface-container-low rounded-full px-2 py-2.5">
+      <button class="text-secondary hover:text-on-surface">
+        <span class="material-symbols-outlined text-[20px]">sentiment_satisfied</span>
+      </button>
+      <input type="text" placeholder="Type a message... Use @ to mention" class="flex-1 bg-transparent text-sm focus:outline-none placeholder:text-secondary"/>
+      <button class="text-secondary hover:text-on-surface">
+        <span class="material-symbols-outlined text-[20px]">attach_file</span>
+      </button>
+      <button class="w-8 h-8 bg-[#f97316] hover:bg-[#ea580c] rounded-full flex items-center justify-center transition-colors">
+        <span class="material-symbols-outlined text-white text-[18px]">arrow_upward</span>
+      </button>
+    </div>
+    <p class="text-[11px] text-secondary mt-2 flex items-center gap-1">
+      <span class="material-symbols-outlined text-[14px]">alternate_email</span>
+      Use @ to mention team members
+    </p>
+  </div>
+</aside>
+
+<!-- What's New Overlay -->
+<div id="whatsnew-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleWhatsNew()"></div>
+
+<!-- What's New Panel -->
+<aside id="whatsnew-panel" class="fixed top-0 right-0 h-full w-[420px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
+  <div class="px-6 pt-5 pb-4 border-b border-outline-variant flex items-center justify-between">
+    <h2 class="text-xl font-semibold text-on-surface">What's new</h2>
+    <button onclick="toggleWhatsNew()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
+      <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+    </button>
+  </div>
+
+  <div class="flex-1 overflow-y-auto px-6 py-4">
+    <!-- Release 1: Automations -->
+    <div class="pb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">New release</span>
+        <span class="text-xs text-secondary">November 6, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Critical status card -->
+        <div class="w-28 h-24 bg-[#eef2f8] rounded-lg shrink-0 p-2.5 flex flex-col justify-between overflow-hidden border border-[#dde3ed]">
+          <div class="flex items-center gap-1">
+            <svg width="8" height="8" viewBox="0 0 8 8"><rect width="8" height="8" rx="1" fill="#1a1a2e"/><rect x="1" y="2" width="2" height="4" fill="#42be65"/><rect x="4" y="1" width="2" height="5" fill="#42be65"/></svg>
+            <span style="font-size:7px;font-weight:700;color:#1a1a2e;">Critical</span>
+          </div>
+          <div>
+            <p style="font-size:16px;font-weight:700;color:#1a1a2e;line-height:1;">97%</p>
+            <p style="font-size:7px;color:#6B6F8A;">succeeded</p>
+          </div>
+          <p style="font-size:6px;color:#9DA0AE;">7 failures out of 240 runs</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">Control automations & workflows across your entire account</h3>
+          <p class="text-xs text-secondary mb-2">Get full visibility into everything that's automated in your organization with the new Autopilot Hub.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Release 2: Capacity Planner -->
+    <div class="py-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">New release</span>
+        <span class="text-xs text-secondary">October 22, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Capacity widget -->
+        <div class="w-28 h-24 bg-[#1a1a2e] rounded-lg shrink-0 p-2.5 flex flex-col justify-between overflow-hidden">
+          <div class="flex items-center gap-1.5">
+            <span style="font-size:7px;color:#fff;background:#0073EA;padding:1px 4px;border-radius:3px;font-weight:600;">Capacity</span>
+            <span style="font-size:7px;color:#f5a623;font-weight:700;">210%</span>
+          </div>
+          <div class="space-y-1">
+            <div class="flex justify-between" style="font-size:6px;color:#9DA0AE;"><span>Sprint scope</span><span class="font-bold text-white">24 SP</span></div>
+            <div class="flex justify-between" style="font-size:6px;color:#9DA0AE;"><span>Team capacity</span><span class="font-bold text-white">11 SP</span></div>
+          </div>
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-[#42be65]"></div><span style="font-size:5px;color:#9DA0AE;">David Shaw</span><span style="font-size:6px;color:#fff;font-weight:600;margin-left:auto;">3/5</span></div>
+            <div class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-[#f5a623]"></div><span style="font-size:5px;color:#9DA0AE;">Lucas H.</span><span style="font-size:6px;color:#fff;font-weight:600;margin-left:auto;">3/3</span></div>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">Accurately plan your team's workload with Capacity Planner</h3>
+          <p class="text-xs text-secondary mb-2">Get a data-driven view of workload, velocity, availability, and sprint scope to balance resources.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Release 3: Tasks view -->
+    <div class="py-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">New release</span>
+        <span class="text-xs text-secondary">October 22, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Tasks gantt -->
+        <div class="w-28 h-24 bg-[#eef2f8] rounded-lg shrink-0 p-2 flex flex-col justify-between overflow-hidden border border-[#dde3ed]">
+          <div class="space-y-1.5 flex-1 flex flex-col justify-center">
+            <div class="flex items-center gap-1"><div class="w-6 h-1.5 bg-[#0073EA] rounded-sm"></div><div class="w-4 h-1.5 bg-[#0073EA] rounded-sm"></div><div class="w-5 h-1.5 bg-[#42be65] rounded-sm"></div></div>
+            <div class="flex items-center gap-1"><div class="w-8 h-1.5 bg-[#0073EA] rounded-sm"></div><div class="w-3 h-1.5 bg-[#f5a623] rounded-sm"></div></div>
+            <div class="flex items-center gap-1"><div class="w-4 h-1.5 bg-[#6B6F8A] rounded-sm"></div><div class="w-6 h-1.5 bg-[#f5a623] rounded-sm"></div><div class="w-3 h-1.5 bg-[#da1e28] rounded-sm"></div></div>
+          </div>
+          <div class="flex items-center gap-1 mt-1">
+            <span class="material-symbols-outlined" style="font-size:10px;color:#525252;">check_box_outline_blank</span>
+            <span style="font-size:7px;font-weight:600;color:#1a1a2e;">Tasks</span>
+          </div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">AI-powered project insights now available</h3>
+          <p class="text-xs text-secondary mb-2">Leverage AI to get smart recommendations on resource allocation and project risk assessment.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Release 4: Files view -->
+    <div class="py-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-[#258750] text-[#258750] text-[11px] font-semibold rounded-full">Improvement</span>
+        <span class="text-xs text-secondary">October 15, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Files column -->
+        <div class="w-28 h-24 bg-white rounded-lg shrink-0 p-2.5 flex flex-col overflow-hidden border border-[#dde3ed]">
+          <p style="font-size:8px;font-weight:700;color:#1a1a2e;margin-bottom:3px;">Files</p>
+          <div style="font-size:6px;color:#9DA0AE;border:1px solid #E6E9EF;border-radius:3px;padding:2px 4px;margin-bottom:3px;">Choose file column value</div>
+          <div style="font-size:6px;color:#9DA0AE;border:1px solid #E6E9EF;border-radius:3px;padding:2px 4px;margin-bottom:4px;display:flex;justify-content:space-between;"><span>Search</span><span>&#x1F50D;</span></div>
+          <div class="flex items-center gap-1 mb-1"><div class="w-2.5 h-2.5 rounded-sm bg-[#da1e28]"></div><span style="font-size:6px;color:#525252;">1 &middot; When update created</span></div>
+          <div style="font-size:6px;color:#0073EA;font-weight:600;margin-top:auto;">File</div>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">New file column type for document management</h3>
+          <p class="text-xs text-secondary mb-2">Attach and organize files directly within your project boards. Filter, search and preview documents inline.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Release 5: Integrations -->
+    <div class="py-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-primary text-primary text-[11px] font-semibold rounded-full">New release</span>
+        <span class="text-xs text-secondary">October 8, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Donut chart -->
+        <div class="w-28 h-24 bg-[#eef2f8] rounded-lg shrink-0 p-2 flex items-center justify-center overflow-hidden border border-[#dde3ed]">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#e0e0e0" stroke-width="6"/>
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#42be65" stroke-width="6" stroke-dasharray="100 38.2" stroke-dashoffset="0" transform="rotate(-90 28 28)"/>
+            <circle cx="28" cy="28" r="22" fill="none" stroke="#da1e28" stroke-width="6" stroke-dasharray="20 118.2" stroke-dashoffset="-100" transform="rotate(-90 28 28)"/>
+            <text x="28" y="26" text-anchor="middle" style="font-size:9px;font-weight:700;fill:#1a1a2e;">72%</text>
+            <text x="28" y="34" text-anchor="middle" style="font-size:5px;fill:#6B6F8A;">synced</text>
+          </svg>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">New integrations: Slack, Jira & Google Calendar</h3>
+          <p class="text-xs text-secondary mb-2">Sync your project updates, tickets, and meetings seamlessly across your favorite tools.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="h-[1px] bg-outline-variant"></div>
+
+    <!-- Release 6: Performance -->
+    <div class="pt-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="px-2.5 py-0.5 border border-[#258750] text-[#258750] text-[11px] font-semibold rounded-full">Improvement</span>
+        <span class="text-xs text-secondary">September 28, 2025</span>
+      </div>
+      <div class="flex gap-4">
+        <!-- Mini UI: Speed gauge -->
+        <div class="w-28 h-24 bg-white rounded-lg shrink-0 p-2 flex flex-col items-center justify-center overflow-hidden border border-[#dde3ed]">
+          <span class="material-symbols-outlined" style="font-size:28px;color:#0073EA;">speed</span>
+          <p style="font-size:8px;font-weight:700;color:#1a1a2e;margin-top:2px;">3x faster</p>
+          <p style="font-size:6px;color:#6B6F8A;">load times</p>
+        </div>
+        <div>
+          <h3 class="text-sm font-semibold text-on-surface mb-1">Dashboard performance boost — 3x faster load times</h3>
+          <p class="text-xs text-secondary mb-2">Optimized data fetching and caching for all dashboard widgets. Reports now load instantly.</p>
+          <a href="#" class="text-xs text-primary font-medium hover:underline">Read more</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Create CTA Overlay -->
+<div id="cta-overlay" class="fixed inset-0 bg-black/20 z-[70] hidden transition-opacity duration-300 opacity-0" onclick="toggleCreateCTA()"></div>
+
+<!-- Create CTA Panel -->
+<aside id="cta-panel" class="fixed top-0 right-0 h-full w-[400px] bg-white z-[80] shadow-2xl border-l border-outline-variant translate-x-full transition-transform duration-300 ease-[cubic-bezier(0.2,0,0.38,0.9)] flex flex-col">
+  <!-- Header -->
+  <div class="px-6 pt-5 pb-4 border-b border-outline-variant flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+        <span class="material-symbols-outlined text-primary text-[18px]">add_task</span>
+      </div>
+      <h2 class="text-lg font-semibold text-on-surface">Create New CTA</h2>
+    </div>
+    <button onclick="toggleCreateCTA()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-full transition-colors">
+      <span class="material-symbols-outlined text-secondary text-[20px]">close</span>
+    </button>
+  </div>
+
+  <!-- Form -->
+  <div class="flex-1 overflow-y-auto px-6 py-5 space-y-5">
+    <!-- CTA ID & Module -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="text-xs font-semibold text-on-surface mb-1.5 block">CTA ID <span class="text-error">*</span></label>
+        <input type="text" value="CTA-49" class="w-full px-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary" readonly/>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface mb-1.5 block">Module</label>
+        <div class="carbon-dropdown relative" data-value="Timesheet">
+          <button type="button" class="carbon-dropdown-btn w-full h-10 px-3 text-sm border border-[#C5C7D4] rounded-md bg-[#F6F7FB] text-left flex items-center justify-between cursor-pointer hover:bg-[#e8e8e8] transition-colors" onclick="toggleCarbonDropdown(this.parentElement)">
+            <span class="carbon-dropdown-label text-on-surface">Timesheet</span>
+            <span class="material-symbols-outlined text-[18px] text-secondary transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="carbon-dropdown-menu hidden absolute top-full left-0 w-full bg-white border border-[#C5C7D4] shadow-md z-[10] max-h-[200px] overflow-y-auto">
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer flex items-center justify-between" data-val="Timesheet" onclick="selectCarbonItem(this)">Timesheet<span class="material-symbols-outlined text-[16px] text-primary">check</span></div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Project" onclick="selectCarbonItem(this)">Project</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Finance" onclick="selectCarbonItem(this)">Finance</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Resource" onclick="selectCarbonItem(this)">Resource</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="CRM" onclick="selectCarbonItem(this)">CRM</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Description -->
+    <div>
+      <label class="text-xs font-semibold text-on-surface mb-1.5 block">CTA Description <span class="text-error">*</span></label>
+      <textarea placeholder="Enter description..." rows="3" class="w-full px-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary resize-none placeholder:text-secondary"></textarea>
+    </div>
+
+    <!-- Due Date & Assignee -->
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="text-xs font-semibold text-on-surface mb-1.5 block">Due Date <span class="text-error">*</span></label>
+        <div class="relative">
+          <input type="date" class="w-full px-3 py-2 text-sm border border-outline-variant rounded-[6px] bg-surface-container-lowest focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary"/>
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-on-surface mb-1.5 block">Assignee <span class="text-error">*</span></label>
+        <div class="carbon-dropdown relative" data-value="">
+          <button type="button" class="carbon-dropdown-btn w-full h-10 px-3 text-sm border border-[#C5C7D4] rounded-md bg-[#F6F7FB] text-left flex items-center justify-between cursor-pointer hover:bg-[#e8e8e8] transition-colors" onclick="toggleCarbonDropdown(this.parentElement)">
+            <span class="carbon-dropdown-label text-secondary">Select</span>
+            <span class="material-symbols-outlined text-[18px] text-secondary transition-transform duration-200">expand_more</span>
+          </button>
+          <div class="carbon-dropdown-menu hidden absolute top-full left-0 w-full bg-white border border-[#C5C7D4] shadow-md z-[10] max-h-[200px] overflow-y-auto">
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Prasanna" onclick="selectCarbonItem(this)">Prasanna</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Sarah Chen" onclick="selectCarbonItem(this)">Sarah Chen</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="James Wilson" onclick="selectCarbonItem(this)">James Wilson</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="David Park" onclick="selectCarbonItem(this)">David Park</div>
+            <div class="carbon-dropdown-item px-3 py-2.5 text-sm text-on-surface hover:bg-[#EDF0F7] cursor-pointer" data-val="Priya Sharma" onclick="selectCarbonItem(this)">Priya Sharma</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Priority -->
+    <div>
+      <label class="text-xs font-semibold text-on-surface mb-2.5 block">Priority</label>
+      <div class="flex items-center gap-1">
+        <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-full cursor-pointer border border-transparent hover:border-outline-variant transition-colors">
+          <input type="radio" name="priority" value="high" class="sr-only peer"/>
+          <span class="w-2.5 h-2.5 rounded-full bg-error"></span>
+          <span class="text-sm text-secondary peer-checked:text-on-surface peer-checked:font-medium">High</span>
+        </label>
+        <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-full cursor-pointer border border-primary bg-primary/5 transition-colors">
+          <input type="radio" name="priority" value="medium" class="sr-only" checked/>
+          <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+          <span class="text-sm text-primary font-medium">Medium</span>
+        </label>
+        <label class="flex items-center gap-1.5 px-3 py-1.5 rounded-full cursor-pointer border border-transparent hover:border-outline-variant transition-colors">
+          <input type="radio" name="priority" value="low" class="sr-only peer"/>
+          <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+          <span class="text-sm text-secondary peer-checked:text-on-surface peer-checked:font-medium">Low</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Tags -->
+    <div>
+      <label class="text-xs font-semibold text-on-surface mb-2 block">Tags</label>
+      <button class="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors">
+        <span class="material-symbols-outlined text-[18px]">add_circle</span>
+        Add Tags
+      </button>
+    </div>
+
+    <!-- Attachment -->
+    <div>
+      <label class="text-xs font-semibold text-on-surface mb-2 block">Attachment</label>
+      <button class="flex items-center gap-2 text-sm text-secondary hover:text-on-surface transition-colors">
+        <span class="material-symbols-outlined text-[18px]">attach_file</span>
+        Add Attachment
+      </button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="px-6 py-4 border-t border-outline-variant flex justify-end">
+    <button class="px-5 py-2.5 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg flex items-center gap-2 transition-colors shadow-sm">
+      Create
+      <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+    </button>
+  </div>
+</aside>
+
+<script>
+// --- Sidebar expand/collapse ---
+let sidebarExpanded = false;
+
+// Load pin state from localStorage
+(function initPins() {
+  const saved = localStorage.getItem('kebs-pinned-apps');
+  if (saved) {
+    const pinned = JSON.parse(saved);
+    document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+      const name = item.dataset.name;
+      if (name in pinned) {
+        item.dataset.pinned = pinned[name] ? 'true' : 'false';
+        const icon = item.querySelector('.pin-icon .material-symbols-outlined');
+        if (icon) icon.style.fontVariationSettings = pinned[name] ? "'FILL' 1" : "'FILL' 0";
+      }
+    });
+  }
+  applyCollapsedVisibility();
+})();
+
+function savePins() {
+  const pins = {};
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    pins[item.dataset.name] = item.dataset.pinned === 'true';
+  });
+  localStorage.setItem('kebs-pinned-apps', JSON.stringify(pins));
+}
+
+function togglePin(item) {
+  const isPinned = item.dataset.pinned === 'true';
+  item.dataset.pinned = isPinned ? 'false' : 'true';
+  const icon = item.querySelector('.pin-icon .material-symbols-outlined');
+  if (icon) icon.style.fontVariationSettings = isPinned ? "'FILL' 0" : "'FILL' 1";
+  savePins();
+}
+
+function applyCollapsedVisibility() {
+  if (sidebarExpanded) return;
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    item.style.display = item.dataset.pinned === 'true' ? '' : 'none';
+  });
+}
+
+// Active nav state
+function setActiveNav(el) {
+  const curTheme = localStorage.getItem('kebs-theme') || 'dark';
+  const resolved = curTheme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : curTheme;
+  const isLight = resolved === 'light';
+  const inactiveColor = isLight ? '#676879' : '#9DA0AE';
+  const activeColor = isLight ? '#0073EA' : '#fff';
+
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    item.classList.remove('nav-active');
+    item.style.color = inactiveColor;
+    item.querySelectorAll('.nav-label-small, .nav-label-full').forEach(l => l.style.color = '');
+  });
+  el.classList.add('nav-active');
+  el.querySelectorAll('.nav-label-small, .nav-label-full').forEach(l => l.style.setProperty('color', activeColor, 'important'));
+}
+
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const header = document.querySelector('header.fixed');
+  const main = document.querySelector('main');
+  const search = document.getElementById('sidebar-search');
+  const sidebarLabels = document.querySelectorAll('.sidebar-label');
+  const smallLabels = document.querySelectorAll('.nav-label-small');
+  const fullLabels = document.querySelectorAll('.nav-label-full');
+  const navItems = document.querySelectorAll('.sidebar-nav-item');
+  const categories = document.querySelectorAll('.sidebar-category');
+  const pinIcons = document.querySelectorAll('.pin-icon');
+  const nav = document.getElementById('sidebar-nav');
+  const appsBtn = document.getElementById('apps-nav');
+  const quickActions = document.getElementById('sidebar-quickactions');
+
+  sidebarExpanded = !sidebarExpanded;
+
+  if (sidebarExpanded) {
+    sidebar.classList.add('expanded');
+    header.classList.add('header-expanded');
+    main.classList.add('main-expanded');
+    quickActions.classList.remove('hidden');
+    search.classList.remove('hidden');
+    nav.classList.remove('overflow-hidden');
+    nav.classList.add('overflow-y-auto');
+    sidebarLabels.forEach(l => l.classList.remove('hidden'));
+    smallLabels.forEach(l => l.classList.add('hidden'));
+    fullLabels.forEach(l => l.classList.remove('hidden'));
+    categories.forEach(c => c.classList.remove('hidden'));
+    pinIcons.forEach(p => p.classList.remove('hidden'));
+    // Show all items in expanded mode
+    navItems.forEach(item => {
+      item.style.display = '';
+    });
+    // Apps button row mode
+    appsBtn.classList.remove('flex-col', 'items-center', 'justify-center');
+    appsBtn.classList.add('flex-row', 'items-center', 'gap-3', 'px-4');
+    appsBtn.querySelectorAll('.nav-label-small').forEach(l => l.classList.add('hidden'));
+    appsBtn.querySelectorAll('.nav-label-full').forEach(l => l.classList.remove('hidden'));
+  } else {
+    sidebar.classList.remove('expanded');
+    header.classList.remove('header-expanded');
+    main.classList.remove('main-expanded');
+    quickActions.classList.add('hidden');
+    search.classList.add('hidden');
+    nav.classList.remove('overflow-y-auto');
+    nav.classList.add('overflow-hidden');
+    sidebarLabels.forEach(l => l.classList.add('hidden'));
+    smallLabels.forEach(l => l.classList.remove('hidden'));
+    fullLabels.forEach(l => l.classList.add('hidden'));
+    categories.forEach(c => c.classList.add('hidden'));
+    pinIcons.forEach(p => p.classList.add('hidden'));
+    navItems.forEach(item => {
+      item.style.display = '';
+    });
+    // Apps button back to column
+    appsBtn.classList.remove('flex-row', 'gap-3', 'px-4');
+    appsBtn.classList.add('flex-col', 'items-center', 'justify-center');
+    appsBtn.querySelectorAll('.nav-label-small').forEach(l => l.classList.remove('hidden'));
+    appsBtn.querySelectorAll('.nav-label-full').forEach(l => l.classList.add('hidden'));
+    // Reset search
+    const searchInput = search.querySelector('input');
+    if (searchInput) searchInput.value = '';
+    // Apply pinned visibility
+    applyCollapsedVisibility();
+  }
+}
+
+function filterSidebarApps(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    const name = (item.dataset.name || '').toLowerCase();
+    const cat = (item.dataset.cat || '').toLowerCase();
+    item.style.display = (!q || name.includes(q) || cat.includes(q)) ? '' : 'none';
+  });
+  // Hide category headers with no visible children
+  document.querySelectorAll('.sidebar-category').forEach(cat => {
+    const nextItems = [];
+    let el = cat.nextElementSibling;
+    while (el && !el.classList.contains('sidebar-category') && el.id !== 'apps-nav') {
+      if (el.classList.contains('sidebar-nav-item')) nextItems.push(el);
+      el = el.nextElementSibling;
+    }
+    const hasVisible = nextItems.some(i => i.style.display !== 'none');
+    cat.style.display = hasVisible ? '' : 'none';
+  });
+}
+
+// Hover submenu for sidebar (works in both collapsed and expanded)
+(function() {
+  let activeFlyout = null;
+  let activeItem = null;
+  let closeTimer = null;
+
+  function showFlyout(item) {
+    const subs = (item.dataset.subs || '').split(',').filter(Boolean);
+    if (!subs.length) return;
+
+    // Same item, keep existing flyout
+    if (activeItem === item && activeFlyout) return;
+
+    // Remove old flyout instantly
+    if (activeFlyout) { activeFlyout.remove(); activeFlyout = null; }
+    clearTimeout(closeTimer);
+    activeItem = item;
+
+    const rect = item.getBoundingClientRect();
+    const sidebar = document.getElementById('sidebar');
+    const sidebarRight = sidebar.getBoundingClientRect().right;
+
+    // Theme-aware flyout colors
+    const curTheme = localStorage.getItem('kebs-theme') || 'dark';
+    const resolved = curTheme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : curTheme;
+    const isLight = resolved === 'light';
+    const flyBg = isLight ? '#fff' : '#1E1F2B';
+    const flyBorder = isLight ? '#E6E9EF' : '#3D3F52';
+    const flyText = isLight ? '#323338' : '#D5D8E8';
+    const flyTextSec = isLight ? '#676879' : '#6B6F8A';
+    const flyHover = isLight ? '#F6F7FB' : '#292B3D';
+    const flyShadow = isLight ? '0 4px 16px rgba(0,0,0,0.1)' : '0 4px 16px rgba(0,0,0,0.3)';
+
+    const flyout = document.createElement('div');
+    flyout.className = 'dynamic-flyout';
+    flyout.style.cssText = `position:fixed;left:${sidebarRight + 2}px;top:${rect.top}px;width:192px;background:${flyBg};border:1px solid ${flyBorder};box-shadow:${flyShadow};border-radius:0 8px 8px 0;display:flex;flex-direction:column;padding:12px;z-index:100;font-family:'Poppins',sans-serif;`;
+
+    // Clamp to viewport bottom
+    const maxTop = window.innerHeight - (subs.length * 34 + 40);
+    if (rect.top > maxTop) flyout.style.top = maxTop + 'px';
+
+    const title = document.createElement('span');
+    title.style.cssText = `font-size:10px;font-weight:700;color:${flyTextSec};text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;`;
+    title.textContent = item.dataset.name;
+    flyout.appendChild(title);
+
+    subs.forEach(sub => {
+      const a = document.createElement('a');
+      a.href = '#';
+      a.style.cssText = `display:flex;align-items:center;padding:6px 8px;font-size:13px;color:${flyText};border-radius:6px;text-decoration:none;transition:background 0.15s;`;
+      a.textContent = sub.trim();
+      a.addEventListener('mouseenter', () => a.style.background = flyHover);
+      a.addEventListener('mouseleave', () => a.style.background = 'transparent');
+      flyout.appendChild(a);
+    });
+
+    flyout.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+    flyout.addEventListener('mouseleave', () => scheduleDismiss());
+
+    document.body.appendChild(flyout);
+    activeFlyout = flyout;
+  }
+
+  function scheduleDismiss() {
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => {
+      if (activeFlyout) { activeFlyout.remove(); activeFlyout = null; activeItem = null; }
+    }, 400);
+  }
+
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    item.addEventListener('mouseenter', () => {
+      clearTimeout(closeTimer);
+      showFlyout(item);
+    });
+    item.addEventListener('mouseleave', () => scheduleDismiss());
+  });
+
+  // Dismiss when leaving sidebar entirely
+  document.getElementById('sidebar').addEventListener('mouseleave', () => scheduleDismiss());
+})();
+
+// Toggle panel open/close
+function toggleNotifications() {
+  const panel = document.getElementById('notif-panel');
+  const overlay = document.getElementById('notif-overlay');
+  const isOpen = !panel.classList.contains('translate-x-full');
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  } else {
+    // Close collab if open
+    const collabPanel = document.getElementById('collab-panel');
+    if (!collabPanel.classList.contains('translate-x-full')) toggleCollab();
+    // Reset filters on open
+    document.getElementById('notif-search').value = '';
+    document.getElementById('unread-toggle').checked = false;
+    activeTab = 'all';
+    document.querySelectorAll('.notif-tab').forEach(b => {
+      b.classList.remove('text-primary', 'font-semibold', 'border-primary');
+      b.classList.add('text-secondary', 'border-transparent');
+    });
+    const allTab = document.querySelector('[data-tab="all"]');
+    allTab.classList.remove('text-secondary', 'border-transparent');
+    allTab.classList.add('text-primary', 'font-semibold', 'border-primary');
+    filterNotifications();
+
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      overlay.classList.remove('opacity-0');
+      panel.classList.remove('translate-x-full');
+    });
+  }
+}
+
+// --- Page navigation ---
+function showDashboard() {
+  document.getElementById('dashboard-view').classList.remove('hidden');
+  document.getElementById('settings-view').classList.add('hidden');
+  // Update header title
+  document.querySelector('header h2').textContent = 'Command Center';
+}
+
+function showSettings(section) {
+  document.getElementById('dashboard-view').classList.add('hidden');
+  document.getElementById('settings-view').classList.remove('hidden');
+  document.querySelector('header h2').textContent = 'Settings';
+  // Set Settings nav item active
+  const settingsNav = document.querySelector('[data-name="settings"]');
+  if (settingsNav) setActiveNav(settingsNav);
+  // Close any open panels
+  document.getElementById('user-menu').classList.add('hidden');
+  if (!document.getElementById('notif-panel').classList.contains('translate-x-full')) toggleNotifications();
+  if (!document.getElementById('collab-panel').classList.contains('translate-x-full')) toggleCollab();
+  if (!document.getElementById('whatsnew-panel').classList.contains('translate-x-full')) toggleWhatsNew();
+  if (section) showSettingsSection(section);
+}
+
+function showSettingsSection(section) {
+  document.querySelectorAll('.settings-section').forEach(s => s.classList.add('hidden'));
+  const target = document.getElementById('settings-' + section);
+  if (target) target.classList.remove('hidden');
+  // Update sidebar nav active state
+  document.querySelectorAll('.settings-nav').forEach(a => {
+    a.classList.remove('bg-surface-container', 'font-medium', 'text-on-surface');
+    a.classList.add('text-secondary');
+  });
+  const activeNav = document.querySelector('.settings-nav[data-section="' + section + '"]');
+  if (activeNav) {
+    activeNav.classList.add('bg-surface-container', 'font-medium', 'text-on-surface');
+    activeNav.classList.remove('text-secondary');
+  }
+}
+
+// --- Carbon Dropdown ---
+function toggleCarbonDropdown(dropdown) {
+  const menu = dropdown.querySelector('.carbon-dropdown-menu');
+  const chevron = dropdown.querySelector('.carbon-dropdown-btn .material-symbols-outlined');
+  const isOpen = !menu.classList.contains('hidden');
+
+  // Close all other dropdowns first
+  document.querySelectorAll('.carbon-dropdown').forEach(d => {
+    if (d !== dropdown) {
+      d.querySelector('.carbon-dropdown-menu').classList.add('hidden');
+      d.querySelector('.carbon-dropdown-btn .material-symbols-outlined').style.transform = '';
+      d.querySelector('.carbon-dropdown-btn').classList.remove('border-primary');
+      d.querySelector('.carbon-dropdown-btn').classList.add('border-[#C5C7D4]');
+    }
+  });
+
+  if (isOpen) {
+    menu.classList.add('hidden');
+    chevron.style.transform = '';
+    dropdown.querySelector('.carbon-dropdown-btn').classList.remove('border-primary');
+    dropdown.querySelector('.carbon-dropdown-btn').classList.add('border-[#C5C7D4]');
+  } else {
+    menu.classList.remove('hidden');
+    chevron.style.transform = 'rotate(180deg)';
+    dropdown.querySelector('.carbon-dropdown-btn').classList.add('border-primary');
+    dropdown.querySelector('.carbon-dropdown-btn').classList.remove('border-[#C5C7D4]');
+  }
+}
+
+function selectCarbonItem(item) {
+  const dropdown = item.closest('.carbon-dropdown');
+  const label = dropdown.querySelector('.carbon-dropdown-label');
+  const val = item.dataset.val;
+
+  // Update value and label
+  dropdown.dataset.value = val;
+  label.textContent = val;
+  label.classList.remove('text-secondary');
+  label.classList.add('text-on-surface');
+
+  // Update checkmarks
+  dropdown.querySelectorAll('.carbon-dropdown-item').forEach(i => {
+    const existing = i.querySelector('.material-symbols-outlined');
+    if (existing) existing.remove();
+    if (i.dataset.val === val) {
+      const check = document.createElement('span');
+      check.className = 'material-symbols-outlined text-[16px] text-primary';
+      check.textContent = 'check';
+      i.appendChild(check);
+    }
+  });
+
+  // Close
+  toggleCarbonDropdown(dropdown);
+}
+
+// Close Carbon dropdowns when clicking outside
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.carbon-dropdown')) {
+    document.querySelectorAll('.carbon-dropdown').forEach(d => {
+      d.querySelector('.carbon-dropdown-menu').classList.add('hidden');
+      const chevron = d.querySelector('.carbon-dropdown-btn .material-symbols-outlined');
+      if (chevron) chevron.style.transform = '';
+      d.querySelector('.carbon-dropdown-btn').classList.remove('border-primary');
+      d.querySelector('.carbon-dropdown-btn').classList.add('border-[#C5C7D4]');
+    });
+  }
+});
+
+// Priority radio styling
+document.addEventListener('change', (e) => {
+  if (e.target.name === 'priority') {
+    document.querySelectorAll('input[name="priority"]').forEach(r => {
+      const label = r.closest('label');
+      if (r.checked) {
+        label.classList.add('border-primary', 'bg-primary/5');
+        label.classList.remove('border-transparent');
+        label.querySelector('span:last-child').classList.add('text-primary', 'font-medium');
+        label.querySelector('span:last-child').classList.remove('text-secondary');
+      } else {
+        label.classList.remove('border-primary', 'bg-primary/5');
+        label.classList.add('border-transparent');
+        label.querySelector('span:last-child').classList.remove('text-primary', 'font-medium');
+        label.querySelector('span:last-child').classList.add('text-secondary');
+      }
+    });
+  }
+});
+
+// Toggle Create CTA panel
+function toggleCreateCTA() {
+  const panel = document.getElementById('cta-panel');
+  const overlay = document.getElementById('cta-overlay');
+  const isOpen = !panel.classList.contains('translate-x-full');
+  // Close other panels
+  if (!document.getElementById('notif-panel').classList.contains('translate-x-full')) toggleNotifications();
+  if (!document.getElementById('collab-panel').classList.contains('translate-x-full')) toggleCollab();
+  if (!document.getElementById('whatsnew-panel').classList.contains('translate-x-full')) toggleWhatsNew();
+  document.getElementById('user-menu').classList.add('hidden');
+
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      overlay.classList.remove('opacity-0');
+      panel.classList.remove('translate-x-full');
+    });
+  }
+}
+
+// Toggle What's New panel
+function toggleWhatsNew() {
+  const panel = document.getElementById('whatsnew-panel');
+  const overlay = document.getElementById('whatsnew-overlay');
+  const isOpen = !panel.classList.contains('translate-x-full');
+  // Close other panels
+  if (!document.getElementById('notif-panel').classList.contains('translate-x-full')) toggleNotifications();
+  if (!document.getElementById('collab-panel').classList.contains('translate-x-full')) toggleCollab();
+  document.getElementById('user-menu').classList.add('hidden');
+
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      overlay.classList.remove('opacity-0');
+      panel.classList.remove('translate-x-full');
+    });
+  }
+}
+
+// Theme switcher
+const themeColors = {
+  light:  { bg: '#F6F7FB', border: '#E6E9EF', text: '#323338', textSec: '#676879', itemHover: '#E6E9EF', searchBg: '#fff', searchBorder: '#C5C7D4', searchText: '#323338', searchPlaceholder: '#9DA0AE' },
+  dark:   { bg: '#1E1F2B', border: '#3D3F52', text: '#D5D8E8', textSec: '#9DA0AE', itemHover: '#292B3D', searchBg: '#2C2E3E', searchBorder: '#3D3F52', searchText: '#6B6F8A' },
+  night:  { bg: '#0D1117', border: '#21262D', text: '#C9D1D9', textSec: '#8B949E', itemHover: '#161B22', searchBg: '#161B22', searchBorder: '#21262D', searchText: '#484F58' },
+  system: null
+};
+
+function setTheme(theme) {
+  document.querySelectorAll('.theme-check').forEach(c => {
+    c.classList.toggle('hidden', c.dataset.theme !== theme);
+  });
+  localStorage.setItem('kebs-theme', theme);
+
+  const resolved = theme === 'system' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme;
+  const t = themeColors[resolved];
+  if (!t) return;
+
+  const sidebar = document.getElementById('sidebar');
+  sidebar.style.background = t.bg;
+  sidebar.style.borderColor = t.border;
+
+  // Nav item text colors
+  sidebar.querySelectorAll('.sidebar-nav-item:not(.nav-active)').forEach(item => {
+    item.style.color = t.textSec;
+  });
+  // Active item label — primary blue on light theme for visibility, white on dark/night
+  const activeLabelColor = (resolved === 'light') ? '#0073EA' : '#fff';
+  sidebar.querySelectorAll('.sidebar-nav-item.nav-active .nav-label-small, .sidebar-nav-item.nav-active .nav-label-full').forEach(el => {
+    el.style.setProperty('color', activeLabelColor, 'important');
+  });
+
+  // Category headers
+  sidebar.querySelectorAll('.sidebar-category p').forEach(p => p.style.color = t.textSec);
+
+  // Kebs label
+  const kebsLabel = sidebar.querySelector('.sidebar-label');
+  if (kebsLabel) kebsLabel.style.color = t.text;
+
+  // Collapse button — fix hover for light theme
+  const collapseBtn = document.getElementById('collapse-btn');
+  if (collapseBtn) {
+    collapseBtn.style.color = t.textSec;
+    collapseBtn.onmouseenter = function() { this.style.background = t.itemHover; };
+    collapseBtn.onmouseleave = function() { this.style.background = 'transparent'; };
+  }
+
+  // Pin icons
+  sidebar.querySelectorAll('.pin-icon').forEach(p => p.style.color = t.textSec);
+
+  // Search input
+  const searchInput = sidebar.querySelector('.sidebar-search-input');
+  if (searchInput) {
+    searchInput.style.setProperty('background', t.searchBg, 'important');
+    searchInput.style.setProperty('border-color', t.searchBorder, 'important');
+    searchInput.style.setProperty('color', t.searchText || t.text, 'important');
+  }
+  // Search icon
+  const searchIcon = sidebar.querySelector('.sidebar-search-icon svg');
+  if (searchIcon) searchIcon.setAttribute('stroke', t.textSec);
+
+  // Apps button
+  const appsBtn = document.getElementById('apps-nav');
+  if (appsBtn) {
+    appsBtn.style.borderColor = t.border;
+    appsBtn.style.color = t.textSec;
+  }
+
+  // Quick actions icon buttons — update hover bg inline + icon color
+  const qa = document.getElementById('sidebar-quickactions');
+  if (qa) {
+    qa.querySelectorAll('button').forEach(b => {
+      if (b.classList.contains('bg-[#0073EA]')) return; // skip Timer
+      b.style.color = t.textSec;
+      // Replace hardcoded dark hover with theme hover
+      b.onmouseenter = function() { this.style.background = t.itemHover; this.style.color = t.text; };
+      b.onmouseleave = function() { this.style.background = 'transparent'; this.style.color = t.textSec; };
+    });
+  }
+
+  // All Apps button hover
+  if (appsBtn) {
+    appsBtn.onmouseenter = function() { this.style.background = t.itemHover; };
+    appsBtn.onmouseleave = function() { this.style.background = 'transparent'; };
+  }
+
+  // Hover states via CSS variable
+  sidebar.style.setProperty('--item-hover', t.itemHover);
+}
+
+// Toggle User Menu
+function toggleUserMenu() {
+  const menu = document.getElementById('user-menu');
+  menu.classList.toggle('hidden');
+}
+// Close user menu when clicking outside
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('user-menu');
+  const btn = document.getElementById('user-menu-btn');
+  if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
+    menu.classList.add('hidden');
+  }
+});
+
+// Toggle Quick Collab panel
+function toggleCollab() {
+  const panel = document.getElementById('collab-panel');
+  const overlay = document.getElementById('collab-overlay');
+  const isOpen = !panel.classList.contains('translate-x-full');
+  // Close notifications if open
+  const notifPanel = document.getElementById('notif-panel');
+  if (!notifPanel.classList.contains('translate-x-full')) toggleNotifications();
+
+  if (isOpen) {
+    panel.classList.add('translate-x-full');
+    overlay.classList.add('opacity-0');
+    setTimeout(() => overlay.classList.add('hidden'), 300);
+  } else {
+    overlay.classList.remove('hidden');
+    requestAnimationFrame(() => {
+      overlay.classList.remove('opacity-0');
+      panel.classList.remove('translate-x-full');
+    });
+    // Scroll chat to bottom
+    const chatArea = panel.querySelector('.overflow-y-auto');
+    if (chatArea) setTimeout(() => chatArea.scrollTop = chatArea.scrollHeight, 350);
+  }
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const notifPanel = document.getElementById('notif-panel');
+    if (!notifPanel.classList.contains('translate-x-full')) return toggleNotifications();
+    const collabPanel = document.getElementById('collab-panel');
+    if (!collabPanel.classList.contains('translate-x-full')) return toggleCollab();
+  }
+});
+
+// --- Notification filtering logic ---
+let activeTab = 'all';
+
+// Tab switching
+document.querySelectorAll('.notif-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.dataset.tab;
+    document.querySelectorAll('.notif-tab').forEach(b => {
+      b.classList.remove('text-primary', 'font-semibold', 'border-primary');
+      b.classList.add('text-secondary', 'border-transparent');
+    });
+    btn.classList.remove('text-secondary', 'border-transparent');
+    btn.classList.add('text-primary', 'font-semibold', 'border-primary');
+    filterNotifications();
+  });
+});
+
+// Search — listen to multiple events for broad compatibility
+const searchInput = document.getElementById('notif-search');
+searchInput.addEventListener('input', filterNotifications);
+searchInput.addEventListener('keyup', filterNotifications);
+searchInput.addEventListener('change', filterNotifications);
+
+// Unread toggle
+document.getElementById('unread-toggle').addEventListener('change', filterNotifications);
+
+// Mark as read on click
+document.querySelectorAll('.notif-item').forEach(item => {
+  item.addEventListener('click', () => {
+    item.dataset.unread = 'false';
+    const dot = item.querySelector('.unread-dot');
+    if (dot) dot.remove();
+    filterNotifications();
+  });
+});
+
+function filterNotifications() {
+  const search = document.getElementById('notif-search').value.toLowerCase().trim();
+  const unreadOnly = document.getElementById('unread-toggle').checked;
+  const items = document.querySelectorAll('.notif-item');
+  const groups = document.querySelectorAll('.notif-group');
+
+  // Type filter based on active tab
+  const tabTypes = {
+    all: null,
+    mentioned: ['mentioned'],
+    assigned: ['assigned']
+  };
+  const allowedTypes = tabTypes[activeTab];
+
+  items.forEach(item => {
+    const type = item.dataset.type;
+    const isUnread = item.dataset.unread === 'true';
+    const person = (item.dataset.person || '').toLowerCase();
+    const board = (item.dataset.board || '').toLowerCase();
+    const text = (item.dataset.text || '').toLowerCase();
+    const searchable = person + ' ' + board + ' ' + text;
+
+    let visible = true;
+
+    // Tab filter
+    if (allowedTypes && !allowedTypes.includes(type)) visible = false;
+
+    // Unread filter
+    if (unreadOnly && !isUnread) visible = false;
+
+    // Search filter
+    if (search && !searchable.includes(search)) visible = false;
+
+    item.style.display = visible ? '' : 'none';
+  });
+
+  // Show/hide group headers if no visible items in group
+  groups.forEach(group => {
+    const visibleItems = group.querySelectorAll('.notif-item:not([style*="display: none"])');
+    const header = group.querySelector('.notif-group-header');
+    if (header) header.style.display = visibleItems.length ? '' : 'none';
+  });
+
+  // Empty state
+  const anyVisible = document.querySelectorAll('.notif-item:not([style*="display: none"])').length > 0;
+  document.getElementById('notif-empty').style.display = anyVisible ? 'none' : '';
+}
+
+// Init Lucide icons
+if (typeof lucide !== 'undefined') lucide.createIcons();
+
+// ── Get Started ──────────────────────────────────────────────────────────────
+const gsSteps = [
+  { id: 'gs6', label: 'Explore the Command Center', done: false,
+    desc: 'Your executive HQ — see forecast accuracy, RAI score and revenue insights at a glance.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>` },
+  { id: 'gs2', label: 'Add a client or account', done: false,
+    desc: 'Create your first client account to start tracking projects, revenue and relationships.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` },
+  { id: 'gs3', label: 'Create your first project', done: false,
+    desc: 'Set up a project, assign resources and start tracking time, tasks and milestones.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="15" x2="12" y2="15"/></svg>` },
+  { id: 'gs1', label: 'Connect your first integration', done: false,
+    desc: 'Link your tools — Jira, Slack, Salesforce and more — to unify your workflow in one place.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>` },
+  { id: 'gs4', label: 'Invite your team members', done: false,
+    desc: 'Bring your team in. Assign roles, set permissions and collaborate in real time.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>` },
+  { id: 'gs5', label: 'Set up your revenue targets', done: false,
+    desc: 'Define quarterly revenue goals and track actuals vs targets across your portfolio.',
+    icon: `<svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5093E2" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>` },
+];
+
+function buildGSPanel() {
+  const completed = gsSteps.filter(s => s.done).length;
+  const pct = Math.round((completed / gsSteps.length) * 100);
+
+  const panel = document.getElementById('gs-panel');
+  panel.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;border-bottom:1px solid #3D3F52;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <button onclick="navigateGS(-1)" style="background:none;border:none;color:#9DA0AE;cursor:pointer;padding:2px 4px;font-size:18px;line-height:1;">&#8249;</button>
+        <span style="font-size:15px;font-weight:600;color:#fff;">Get started</span>
+      </div>
+      <button onclick="toggleGSPanel()" style="background:none;border:none;color:#9DA0AE;cursor:pointer;font-size:20px;line-height:1;">&times;</button>
+    </div>
+    <div style="padding:16px 20px;flex:1;overflow-y:auto;">
+      ${gsSteps.map((s, i) => `
+        <div onclick="toggleGSStep(${i})" onmouseenter="showGSTooltip(${i},this)" onmouseleave="hideGSTooltip()"
+             style="display:flex;align-items:center;gap:12px;padding:10px 8px;border-radius:8px;cursor:pointer;transition:background 0.15s;position:relative;">
+          <div style="width:20px;height:20px;border-radius:50%;border:2px solid ${s.done ? '#0073EA' : '#3D3F52'};
+               background:${s.done ? '#0073EA' : 'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;">
+            ${s.done ? `<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>` : ''}
+          </div>
+          <span style="font-size:13px;color:${s.done ? '#6B6F8A' : '#D5D8E8'};text-decoration:${s.done ? 'line-through' : 'none'};flex:1;">${s.label}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D3F52" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+      `).join('')}
+    </div>
+    <div style="padding:12px 20px 16px;border-top:1px solid #3D3F52;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:11px;color:#6B6F8A;font-weight:600;">${pct}% complete</span>
+        <span style="font-size:11px;color:#6B6F8A;">${completed}/${gsSteps.length} done</span>
+      </div>
+      <div style="height:4px;background:#2C2E3E;border-radius:99px;overflow:hidden;">
+        <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,#0073EA,#5093E2);border-radius:99px;transition:width 0.4s ease;"></div>
+      </div>
+    </div>
+  `;
+}
+
+function toggleGSStep(i) {
+  // If it's "Explore the Command Center", start the walkthrough
+  if (gsSteps[i].id === 'gs6' && !gsSteps[i].done) {
+    startWalkthrough();
+    return;
+  }
+  gsSteps[i].done = !gsSteps[i].done;
+  buildGSPanel();
+  // update FAB badge
+  const done = gsSteps.filter(s => s.done).length;
+  const badge = document.getElementById('gs-badge');
+  badge.textContent = gsSteps.length - done;
+  badge.style.display = done === gsSteps.length ? 'none' : 'flex';
+}
+
+function toggleGSPanel() {
+  const panel = document.getElementById('gs-panel');
+  const isOpen = panel.style.transform === 'translateY(0px)';
+  panel.style.transform = isOpen ? 'translateY(110%)' : 'translateY(0px)';
+  panel.style.opacity = isOpen ? '0' : '1';
+}
+
+function navigateGS(dir) { /* placeholder for multi-page flow */ }
+
+let gsTooltipTimer = null;
+// Shimmer illustration SVGs for each step
+const gsIllustrations = {
+  gs6: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#FF6B35,#FF8F5E,#FF6B35);"></div>
+    <div style="position:absolute;top:20px;left:16px;right:16px;">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <div style="width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,0.6);background:rgba(255,255,255,0.2);"></div>
+        <div style="height:8px;flex:1;background:rgba(255,255,255,0.35);border-radius:4px;"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <div style="width:16px;height:16px;border-radius:50%;background:rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;">
+          <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div style="height:8px;width:70%;background:rgba(255,255,255,0.35);border-radius:4px;"></div>
+      </div>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.15) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+  gs2: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#0073EA,#5093E2);"></div>
+    <div style="position:absolute;top:16px;left:16px;right:16px;">
+      <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;margin-bottom:8px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div style="height:6px;width:80%;background:rgba(255,255,255,0.3);border-radius:3px;margin-bottom:6px;"></div>
+      <div style="height:6px;width:55%;background:rgba(255,255,255,0.2);border-radius:3px;"></div>
+    </div>
+    <div style="position:absolute;bottom:12px;right:12px;width:36px;height:18px;background:rgba(255,255,255,0.3);border-radius:9px;display:flex;align-items:center;justify-content:center;">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+  gs3: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#7c3aed,#a78bfa);"></div>
+    <div style="position:absolute;top:16px;left:14px;right:14px;">
+      <div style="height:6px;width:90%;background:rgba(255,255,255,0.3);border-radius:3px;margin-bottom:8px;"></div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <div style="height:5px;width:30%;background:rgba(255,255,255,0.4);border-radius:2px;"></div>
+        <div style="height:5px;width:20%;background:#42be65;border-radius:2px;"></div>
+      </div>
+      <div style="display:flex;gap:4px;margin-bottom:6px;">
+        <div style="height:5px;width:50%;background:rgba(255,255,255,0.35);border-radius:2px;"></div>
+        <div style="height:5px;width:15%;background:#f5a623;border-radius:2px;"></div>
+      </div>
+      <div style="display:flex;gap:4px;">
+        <div style="height:5px;width:25%;background:rgba(255,255,255,0.25);border-radius:2px;"></div>
+        <div style="height:5px;width:35%;background:#42be65;border-radius:2px;"></div>
+      </div>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+  gs1: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#059669,#34d399);"></div>
+    <div style="position:absolute;top:20px;left:50%;transform:translateX(-50%);display:flex;gap:8px;">
+      <div style="width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.3);"></div>
+      <div style="width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.4);"></div>
+      <div style="width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.25);"></div>
+    </div>
+    <div style="position:absolute;bottom:14px;left:16px;right:16px;text-align:center;">
+      <div style="height:4px;width:60%;background:rgba(255,255,255,0.3);border-radius:2px;margin:0 auto 4px;"></div>
+      <div style="height:4px;width:40%;background:rgba(255,255,255,0.2);border-radius:2px;margin:0 auto;"></div>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+  gs4: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#dc2626,#f87171);"></div>
+    <div style="position:absolute;top:14px;left:14px;display:flex;gap:6px;flex-wrap:wrap;">
+      <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.3);"></div>
+      <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.4);"></div>
+      <div style="width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.25);"></div>
+      <div style="width:22px;height:22px;border-radius:50%;border:2px dashed rgba(255,255,255,0.4);display:flex;align-items:center;justify-content:center;">
+        <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+  gs5: `<div style="position:relative;width:100%;height:100%;overflow:hidden;border-radius:12px;">
+    <div style="position:absolute;inset:0;background:linear-gradient(135deg,#d97706,#fbbf24);"></div>
+    <div style="position:absolute;top:14px;left:14px;right:14px;">
+      <div style="font-size:18px;font-weight:800;color:#fff;line-height:1;">$45M</div>
+      <div style="height:6px;width:100%;background:rgba(255,255,255,0.2);border-radius:3px;margin-top:8px;">
+        <div style="height:100%;width:65%;background:rgba(255,255,255,0.5);border-radius:3px;"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;margin-top:6px;">
+        <div style="height:4px;width:20%;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+        <div style="height:4px;width:20%;background:rgba(255,255,255,0.2);border-radius:2px;"></div>
+      </div>
+    </div>
+    <div class="gs-shimmer" style="position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,0.12) 50%,transparent 100%);animation:gsShimmer 2s infinite;"></div>
+  </div>`,
+};
+
+function showGSTooltip(i, el) {
+  clearTimeout(gsTooltipTimer);
+  const s = gsSteps[i];
+  let tip = document.getElementById('gs-tooltip');
+  if (!tip) {
+    tip = document.createElement('div');
+    tip.id = 'gs-tooltip';
+    tip.addEventListener('mouseenter', () => clearTimeout(gsTooltipTimer));
+    tip.addEventListener('mouseleave', () => hideGSTooltip());
+    document.body.appendChild(tip);
+  }
+  const panel = document.getElementById('gs-panel');
+  const panelRect = panel.getBoundingClientRect();
+  const elRect = el.getBoundingClientRect();
+
+  tip.style.cssText = `
+    position:fixed;
+    right:${window.innerWidth - panelRect.left + 12}px;
+    top:${Math.max(8, elRect.top - 40)}px;
+    width:240px;
+    background:#1E1F2B;
+    border:1px solid #3D3F52;
+    border-radius:14px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.5);
+    z-index:210;
+    font-family:'Poppins',sans-serif;
+    transition:opacity 0.25s ease,transform 0.25s ease;
+    opacity:0;
+    transform:translateX(8px);
+    pointer-events:auto;
+    overflow:hidden;
+  `;
+
+  const illus = gsIllustrations[s.id] || gsIllustrations.gs6;
+
+  tip.innerHTML = `
+    <div style="width:100%;height:100px;">
+      ${illus}
+    </div>
+    <div style="padding:14px 16px 16px;">
+      <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:5px;line-height:1.3;">${s.label}</div>
+      <div style="font-size:11px;color:#9DA0AE;line-height:1.6;margin-bottom:14px;">${s.desc}</div>
+      ${!s.done ? `<button onclick="toggleGSStep(${i})" style="width:100%;height:32px;background:#0073EA;color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:600;font-family:'Poppins',sans-serif;cursor:pointer;transition:background 0.15s;" onmouseenter="this.style.background='#0060B9'" onmouseleave="this.style.background='#0073EA'">Mark as done</button>` : `<div style="display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#258750" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg><span style="font-size:12px;color:#258750;font-weight:500;">Completed</span></div>`}
+    </div>
+  `;
+
+  // Arrow
+  const arrow = document.createElement('div');
+  arrow.style.cssText = `position:absolute;right:-7px;top:60px;width:12px;height:12px;background:#1E1F2B;border-right:1px solid #3D3F52;border-top:1px solid #3D3F52;transform:rotate(45deg);`;
+  tip.appendChild(arrow);
+
+  setTimeout(() => {
+    tip.style.opacity = '1';
+    tip.style.transform = 'translateX(0)';
+  }, 10);
+}
+
+function hideGSTooltip() {
+  gsTooltipTimer = setTimeout(() => {
+    const tip = document.getElementById('gs-tooltip');
+    if (tip) { tip.style.opacity = '0'; tip.style.transform = 'translateX(8px)'; }
+  }, 300);
+}
+
+// === Walkthrough System ===
+const walkthroughSteps = [
+  { target: '#wt-forecast', title: 'Forecast Accuracy', desc: 'Shows how accurate your revenue forecasts have been. Currently at 94.2% — up 2.4% from last month. Green trend means your predictions are getting better.', position: 'bottom' },
+  { target: '#wt-risk', title: 'Revenue at Risk', desc: 'Flags revenue that may not materialize. $1.2M across 3 projects needs attention. Click to drill into which projects are at risk and why.', position: 'bottom' },
+  { target: '#wt-rai', title: 'RAI Score', desc: 'Your Resource Allocation Index — a composite score of how efficiently resources are deployed. 8.4 is rated "Optimal". Aim to keep this above 7.0.', position: 'bottom' },
+  { target: '#wt-recovery', title: 'Recovery Potential', desc: 'Estimated revenue that can be recovered through corrective actions. $450k at "High Efficiency" means your recovery strategies are working well.', position: 'bottom' },
+  { target: '#wt-revenue', title: 'Revenue Insight', desc: 'Your Q3 revenue tracker — $18.4M collected out of $25M target (74%). See the breakdown: Target, Gap, Pipeline, Accuracy, Realization, and Utilization metrics.', position: 'bottom' },
+  { target: '#wt-tabs', title: 'Dashboard Views', desc: 'Switch between Overview, Portfolio, Resources, Financials, and AI Insights tabs. Each tab gives a different lens into your business data.', position: 'bottom' },
+  { target: '#wt-portfolios', title: 'Critical Portfolios at Risk', desc: 'Your flagged projects table — see status (Delayed, In Progress), risk level indicators, and expected margins. Click any row to drill into details.', position: 'top' },
+  { target: '#wt-sales', title: 'Sales Performance', desc: 'Three key sales widgets: Target vs Actual ($8.4M of $10M), Pipeline Velocity (18 days, improving), and Win Rate (65%, exceeding benchmark by 5%).', position: 'left' },
+];
+
+let wtCurrentStep = -1;
+
+function startWalkthrough() {
+  // Close GS panel
+  const gsPanel = document.getElementById('gs-panel');
+  if (gsPanel.style.transform === 'translateY(0px)') toggleGSPanel();
+  // Ensure dashboard is visible
+  if (typeof showDashboard === 'function') showDashboard();
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  setTimeout(() => {
+    wtCurrentStep = -1;
+    wtNext();
+  }, 400);
+}
+
+function wtNext() {
+  wtCurrentStep++;
+  if (wtCurrentStep >= walkthroughSteps.length) {
+    wtEnd();
+    return;
+  }
+  wtShowStep(wtCurrentStep);
+}
+
+function wtPrev() {
+  if (wtCurrentStep > 0) {
+    wtCurrentStep--;
+    wtShowStep(wtCurrentStep);
+  }
+}
+
+function wtEnd() {
+  // Remove overlay and tooltip
+  const overlay = document.getElementById('wt-overlay');
+  if (overlay) overlay.remove();
+  const tip = document.getElementById('wt-tooltip');
+  if (tip) tip.remove();
+  wtCurrentStep = -1;
+  // Mark "Explore the Command Center" as done
+  const idx = gsSteps.findIndex(s => s.id === 'gs6');
+  if (idx >= 0 && !gsSteps[idx].done) {
+    gsSteps[idx].done = true;
+    buildGSPanel();
+    const done = gsSteps.filter(s => s.done).length;
+    const badge = document.getElementById('gs-badge');
+    badge.textContent = gsSteps.length - done;
+    if (done === gsSteps.length) badge.style.display = 'none';
+  }
+}
+
+function wtShowStep(stepIdx) {
+  const step = walkthroughSteps[stepIdx];
+  const targetEl = document.querySelector(step.target);
+  if (!targetEl) { wtNext(); return; }
+
+  // Scroll target into view
+  targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+  setTimeout(() => {
+    const rect = targetEl.getBoundingClientRect();
+
+    // Overlay with spotlight cutout
+    let overlay = document.getElementById('wt-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'wt-overlay';
+      overlay.style.cssText = 'position:fixed;inset:0;z-index:9000;pointer-events:none;';
+      document.body.appendChild(overlay);
+    }
+    // SVG mask for spotlight
+    const pad = 12;
+    overlay.innerHTML = `
+      <svg width="100%" height="100%" style="position:absolute;inset:0;">
+        <defs>
+          <mask id="wt-mask">
+            <rect width="100%" height="100%" fill="white"/>
+            <rect x="${rect.left - pad}" y="${rect.top - pad}" width="${rect.width + pad*2}" height="${rect.height + pad*2}" rx="8" fill="black"/>
+          </mask>
+        </defs>
+        <rect width="100%" height="100%" fill="rgba(0,0,0,0.5)" mask="url(#wt-mask)"/>
+      </svg>
+      <div style="position:absolute;left:${rect.left - pad}px;top:${rect.top - pad}px;width:${rect.width + pad*2}px;height:${rect.height + pad*2}px;border:2px solid #0073EA;border-radius:8px;pointer-events:none;box-shadow:0 0 0 4px rgba(0,115,234,0.2);"></div>
+    `;
+
+    // Tooltip
+    let tip = document.getElementById('wt-tooltip');
+    if (!tip) {
+      tip = document.createElement('div');
+      tip.id = 'wt-tooltip';
+      document.body.appendChild(tip);
+    }
+
+    const totalSteps = walkthroughSteps.length;
+    const isFirst = stepIdx === 0;
+    const isLast = stepIdx === totalSteps - 1;
+
+    // Position tooltip
+    let tipTop, tipLeft;
+    const tipW = 340;
+    if (step.position === 'bottom') {
+      tipTop = rect.bottom + pad + 16;
+      tipLeft = rect.left + (rect.width / 2) - (tipW / 2);
+    } else if (step.position === 'top') {
+      tipTop = rect.top - pad - 200;
+      tipLeft = rect.left + (rect.width / 2) - (tipW / 2);
+    } else {
+      tipTop = rect.top;
+      tipLeft = rect.left - tipW - 24;
+    }
+    // Clamp
+    tipLeft = Math.max(16, Math.min(tipLeft, window.innerWidth - tipW - 16));
+    tipTop = Math.max(16, tipTop);
+
+    tip.style.cssText = `
+      position:fixed;left:${tipLeft}px;top:${tipTop}px;width:${tipW}px;
+      background:#1E1F2B;border:1px solid #3D3F52;border-radius:12px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.5);padding:20px;z-index:9001;
+      font-family:'Poppins',sans-serif;pointer-events:auto;
+      animation:wtFadeIn 0.3s ease;
+    `;
+    tip.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:10px;font-weight:600;color:#0073EA;text-transform:uppercase;letter-spacing:0.08em;">Step ${stepIdx + 1} of ${totalSteps}</span>
+        <button onclick="wtEnd()" style="background:none;border:none;color:#6B6F8A;cursor:pointer;font-size:18px;line-height:1;">&times;</button>
+      </div>
+      <h3 style="font-size:15px;font-weight:600;color:#fff;margin-bottom:8px;">${step.title}</h3>
+      <p style="font-size:13px;color:#9DA0AE;line-height:1.6;margin-bottom:16px;">${step.desc}</p>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;gap:4px;">
+          ${Array.from({length: totalSteps}, (_, i) =>
+            `<div style="width:${i === stepIdx ? '20px' : '6px'};height:6px;border-radius:3px;background:${i === stepIdx ? '#0073EA' : '#3D3F52'};transition:all 0.2s;"></div>`
+          ).join('')}
+        </div>
+        <div style="display:flex;gap:8px;">
+          ${!isFirst ? `<button onclick="wtPrev()" style="height:32px;padding:0 14px;background:transparent;border:1px solid #3D3F52;color:#D5D8E8;font-size:12px;font-weight:600;border-radius:6px;cursor:pointer;font-family:'Poppins',sans-serif;">Back</button>` : ''}
+          <button onclick="${isLast ? 'wtEnd()' : 'wtNext()'}" style="height:32px;padding:0 14px;background:#0073EA;color:#fff;font-size:12px;font-weight:600;border:none;border-radius:6px;cursor:pointer;font-family:'Poppins',sans-serif;">${isLast ? 'Finish' : 'Next'}</button>
+        </div>
+      </div>
+    `;
+  }, 350);
+}
+
+// Add CSS animation for tooltip
+(function() {
+  const style = document.createElement('style');
+  style.textContent = '@keyframes wtFadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } } @keyframes gsShimmer { 0% { transform:translateX(-100%); } 100% { transform:translateX(100%); } }';
+  document.head.appendChild(style);
+})();
+
+// init after DOM ready
+window.addEventListener('load', function() {
+  buildGSPanel();
+  const p = document.getElementById('gs-panel');
+  if (p) { p.style.transform = 'translateY(110%)'; p.style.opacity = '0'; }
+
+  // Add click handler to all nav items for active state
+  document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+    item.addEventListener('click', () => setActiveNav(item));
+  });
+});
+</script>
+
+<!-- Get Started FAB -->
+<button onclick="toggleGSPanel()" style="position:fixed;bottom:24px;right:24px;z-index:60;display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;background:#0073EA;color:#fff;font-family:'Poppins',sans-serif;font-size:13px;font-weight:600;border:none;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,115,234,0.4);transition:background 0.15s;" onmouseenter="this.style.background='#0060B9'" onmouseleave="this.style.background='#0073EA'">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+  Get started
+  <span id="gs-badge" style="display:flex;align-items:center;justify-content:center;width:18px;height:18px;background:#fff;color:#0073EA;font-size:10px;font-weight:700;border-radius:50%;">5</span>
+</button>
+
+<!-- Get Started Panel -->
+<div id="gs-panel" style="position:fixed;bottom:72px;right:24px;z-index:59;width:320px;max-height:480px;background:#1E1F2B;border:1px solid #3D3F52;border-radius:12px;box-shadow:0 8px 32px rgba(0,0,0,0.4);display:flex;flex-direction:column;font-family:'Poppins',sans-serif;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1),opacity 0.3s ease;overflow:hidden;"></div>
+<!-- Sidebar expand overrides — MUST come after Tailwind CDN generates its styles -->
+<style>
+  #sidebar.expanded { width: 280px !important; min-width: 280px !important; }
+  header.header-expanded { left: 280px !important; }
+  main.main-expanded { margin-left: 280px !important; }
+</style>
+</body></html>
