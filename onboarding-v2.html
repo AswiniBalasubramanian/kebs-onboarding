@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Kebs - Setup Your Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Inter',sans-serif; background:#fff; overflow:hidden; height:100vh; color:#2d2d2d; }
+  a { text-decoration:none; color:inherit; }
+
+  /* Step-card visibility */
+  .step-card { display:none; }
+  .step-card.active { display:block; animation:fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .typing-shimmer { background:linear-gradient(90deg,#f3f4f6 25%,#e5e7eb 50%,#f3f4f6 75%); background-size:400px 100%; animation:shimmer 1.2s infinite ease-in-out; border-radius:3px; min-height:0.9em; display:inline-block; }
+  .typing-shimmer:empty { min-width:40px; }
+  .shimmer-line { background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:800px 100%; animation:shimmer 1.2s infinite ease-in-out; border-radius:4px; }
+
+  /* Sidebar stepper */
+  .sb-step { display:flex; align-items:center; gap:14px; padding:10px 0; position:relative; }
+  .sb-circle { width:26px; height:26px; border-radius:50%; border:2px solid rgba(255,255,255,0.55); background:transparent; flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all 0.2s; }
+  .sb-step.done .sb-circle { background:#fff; border-color:#fff; }
+  .sb-step.done .sb-circle::after { content:''; display:block; width:9px; height:5px; border-left:2px solid #FA5D2B; border-bottom:2px solid #FA5D2B; transform:rotate(-45deg); margin-top:-3px; }
+  .sb-step.current .sb-circle { background:#fff; border-color:#fff; box-shadow:0 0 0 4px rgba(255,255,255,0.22); }
+  .sb-step.current .sb-circle::after { content:''; display:block; width:9px; height:5px; border-left:2px solid #FA5D2B; border-bottom:2px solid #FA5D2B; transform:rotate(-45deg); margin-top:-3px; }
+  .sb-label { font-size:15px; font-weight:500; color:rgba(255,255,255,0.75); letter-spacing:-0.01em; transition:color 0.2s; }
+  .sb-step.done .sb-label, .sb-step.current .sb-label { color:#fff; font-weight:600; }
+  /* Dashed vertical connector between steps */
+  .sb-connector { width:2px; height:22px; margin-left:12px; background-image:linear-gradient(to bottom, rgba(255,255,255,0.45) 50%, transparent 50%); background-size:2px 8px; background-repeat:repeat-y; }
+
+  /* Hidden native select — we replace it with a custom Harvest-style dropdown */
+  .ob-select { position:absolute; opacity:0; pointer-events:none; width:0; height:0; }
+
+  /* ── Custom Harvest-style dropdown ── */
+  .hd-wrap { position:relative; width:100%; }
+  .hd-trigger { width:100%; min-height:54px; padding:6px 42px 6px 10px; font-family:'Inter',sans-serif; font-size:15px; color:#2d2d2d; border:1.5px solid #e5e7eb; border-radius:10px; background:#fff; cursor:pointer; display:flex; flex-wrap:wrap; gap:6px; align-items:center; transition:border-color 0.15s, box-shadow 0.15s; user-select:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none'><path d='M1 1l6 6 6-6' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat:no-repeat; background-position:right 18px center;
+  }
+  .hd-trigger.placeholder { color:#9ca3af; padding-left:18px; }
+  /* Chip inside multi-select trigger */
+  .hd-chip { display:inline-flex; align-items:center; gap:6px; background:transparent; border:1px solid #FA5D2B; color:#FA5D2B; font-family:'Inter',sans-serif; font-size:13px; font-weight:500; padding:4px 6px 4px 10px; border-radius:999px; line-height:1; max-width:calc(100% - 12px); }
+  .hd-chip .hd-chip-x { display:flex; align-items:center; justify-content:center; width:16px; height:16px; border-radius:50%; background:transparent; border:none; color:#FA5D2B; font-size:14px; line-height:1; cursor:pointer; flex-shrink:0; padding:0; font-weight:600; }
+  .hd-chip .hd-chip-x:hover { background:rgba(250,93,43,0.10); }
+  .hd-placeholder-text { color:#9ca3af; padding-left:8px; }
+  .hd-wrap:hover .hd-trigger { border-color:#FDBA9A; }
+  .hd-wrap.open .hd-trigger, .hd-trigger:focus { border-color:#FA5D2B; box-shadow:0 0 0 3px rgba(250,93,43,0.15); outline:none; }
+  .hd-menu { position:absolute; top:calc(100% + 6px); left:0; right:0; background:#fff; border:1px solid #f0e4dc; border-radius:12px; box-shadow:0 12px 32px rgba(17,24,39,0.10), 0 2px 6px rgba(17,24,39,0.04); padding:6px; z-index:30; opacity:0; transform:translateY(-4px); pointer-events:none; transition:opacity 0.15s, transform 0.15s; max-height:280px; overflow-y:auto; }
+  .hd-wrap.open .hd-menu { opacity:1; transform:translateY(0); pointer-events:auto; }
+  .hd-option { padding:11px 14px; border-radius:8px; font-family:'Inter',sans-serif; font-size:14.5px; font-weight:500; color:#2d2d2d; cursor:pointer; display:flex; align-items:center; justify-content:space-between; transition:background 0.1s, color 0.1s; }
+  .hd-option:hover { background:#FFF5EE; color:#FA5D2B; }
+  .hd-option.selected { background:#FFF5EE; color:#FA5D2B; font-weight:600; }
+  .hd-option.selected::after { content:''; display:block; width:14px; height:8px; border-left:2px solid #FA5D2B; border-bottom:2px solid #FA5D2B; transform:rotate(-45deg); margin-left:12px; flex-shrink:0; margin-top:-3px; }
+  /* Scrollbar inside the menu */
+  .hd-menu::-webkit-scrollbar { width:6px; }
+  .hd-menu::-webkit-scrollbar-thumb { background:#FDBA9A; border-radius:3px; }
+
+  /* Text input */
+  .ob-input { width:100%; height:54px; padding:0 18px; font-family:'Inter',sans-serif; font-size:15px; color:#2d2d2d; border:1.5px solid #e5e7eb; border-radius:10px; outline:none; transition:border-color 0.15s, box-shadow 0.15s; background:#fff; }
+  .ob-input:hover { border-color:#FDBA9A; }
+  .ob-input:focus { border-color:#FA5D2B; box-shadow:0 0 0 3px rgba(250,93,43,0.15); }
+
+  .ob-label { display:block; font-size:14px; font-weight:500; color:#4b5563; margin-bottom:8px; }
+
+  /* Buttons */
+  .btn-primary { height:48px; padding:0 30px; border:none; border-radius:10px; background:#188433; color:#fff; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+  .btn-primary:hover { background:#0f6b28; }
+  .btn-secondary { height:48px; padding:0 30px; border:none; border-radius:10px; background:#eef2f7; color:#4b5563; font-family:'Inter',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background 0.15s; }
+  .btn-secondary:hover { background:#dfe6ee; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ SIGNUP VIEW (signup-v2.html design) ═══════════════════════ -->
+<style>
+  .signup-view { position:fixed; inset:0;
+    background:
+      radial-gradient(ellipse 75% 90% at 100% 0%, #fcb46f 0%, rgba(252,180,111,0) 55%),
+      radial-gradient(ellipse 55% 70% at 100% 35%, #fcd3a0 0%, rgba(252,211,160,0) 65%),
+      linear-gradient(180deg, #fef6ea 0%, #fceedb 100%);
+    z-index:100; overflow-y:auto; font-family:'Inter',sans-serif; transition: opacity 0.45s ease-out, visibility 0.45s; }
+  .signup-view.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .sv2-page { display:flex; min-height:100vh; max-width:1340px; margin:0 auto; padding:32px 60px 24px; gap:80px; align-items:flex-start; }
+
+  /* ── Testimonials / reviews section ── */
+  .sv2-reviews { max-width:1340px; margin:0 auto; padding:48px 60px 84px; display:flex; gap:48px; align-items:center; position:relative; }
+  .sv2-badges { display:grid; grid-template-columns:1fr 1fr; gap:20px; flex-shrink:0; width:300px; }
+  .sv2-badge { background:#fff; width:130px; height:175px; position:relative; display:flex; flex-direction:column; align-items:center; font-family:'Inter',sans-serif; clip-path:polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%); padding:10px 10px 0; filter:drop-shadow(0 3px 8px rgba(0,0,0,0.12)); }
+  .sv2-badge-header { width:100%; padding:0 2px 4px; display:flex; align-items:flex-start; justify-content:space-between; }
+  .sv2-badge-spring { font-size:8.5px; font-weight:700; color:#111; letter-spacing:0.06em; line-height:1.2; max-width:60px; text-transform:uppercase; }
+  .sv2-badge-g2 { display:flex; align-items:center; justify-content:center; width:20px; height:20px; background:#ff492c; color:#fff; border-radius:50%; font-size:10px; font-weight:800; flex-shrink:0; line-height:1; }
+  .sv2-badge-title { padding:6px 4px 4px; text-align:center; font-weight:800; color:#111; font-size:15px; line-height:1.15; letter-spacing:-0.02em; flex:1; display:flex; align-items:center; justify-content:center; }
+  .sv2-badge-sub { font-size:8.5px; font-weight:700; color:#333; letter-spacing:0.08em; text-align:center; text-transform:uppercase; margin-bottom:28px; }
+  /* Bottom colored stripe region — filled to bottom, parent's clip-path turns it into chevron */
+  .sv2-badge::after { content:''; position:absolute; left:0; right:0; bottom:0; height:36px; background:linear-gradient(to right, var(--s1) 0 33.333%, var(--s2) 33.333% 66.667%, var(--s3) 66.667% 100%); }
+  .sv2-badge.grid      { --s1:#fbbf24; --s2:#f97316; --s3:#ef4444; }
+  .sv2-badge.momentum  { --s1:#fde047; --s2:#f97316; --s3:#ef4444; }
+  .sv2-badge.setup     { --s1:#60a5fa; --s2:#3b82f6; --s3:#1d4ed8; }
+  .sv2-badge.easiest   { --s1:#fde047; --s2:#fbbf24; --s3:#f97316; }
+
+  .sv2-review-cards { flex:1; position:relative; overflow:hidden; min-width:0; }
+  .sv2-review-track { display:flex; gap:20px; transition:transform 0.45s cubic-bezier(.22,.8,.25,1); will-change:transform; }
+  .sv2-review-card { flex:0 0 calc((100% - 40px) / 3); min-width:0; background:#fff; border-radius:8px; box-shadow:0 3px 12px rgba(0,0,0,0.06); padding:32px 30px 24px; display:flex; flex-direction:column; min-height:340px; }
+  @media (max-width: 900px) { .sv2-review-card { flex:0 0 calc((100% - 20px) / 2); } }
+  @media (max-width: 640px) { .sv2-review-card { flex:0 0 100%; } }
+  .sv2-stars { display:flex; gap:4px; margin-bottom:20px; }
+  .sv2-stars svg { width:22px; height:22px; fill:#f97316; }
+  .sv2-quote { font-size:15px; line-height:1.55; color:#1a1a1a; font-family:'Inter',sans-serif; flex:1; }
+  .sv2-author { font-size:14px; color:#2d2d2d; padding-top:22px; margin-top:22px; border-top:1px solid #e8e4dd; }
+  .sv2-review-nav { position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:50%; background:transparent; border:none; cursor:pointer; color:#9ca3af; display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:400; transition:color 0.15s; z-index:2; padding:0; line-height:1; }
+  .sv2-review-nav:hover { color:#2d2d2d; }
+  .sv2-review-nav.prev { left:-40px; }
+  .sv2-review-nav.next { right:-40px; }
+  .sv2-review-nav:disabled { opacity:0.35; cursor:not-allowed; }
+  .sv2-marketing { flex:1; max-width:520px; }
+  .sv2-brand-row { display:flex; align-items:center; gap:10px; margin-bottom:48px; text-decoration:none; }
+  .sv2-brand-row svg { width:34px; height:38px; }
+  .sv2-brand-text { font-size:26px; font-weight:600; color:#FA5D2B; letter-spacing:-0.5px; }
+  .sv2-eyebrow { font-size:12px; font-weight:700; color:#FA5D2B; letter-spacing:0.18em; text-transform:uppercase; margin-bottom:18px; }
+  .sv2-headline { font-family:'Monarcha',Georgia,'Times New Roman',serif; font-size:46px; font-weight:500; color:#1a1a1a; line-height:1.12; letter-spacing:-0.012em; margin-bottom:40px; }
+  .sv2-headline .sv2-accent { color:#FA5D2B; font-style:italic; font-weight:500; }
+  .sv2-features { display:flex; flex-direction:column; gap:18px; }
+  .sv2-feat { display:flex; align-items:flex-start; gap:14px; }
+  .sv2-feat-dot { flex-shrink:0; width:22px; height:22px; border-radius:50%; background:#FA5D2B; display:flex; align-items:center; justify-content:center; margin-top:2px; }
+  .sv2-feat-dot::after { content:''; display:block; width:10px; height:5px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg); margin-top:-2px; }
+  .sv2-feat strong { display:block; font-size:16px; font-weight:700; color:#1a1a1a; margin-bottom:2px; }
+  .sv2-feat span { font-size:14.5px; color:#4b5563; line-height:1.5; }
+  .sv2-card-wrap { flex:0 0 580px; }
+  .sv2-card { background:#fff; border:1px solid #eceff3; border-radius:18px; box-shadow:0 6px 24px rgba(17,24,39,0.06), 0 1px 3px rgba(17,24,39,0.04); padding:54px 44px 44px; }
+  .sv2-card h1 { font-family:'Muoto','Manrope','Inter',sans-serif; font-size:32px; font-weight:700; color:#1a1a1a; letter-spacing:-0.025em; margin-bottom:4px; text-align:center; }
+  .sv2-card .sv2-sub { font-size:13.5px; color:#6b7280; text-align:center; margin-bottom:18px; }
+  .sv2-sso-row { display:flex; gap:10px; }
+  .sv2-gbtn { flex:1; height:48px; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; border:1.5px solid #e5e7eb; border-radius:10px; font-family:'Inter',sans-serif; font-size:14px; font-weight:500; color:#2d2d2d; cursor:pointer; transition:border-color 0.15s; padding:0 12px; }
+  .sv2-gbtn:hover { border-color:#FDBA9A; }
+  .sv2-gbtn svg { width:18px; height:18px; flex-shrink:0; }
+  .sv2-divider { display:flex; align-items:center; gap:12px; margin:18px 0; }
+  .sv2-divider::before, .sv2-divider::after { content:''; flex:1; height:1px; background:#eef0f4; }
+  .sv2-divider span { font-size:12.5px; color:#9ca3af; }
+  .sv2-field { margin-bottom:14px; }
+  .sv2-field.row { display:flex; gap:12px; }
+  .sv2-field.row > div { flex:1; }
+  .sv2-label { display:block; font-size:12.5px; font-weight:500; color:#4b5563; margin-bottom:4px; }
+  .sv2-input { width:100%; height:44px; padding:0 14px; font-family:'Inter',sans-serif; font-size:14px; color:#2d2d2d; border:1.5px solid #e5e7eb; border-radius:10px; outline:none; transition:border-color 0.15s, box-shadow 0.15s; background:#fff; }
+  .sv2-input:hover { border-color:#FDBA9A; }
+  .sv2-input:focus { border-color:#FA5D2B; box-shadow:0 0 0 3px rgba(250,93,43,0.15); }
+  .sv2-pwd-wrap { position:relative; }
+  .sv2-pwd-toggle { position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#9ca3af; padding:4px; display:flex; align-items:center; }
+  .sv2-pwd-toggle:hover { color:#4b5563; }
+  .sv2-submit { width:100%; height:50px; border:none; border-radius:10px; background:#188433; color:#fff; font-family:'Inter',sans-serif; font-size:15.5px; font-weight:600; cursor:pointer; transition:background 0.15s; margin-top:10px; letter-spacing:-0.01em; }
+  .sv2-submit:hover { background:#0f6b28; }
+  /* Password hint tooltip inside signup password wrap */
+  .sv2-pwd-wrap { position:relative; }
+  .sv2-pwd-tip { position:absolute; right:-8px; bottom:calc(100% + 14px); width:300px; background:#FFF5D8; border:1px solid #F5D98A; border-radius:10px; padding:14px 16px; box-shadow:0 6px 20px rgba(0,0,0,0.10); font-family:'Inter',sans-serif; font-size:13px; line-height:1.5; color:#2d2d2d; opacity:0; visibility:hidden; transform:translateY(4px); transition:opacity 0.18s ease, transform 0.18s ease, visibility 0.18s; z-index:10; pointer-events:none; }
+  .sv2-pwd-tip strong { display:block; font-weight:700; margin-bottom:4px; }
+  .sv2-pwd-tip::after { content:''; position:absolute; right:22px; top:100%; width:14px; height:14px; background:#FFF5D8; border-right:1px solid #F5D98A; border-bottom:1px solid #F5D98A; transform:translateY(-7px) rotate(45deg); }
+  .sv2-pwd-wrap.show-tip .sv2-pwd-tip { opacity:1; visibility:visible; transform:translateY(0); }
+  .sv2-terms { font-size:11.5px; color:#6b7280; line-height:1.55; margin-top:16px; text-align:center; }
+  .sv2-terms a { color:#6b7280; text-decoration:underline; }
+  .sv2-terms a:hover { color:#2d2d2d; }
+  .sv2-signin-row { text-align:center; margin-top:22px; font-size:14px; color:#4b5563; }
+  .sv2-signin-row a { color:#1a1a1a; font-weight:600; text-decoration:underline; }
+  @media (max-width: 1020px) {
+    .sv2-page { flex-direction:column; gap:48px; padding:40px 24px; }
+    .sv2-marketing, .sv2-card-wrap { flex:1 1 auto; max-width:520px; width:100%; }
+    .sv2-headline { font-size:34px; }
+  }
+
+  /* ── "Almost there" SSO finish view ── */
+  .almost-view { position:fixed; inset:0; background:linear-gradient(118deg, #fcf1e4 0%, #fcdfc6 55%, #fbcba8 100%); z-index:110; overflow:hidden; font-family:'DM Sans','Inter',sans-serif; opacity:0; visibility:hidden; transition: opacity 0.45s ease-out, visibility 0.45s; }
+  .almost-view.show { opacity:1; visibility:visible; }
+  .almost-logo { display:flex; align-items:center; gap:8px; justify-content:center; padding-top:18px; }
+  .almost-logo svg { width:28px; height:32px; }
+  .almost-logo span { font-family:'Inter',sans-serif; font-size:22px; font-weight:700; color:#FA5D2B; letter-spacing:-0.5px; }
+  .almost-card { max-width:620px; margin:54px auto 0; padding:0 24px; }
+  .almost-card h1 { font-size:28px; font-weight:700; color:#2d2d2d; margin-bottom:8px; }
+  .almost-card .sub { font-size:14px; color:#4b5563; margin-bottom:32px; }
+  .almost-form { display:flex; flex-direction:column; gap:14px; max-width:620px; }
+  .almost-row { display:grid; grid-template-columns:120px 1fr; align-items:center; gap:20px; }
+  .almost-row label { font-size:13.5px; font-weight:600; color:#2d2d2d; }
+  .almost-input { height:40px; padding:0 12px; border:1px solid #dadce0; border-radius:6px; font-family:'DM Sans',sans-serif; font-size:14px; color:#2d2d2d; background:#efe9e2; outline:none; transition:border-color 0.15s; width:100%; }
+  .almost-input:focus { border-color:#2d2d2d; background:#fff; }
+  .almost-input.empty { background:#fff; border:2px solid #2d2d2d; }
+  .almost-submit { margin-top:16px; width:100%; height:46px; border:none; border-radius:6px; background:#188433; color:#fff; font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600; cursor:pointer; transition:background 0.15s; grid-column:1 / -1; }
+  .almost-submit:hover { background:#0f6b28; }
+  .almost-terms { font-size:12px; color:#6b7280; margin-top:16px; text-align:left; }
+  .almost-terms a { color:#2d2d2d; text-decoration:underline; }
+  .almost-bottom-bar { position:absolute; left:0; right:0; bottom:0; height:8px; background:#FA5D2B; }
+  /* Shared clickable logo inside stacked views */
+  .almost-logo, .signin-logo { cursor:pointer; }
+
+  /* ── Sign-in view — pixel-perfect Harvest-ID style ── */
+  .signin-view { position:fixed; inset:0; background:#ffffff; z-index:120; overflow-y:auto; font-family:'Inter',sans-serif; opacity:0; visibility:hidden; transition: opacity 0.45s ease-out, visibility 0.45s; }
+  .signin-view.show { opacity:1; visibility:visible; }
+  .signin-logo { display:flex; align-items:center; gap:8px; justify-content:center; padding-top:30px; text-decoration:none; cursor:pointer; }
+  .signin-logo svg { width:30px; height:34px; }
+  .signin-logo span { font-family:'Inter',sans-serif; font-size:24px; font-weight:700; color:#FA5D2B; letter-spacing:-0.5px; }
+  .signin-title { font-family:'Muoto','Manrope','Inter',sans-serif; font-size:32px; font-weight:700; color:#1a1a1a; text-align:center; margin:68px 0 28px; letter-spacing:-0.025em; }
+  .signin-card { max-width:480px; margin:0 auto; background:#fdf3e3; border-radius:12px; padding:28px 28px 26px; box-shadow:0 1px 2px rgba(17,24,39,0.04); }
+  .signin-sso-row { display:flex; gap:10px; }
+  .signin-g { flex:1; height:48px; display:flex; align-items:center; justify-content:center; gap:10px; background:#fff; border:1.5px solid #e3ddd3; border-radius:8px; font-family:'Inter',sans-serif; font-size:14px; font-weight:600; color:#2d2d2d; cursor:pointer; transition:border-color 0.15s, box-shadow 0.15s; padding:0 14px; }
+  .signin-g:hover { border-color:#FDBA9A; box-shadow:0 1px 3px rgba(0,0,0,0.04); }
+  .signin-g svg { width:18px; height:18px; flex-shrink:0; }
+  .signin-divider { display:flex; align-items:center; gap:14px; margin:18px 4px; }
+  .signin-divider::before, .signin-divider::after { content:''; flex:1; height:1px; background:#e8ddcb; }
+  .signin-divider span { font-size:13.5px; color:#6b7280; white-space:nowrap; }
+  .signin-input { width:100%; height:46px; padding:0 14px; margin-bottom:10px; border:1.5px solid #e3ddd3; border-radius:8px; font-family:'Inter',sans-serif; font-size:14.5px; color:#1a1a1a; background:#fff; outline:none; transition:border-color 0.15s, box-shadow 0.15s; }
+  .signin-input::placeholder { color:#9ca3af; }
+  .signin-input:focus { border-color:#FA5D2B; box-shadow:0 0 0 3px rgba(250,93,43,0.15); }
+  .signin-submit { width:100%; height:50px; border:none; border-radius:8px; background:#2e7d32; color:#fff; font-family:'Inter',sans-serif; font-size:15.5px; font-weight:700; cursor:pointer; transition:background 0.15s; margin-top:6px; letter-spacing:-0.005em; }
+  .signin-submit:hover { background:#256428; }
+  .signin-sso { text-align:center; margin-top:14px; font-size:13.5px; color:#1a1a1a; }
+  .signin-sso a { color:#1a1a1a; text-decoration:underline; font-weight:500; cursor:pointer; }
+  .signin-footer-links { max-width:480px; margin:22px auto 0; display:flex; justify-content:center; gap:28px; font-size:13.5px; color:#6b7280; }
+  .signin-footer-links a { color:#6b7280; text-decoration:underline; cursor:pointer; }
+  .signin-footer-links a:hover { color:#2d2d2d; }
+  .signin-bottom-bar { position:absolute; left:0; right:0; bottom:0; height:8px; background:#FA5D2B; }
+
+  /* ── Forgot-password view ── */
+  .forgot-view { position:fixed; inset:0; background:#ffffff; z-index:130; overflow-y:auto; font-family:'Inter',sans-serif; opacity:0; visibility:hidden; transition:opacity 0.35s ease-out, visibility 0.35s; }
+  .forgot-view.show { opacity:1; visibility:visible; }
+  .forgot-logo { display:flex; align-items:center; gap:8px; justify-content:center; padding-top:30px; cursor:pointer; text-decoration:none; }
+  .forgot-logo svg { width:30px; height:34px; }
+  .forgot-logo span { font-family:'Inter',sans-serif; font-size:24px; font-weight:700; color:#FA5D2B; letter-spacing:-0.5px; }
+  .forgot-title { font-family:'Muoto','Manrope','Inter',sans-serif; font-size:32px; font-weight:700; color:#1a1a1a; text-align:center; margin:68px 0 24px; letter-spacing:-0.025em; }
+  .forgot-card { max-width:560px; margin:0 auto; background:#fdf3e3; border-radius:12px; padding:24px 28px; }
+  .forgot-card p { font-size:14.5px; color:#1a1a1a; line-height:1.55; margin-bottom:14px; }
+  .forgot-input { width:100%; height:46px; padding:0 14px; border:1.5px solid #1a1a1a; border-radius:8px; font-family:'Inter',sans-serif; font-size:14.5px; color:#1a1a1a; background:#fff; outline:none; transition:box-shadow 0.15s; }
+  .forgot-input:focus { box-shadow:0 0 0 3px rgba(26,26,26,0.08); }
+  .forgot-actions { display:flex; gap:10px; margin-top:18px; }
+  .forgot-send { height:42px; padding:0 18px; border:none; border-radius:6px; background:#2e7d32; color:#fff; font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.15s; }
+  .forgot-send:hover { background:#256428; }
+  .forgot-cancel { height:42px; padding:0 18px; border:1.5px solid #d4ccbf; border-radius:6px; background:#fff; color:#1a1a1a; font-family:'Inter',sans-serif; font-size:14px; font-weight:700; cursor:pointer; transition:background 0.15s; }
+  .forgot-cancel:hover { background:#f5f0e6; }
+  .forgot-bottom-bar { position:absolute; left:0; right:0; bottom:0; height:8px; background:#FA5D2B; }
+  @media (max-width: 1080px) {
+    .su-center { flex-direction:column; height:auto; position:relative; left:0; top:0; transform:none; padding:120px 24px 60px; align-items:center; }
+    .su-left { padding:0 0 40px; }
+    .su-right { padding:0; flex:initial; }
+    .su-headline { font-size:36px; line-height:44px; }
+  }
+</style>
+
+<div id="signup-view" class="signup-view">
+  <div class="sv2-page">
+    <section class="sv2-marketing">
+      <a href="#" class="sv2-brand-row" onclick="event.preventDefault();backToSignup()">
+        <svg viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+        <span class="sv2-brand-text">kebs</span>
+      </a>
+
+      <div class="sv2-eyebrow">See why 70,000+ companies track time with kebs</div>
+
+      <h1 class="sv2-headline">Finally, time tracking your team actually wants to use</h1>
+
+      <div class="sv2-features">
+        <div class="sv2-feat">
+          <div class="sv2-feat-dot"></div>
+          <div>
+            <strong>Time Tracking.</strong>
+            <span>Easy and intuitive time tracking that captures all your time without changing the way you work.</span>
+          </div>
+        </div>
+        <div class="sv2-feat">
+          <div class="sv2-feat-dot"></div>
+          <div>
+            <strong>Reports &amp; Analysis.</strong>
+            <span>Instantly create reports across projects. Budgets, time, team capacity, cost breakdowns, and more.</span>
+          </div>
+        </div>
+        <div class="sv2-feat">
+          <div class="sv2-feat-dot"></div>
+          <div>
+            <strong>Invoicing &amp; Payments.</strong>
+            <span>Turn tracked time into invoices. Accept payments online with Stripe and PayPal. Integrate with QuickBooks Online and Xero.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sv2-card-wrap">
+      <div class="sv2-card">
+        <h1>Get a FREE trial</h1>
+        <p class="sv2-sub">No credit card required.</p>
+
+        <div class="sv2-sso-row">
+          <button class="sv2-gbtn" type="button" onclick="showAlmostView('google')">
+            <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.7 4.6-6 7.8-11.3 7.8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2c-2.1 1.4-4.7 2.3-7.3 2.3-5.2 0-9.6-3.2-11.3-7.8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.9 35.3 44 30 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+            <span>Sign up with Google</span>
+          </button>
+          <button class="sv2-gbtn" type="button" onclick="showAlmostView('microsoft')">
+            <svg viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>
+            <span>Sign up with Microsoft</span>
+          </button>
+        </div>
+
+        <div class="sv2-divider"><span>or with your email below</span></div>
+
+        <div class="sv2-field row">
+          <div>
+            <label class="sv2-label" for="sv2-fname">First name</label>
+            <input class="sv2-input" id="sv2-fname" type="text" placeholder="Alex"/>
+          </div>
+          <div>
+            <label class="sv2-label" for="sv2-lname">Last name</label>
+            <input class="sv2-input" id="sv2-lname" type="text" placeholder="Morgan"/>
+          </div>
+        </div>
+
+        <div class="sv2-field row">
+          <div>
+            <label class="sv2-label" for="sv2-company">Company name</label>
+            <input class="sv2-input" id="sv2-company" type="text" placeholder="Acme Studios"/>
+          </div>
+          <div>
+            <label class="sv2-label" for="sv2-email">Work email</label>
+            <input class="sv2-input" id="sv2-email" type="email" placeholder="alex@acme.com"/>
+          </div>
+        </div>
+
+        <div class="sv2-field">
+          <label class="sv2-label" for="sv2-password">Password</label>
+          <div class="sv2-pwd-wrap" id="sv2-pwd-wrap">
+            <input class="sv2-input" id="sv2-password" type="password" placeholder="At least 8 characters" style="padding-right:44px;" onfocus="document.getElementById('sv2-pwd-wrap').classList.add('show-tip')" onblur="document.getElementById('sv2-pwd-wrap').classList.remove('show-tip')"/>
+            <button type="button" class="sv2-pwd-toggle" onclick="toggleSv2Pwd()" aria-label="Show password">
+              <svg id="sv2-eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+            <div class="sv2-pwd-tip">
+              <strong>Good passwords are hard to guess.</strong>
+              Use at least 8 characters. Try uncommon words, uPPercasing, and non-obvious numbers and symbols.
+            </div>
+          </div>
+        </div>
+
+        <button class="sv2-submit" type="button" onclick="dismissSignupView()">Start your free trial</button>
+
+        <p class="sv2-terms">By creating an account, you agree to the kebs <a href="#">Terms of service</a> and <a href="#">Privacy policy</a>.</p>
+        <p class="sv2-signin-row">Already a customer? <a href="#" onclick="event.preventDefault();showSigninView()">Sign in</a></p>
+      </div>
+    </section>
+  </div>
+
+  <!-- ─── Reviews / G2 badges section ─── -->
+  <section class="sv2-reviews">
+    <div class="sv2-badges">
+      <div class="sv2-badge grid">
+        <div class="sv2-badge-header"><span class="sv2-badge-spring">SPRING 2025</span><span class="sv2-badge-g2">G²</span></div>
+        <div class="sv2-badge-title">Grid<br/>Leader</div>
+      </div>
+      <div class="sv2-badge momentum">
+        <div class="sv2-badge-header"><span class="sv2-badge-spring">SPRING 2025</span><span class="sv2-badge-g2">G²</span></div>
+        <div class="sv2-badge-title">Momentum<br/>Leader</div>
+      </div>
+      <div class="sv2-badge setup">
+        <div class="sv2-badge-header"><span class="sv2-badge-spring">SPRING 2025</span><span class="sv2-badge-g2">G²</span></div>
+        <div class="sv2-badge-title">Easiest<br/>Setup</div>
+        <div class="sv2-badge-sub">Small Business</div>
+      </div>
+      <div class="sv2-badge easiest">
+        <div class="sv2-badge-header"><span class="sv2-badge-spring">SPRING 2025</span><span class="sv2-badge-g2">G²</span></div>
+        <div class="sv2-badge-title">Easiest<br/>To Use</div>
+        <div class="sv2-badge-sub">Small Business</div>
+      </div>
+    </div>
+    <button class="sv2-review-nav prev" aria-label="Previous" onclick="reviewNav(-1)">‹</button>
+    <div class="sv2-review-cards">
+      <div class="sv2-review-track" id="sv2-review-track">
+      <div class="sv2-review-card">
+        <div class="sv2-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="half1"><stop offset="50%" stop-color="#f59e0b"/><stop offset="50%" stop-color="#e5e7eb"/></linearGradient></defs><path fill="url(#half1)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="sv2-quote">"kebs is super simple and easy to use. I love that you can set a time limit on specific projects and visually see how much you've gone over."</p>
+        <p class="sv2-author">Anna A.</p>
+      </div>
+      <div class="sv2-review-card">
+        <div class="sv2-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><defs><linearGradient id="half2"><stop offset="50%" stop-color="#f59e0b"/><stop offset="50%" stop-color="#e5e7eb"/></linearGradient></defs><path fill="url(#half2)" d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="sv2-quote">"I like how you can access from anywhere, mobile app, desktop app, website, many easy options for quickly tracking time spent on projects."</p>
+        <p class="sv2-author">Rebecca B.</p>
+      </div>
+      <div class="sv2-review-card">
+        <div class="sv2-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="sv2-quote">"kebs is great. It has LITERALLY changed the way we work. Makes our staffing and budgeting estimates VERY easy."</p>
+        <p class="sv2-author">Brock P.</p>
+      </div>
+      <!-- Extra reviews for swipe -->
+      <div class="sv2-review-card">
+        <div class="sv2-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="sv2-quote">"Best time tracking tool I've used. The reports pay for the whole subscription in the first month alone."</p>
+        <p class="sv2-author">Jordan K.</p>
+      </div>
+      <div class="sv2-review-card">
+        <div class="sv2-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="sv2-quote">"Invoicing used to take me a weekend. Now it's fifteen minutes on Friday. Game changer."</p>
+        <p class="sv2-author">Priya S.</p>
+      </div>
+      </div>
+    </div>
+    <button class="sv2-review-nav next" aria-label="Next" onclick="reviewNav(1)">›</button>
+  </section>
+</div>
+
+<!-- ═══════════════════════ "ALMOST THERE" SSO FINISH VIEW ═══════════════════════ -->
+<div id="almost-view" class="almost-view">
+  <div class="almost-logo" onclick="backToSignup()">
+    <svg viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+    <span>kebs</span>
+  </div>
+  <div class="almost-card">
+    <h1>You're almost there!</h1>
+    <p class="sub">Please fill in any missing fields below to finish signing up.</p>
+    <div class="almost-form">
+      <div class="almost-row">
+        <label for="a-fname">First name</label>
+        <input class="almost-input" type="text" id="a-fname" value="Venkataramani" readonly/>
+      </div>
+      <div class="almost-row">
+        <label for="a-lname">Last name</label>
+        <input class="almost-input" type="text" id="a-lname" value="Srinivasan" readonly/>
+      </div>
+      <div class="almost-row">
+        <label for="a-email">Work email</label>
+        <input class="almost-input" type="email" id="a-email" value="astrosrinivasa@gmail.com" readonly/>
+      </div>
+      <div class="almost-row">
+        <label for="a-company">Company name</label>
+        <input class="almost-input empty" type="text" id="a-company" placeholder="" autofocus/>
+      </div>
+      <button class="almost-submit" type="button" onclick="dismissAlmostView()">Create my account</button>
+    </div>
+    <p class="almost-terms">By creating an account, you agree to our <a href="#">Terms of service</a> and <a href="#">Privacy policy</a>.</p>
+  </div>
+  <div class="almost-bottom-bar"></div>
+</div>
+
+<!-- ═══════════════════════ SIGN-IN VIEW ═══════════════════════ -->
+<div id="signin-view" class="signin-view">
+  <a class="signin-logo" href="#" onclick="event.preventDefault();backToSignup()">
+    <svg viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+    <span>kebs</span>
+  </a>
+  <h2 class="signin-title">Sign in to kebs ID</h2>
+  <div class="signin-card">
+    <div class="signin-sso-row">
+      <button class="signin-g" type="button" onclick="alert('Google sign-in is not wired up in this demo.')">
+        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.7 4.6-6 7.8-11.3 7.8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-1.9 13.5-5.1l-6.2-5.2c-2.1 1.4-4.7 2.3-7.3 2.3-5.2 0-9.6-3.2-11.3-7.8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.1-4 5.5l6.2 5.2C41.9 35.3 44 30 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+        <span>Sign in with Google</span>
+      </button>
+      <button class="signin-g" type="button" onclick="alert('Microsoft sign-in is not wired up in this demo.')">
+        <svg viewBox="0 0 23 23"><rect x="1" y="1" width="10" height="10" fill="#F25022"/><rect x="12" y="1" width="10" height="10" fill="#7FBA00"/><rect x="1" y="12" width="10" height="10" fill="#00A4EF"/><rect x="12" y="12" width="10" height="10" fill="#FFB900"/></svg>
+        <span>Sign in with Microsoft</span>
+      </button>
+    </div>
+    <div class="signin-divider"><span>or with your email below</span></div>
+    <form onsubmit="event.preventDefault();dismissSigninView()">
+      <input class="signin-input" type="email" id="si-email" placeholder="Work email" autofocus/>
+      <input class="signin-input" type="password" id="si-password" placeholder="Password"/>
+      <button class="signin-submit" type="submit">Sign in</button>
+    </form>
+    <p class="signin-sso">Don't have an account? <a href="#" onclick="event.preventDefault();backToSignup()">Sign up</a></p>
+  </div>
+  <div class="signin-footer-links">
+    <a onclick="showForgotView()">Forgot password?</a>
+    <a href="#">Terms of service</a>
+    <a href="#">Privacy policy</a>
+  </div>
+  <div class="signin-bottom-bar"></div>
+</div>
+
+<!-- ═══════════════════════ FORGOT-PASSWORD VIEW ═══════════════════════ -->
+<div id="forgot-view" class="forgot-view">
+  <a class="forgot-logo" href="#" onclick="event.preventDefault();backToSignup()">
+    <svg viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+    <span>kebs</span>
+  </a>
+  <h2 class="forgot-title">Forgot your password?</h2>
+  <div class="forgot-card">
+    <p>Enter the email address you use to sign in, and we'll send you a link to reset your password.</p>
+    <form onsubmit="event.preventDefault();alert('Reset link sent (demo).');dismissForgotView();">
+      <input class="forgot-input" type="email" id="fp-email" placeholder="Work email" autofocus/>
+      <div class="forgot-actions">
+        <button class="forgot-send" type="submit">Send link</button>
+        <button class="forgot-cancel" type="button" onclick="dismissForgotView()">Cancel</button>
+      </div>
+    </form>
+  </div>
+  <div class="forgot-bottom-bar"></div>
+</div>
+
+<!-- ROOT SPLIT LAYOUT -->
+<div style="display:flex;height:100vh;">
+
+  <!-- ============ LEFT SIDEBAR (kebs blue) ============ -->
+  <aside style="width:400px;background:
+      radial-gradient(ellipse 75% 90% at 100% 0%, #FF8A55 0%, rgba(255,138,85,0) 55%),
+      radial-gradient(ellipse 55% 70% at 100% 35%, #FF9D6B 0%, rgba(255,157,107,0) 65%),
+      linear-gradient(160deg, #FA5D2B 0%, #DC4A18 100%);display:flex;flex-direction:column;padding:42px 44px 0;position:relative;overflow:hidden;height:100vh;">
+    <!-- Subtle decorative kebs mark background -->
+    <svg style="position:absolute;right:-60px;top:-40px;width:260px;height:290px;opacity:0.08;" viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#fff"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#fff"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#fff"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#fff"/></svg>
+
+    <!-- Top: logo (fixed at top) -->
+    <div style="position:relative;z-index:2;flex-shrink:0;">
+      <a href="signup.html" style="display:inline-flex;align-items:center;gap:10px;">
+        <svg width="38" height="42" viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#fff"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#fff"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#fff"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#fff"/></svg>
+        <span style="font-size:30px;font-weight:600;color:#fff;letter-spacing:-0.7px;">kebs</span>
+      </a>
+    </div>
+
+    <!-- Middle: stepper — gets remaining flex space, items start below logo -->
+    <nav style="position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:flex-start;padding-top:46px;min-height:0;">
+      <div id="sb-step-1" class="sb-step current"><div class="sb-circle"></div><div class="sb-label">Create Account</div></div>
+      <div class="sb-connector"></div>
+      <div id="sb-step-2" class="sb-step"><div class="sb-circle"></div><div class="sb-label">Your Role</div></div>
+      <div class="sb-connector"></div>
+      <div id="sb-step-3" class="sb-step"><div class="sb-circle"></div><div class="sb-label">Company Info</div></div>
+      <div class="sb-connector"></div>
+      <div id="sb-step-4" class="sb-step"><div class="sb-circle"></div><div class="sb-label">Your Objectives</div></div>
+      <div class="sb-connector"></div>
+      <div id="sb-step-5" class="sb-step"><div class="sb-circle"></div><div class="sb-label">Your Challenges</div></div>
+      <div class="sb-connector"></div>
+      <div id="sb-step-6" class="sb-step"><div class="sb-circle"></div><div class="sb-label">Invite Teammates</div></div>
+    </nav>
+
+  </aside>
+
+  <!-- ============ ILLUSTRATION anchored to the right edge (mirrored, hidden on step 5) ============ -->
+  <div id="side-illustration" style="position:fixed;right:40px;bottom:0;width:340px;pointer-events:none;z-index:15;display:flex;align-items:flex-end;transform-origin:80% 25%;transition:opacity 0.55s cubic-bezier(.55,0,.3,1),transform 0.7s cubic-bezier(.55,0,.3,1);will-change:opacity,transform;">
+    <img src="assets/man-working.png" alt="" style="width:100%;max-height:60vh;object-fit:contain;object-position:bottom;display:block;filter:drop-shadow(0 -6px 20px rgba(0,0,0,0.22));transform:scaleX(-1);" onerror="this.parentElement.style.display='none'"/>
+  </div>
+  <style>
+    /* Monitor-zoom: camera flies into the figure's monitor, which becomes the tablet */
+    #side-illustration.zooming-in-monitor { opacity:0; transform:scale(3.6) translate(-8%, -18%); }
+    #side-illustration.returning { opacity:0; transform:scale(0.92) translateY(18px); transition:none; }
+    #step5-tablet { transition: opacity 0.55s ease-out 0.18s, transform 0.65s cubic-bezier(.2,.8,.25,1) 0.18s; will-change: opacity, transform; }
+    #step5-tablet.tablet-enter-init { opacity:0; transform:scale(0.88) translateY(-14px); }
+    #step5-tablet.tablet-leave { opacity:0; transform:scale(0.94) translateY(-10px); transition: opacity 0.3s ease-out, transform 0.3s ease-out; }
+  </style>
+
+  <!-- ============ RIGHT CONTENT ============ -->
+  <main style="flex:1;display:flex;flex-direction:column;padding:0;position:relative;overflow:hidden;">
+
+    <!-- Content area -->
+    <div style="flex:1;display:flex;flex-direction:column;padding:42px 80px 24px;overflow-y:auto;">
+
+      <div style="max-width:560px;">
+
+        <!-- Step 1: Create Account -->
+        <div id="step1" class="step-card active">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">Let's Get You Set Up</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">Tell us a bit about you and your company so we can personalise your kebs experience.</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label class="ob-label">Full name</label>
+              <input class="ob-input" type="text" placeholder="e.g. Alex Morgan"/>
+            </div>
+            <div>
+              <label class="ob-label">Company name</label>
+              <input class="ob-input" type="text" placeholder="e.g. Acme Studios"/>
+            </div>
+            <div>
+              <label class="ob-label">Team name</label>
+              <input class="ob-input" type="text" placeholder="e.g. Delivery team"/>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 2: Your Role -->
+        <div id="step2" class="step-card">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">Tell Us What You Do</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">Pick the role that best describes your day-to-day. We'll tune the dashboards and reports accordingly.</p>
+          <div>
+            <label class="ob-label">What is your role?</label>
+            <select class="ob-select" id="sel-role">
+              <option value="" disabled selected>Choose your role</option>
+              <option value="pm">Project Manager</option>
+              <option value="ceo">CEO / Founder</option>
+              <option value="sales">Sales Manager</option>
+              <option value="hr">HR Manager</option>
+              <option value="finance">Finance Lead</option>
+              <option value="ops">Admin / Ops</option>
+              <option value="other">Something else</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Step 3: Company Info -->
+        <div id="step3" class="step-card">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">A Little About Your Company</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">Help us tailor industry-specific insights and benchmarks for you.</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label class="ob-label">Industry</label>
+              <select class="ob-select" id="sel-industry">
+                <option value="" disabled selected>Choose your industry</option>
+                <option>Professional Services</option>
+                <option>Software &amp; SaaS</option>
+                <option>Marketing &amp; Creative</option>
+                <option>Consulting</option>
+                <option>Architecture &amp; Engineering</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="ob-label">Team size</label>
+              <select class="ob-select" id="sel-size">
+                <option value="" disabled selected>Choose your team size</option>
+                <option>Just me</option>
+                <option>2 – 10</option>
+                <option>11 – 50</option>
+                <option>51 – 200</option>
+                <option>200+</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 4: Your Objectives -->
+        <div id="step4" class="step-card">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">What Are You Hoping To Achieve</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">Your primary objective shapes which kebs insights land on your home dashboard first.</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label class="ob-label">Primary objective</label>
+              <select class="ob-select" id="sel-goal">
+                <option value="" disabled selected>Choose your primary objective</option>
+                <option>Improve project visibility</option>
+                <option>Increase team productivity</option>
+                <option>Deliver projects on time</option>
+                <option>Protect revenue &amp; margin</option>
+                <option>Consolidate tools</option>
+              </select>
+            </div>
+            <div>
+              <label class="ob-label">Timeframe</label>
+              <select class="ob-select" id="sel-timeframe">
+                <option value="" disabled selected>When do you want to see results?</option>
+                <option>Within 30 days</option>
+                <option>This quarter</option>
+                <option>Next 6 months</option>
+                <option>No specific deadline</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 5: Your Challenges (with tablet mockup) -->
+        <div id="step5" class="step-card">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">Tell Us Your Biggest Challenges</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">Pick up to three — we'll instantly preview how kebs will help with your top one.</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div>
+              <label class="ob-label">Challenge 1</label>
+              <select class="ob-select" id="sel-challenge" data-multi="1" multiple onchange="onChallengeSelect(this)">
+                <option value="" disabled selected>Choose your biggest challenge</option>
+                <option value="visibility">Lack of visibility</option>
+                <option value="tracking">Manual tracking</option>
+                <option value="deadlines">Missed deadlines</option>
+                <option value="revenue">Revenue leakage</option>
+              </select>
+            </div>
+            <div>
+              <label class="ob-label">Challenge 2</label>
+              <select class="ob-select" id="sel-challenge-2" data-multi="1" multiple>
+                <option value="" disabled selected>Choose another challenge</option>
+                <option value="visibility">Lack of visibility</option>
+                <option value="tracking">Manual tracking</option>
+                <option value="deadlines">Missed deadlines</option>
+                <option value="revenue">Revenue leakage</option>
+              </select>
+            </div>
+            <div>
+              <label class="ob-label">Challenge 3</label>
+              <select class="ob-select" id="sel-challenge-3" data-multi="1" multiple>
+                <option value="" disabled selected>Choose another challenge</option>
+                <option value="visibility">Lack of visibility</option>
+                <option value="tracking">Manual tracking</option>
+                <option value="deadlines">Missed deadlines</option>
+                <option value="revenue">Revenue leakage</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 6: Invite teammates -->
+        <div id="step6" class="step-card">
+          <h2 style="font-size:26px;font-weight:600;color:#111827;letter-spacing:-0.02em;line-height:1.25;margin-bottom:10px;">Bring Your Teammates Along</h2>
+          <p style="font-size:15px;color:#6b7280;line-height:1.55;margin-bottom:32px;">kebs is better together. Invite a teammate to try it with you.</p>
+          <div id="invite-list" style="display:flex;flex-direction:column;gap:12px;margin-bottom:12px;">
+            <input class="ob-input" type="email" placeholder="name@example.com"/>
+          </div>
+          <button type="button" onclick="addInviteRow()" style="background:none;border:none;font-size:14px;font-weight:600;color:#FA5D2B;cursor:pointer;padding:6px 0;">+ Add another</button>
+        </div>
+
+        <!-- Inline navigation buttons (sit directly below the current step's fields) -->
+        <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:center;gap:16px;">
+          <button id="btn-back" class="btn-secondary" onclick="goStep(-1)" style="display:none;">Back</button>
+          <div style="flex:1;"></div>
+          <div style="display:flex;gap:14px;align-items:center;">
+            <a href="executive-dashboard.html" style="font-size:13px;color:#FA5D2B;font-weight:500;text-decoration:underline;">Skip for now</a>
+            <button id="btn-next" class="btn-primary" onclick="goStep(1)">Next</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+</div>
+
+<!-- Tablet mockup — visible only on step 5, anchored to the upper-right empty area -->
+<div id="step5-tablet" style="display:none;position:fixed;right:40px;top:40px;bottom:120px;width:400px;max-width:40vw;pointer-events:none;z-index:20;">
+  <div style="background:#0d0d0d;border-radius:28px;padding:10px;box-shadow:0 18px 50px rgba(0,0,0,0.22),0 4px 10px rgba(0,0,0,0.08);position:relative;height:100%;display:flex;flex-direction:column;">
+    <!-- Camera / speaker dot at the top centre -->
+    <div style="position:absolute;top:4px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;">
+      <div style="width:32px;height:3px;background:#1a1a1a;border-radius:2px;"></div>
+      <div style="width:5px;height:5px;background:#1a1a1a;border-radius:50%;"></div>
+    </div>
+    <div style="background:#fff;border-radius:20px;overflow:hidden;flex:1;min-height:0;">
+      <div id="report-content" style="padding:22px 24px;overflow:hidden;height:100%;">
+        <!-- Shimmer — shown by default when step 5 opens -->
+        <div id="report-shimmer" style="display:block;padding:4px;">
+          <!-- Real kebs logo + wordmark (stays visible during shimmer) -->
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">
+            <svg width="28" height="31" viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+            <span style="font-family:'Inter',sans-serif;font-size:18px;font-weight:600;color:#FA5D2B;letter-spacing:-0.4px;">kebs</span>
+          </div>
+          <div class="shimmer-line" style="width:80px;height:10px;margin-bottom:10px;"></div>
+          <div class="shimmer-line" style="width:100%;height:14px;margin-bottom:6px;"></div>
+          <div class="shimmer-line" style="width:85%;height:14px;margin-bottom:20px;"></div>
+          <div class="shimmer-line" style="width:100px;height:10px;margin-bottom:10px;"></div>
+          <div class="shimmer-line" style="width:95%;height:12px;margin-bottom:6px;"></div>
+          <div class="shimmer-line" style="width:90%;height:12px;margin-bottom:6px;"></div>
+          <div class="shimmer-line" style="width:80%;height:12px;margin-bottom:16px;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
+            <div class="shimmer-line" style="height:58px;border-radius:8px;"></div>
+            <div class="shimmer-line" style="height:58px;border-radius:8px;"></div>
+            <div class="shimmer-line" style="height:58px;border-radius:8px;"></div>
+            <div class="shimmer-line" style="height:58px;border-radius:8px;"></div>
+          </div>
+          <div class="shimmer-line" style="width:120px;height:10px;margin-bottom:10px;"></div>
+          <div class="shimmer-line" style="width:100%;height:12px;margin-bottom:6px;"></div>
+          <div class="shimmer-line" style="width:100%;height:12px;margin-bottom:6px;"></div>
+          <div class="shimmer-line" style="width:80%;height:12px;"></div>
+        </div>
+        <!-- Actual report (populated by JS) -->
+        <div id="report-actual" style="display:none;"></div>
+        <!-- Empty state (before any challenge picked) -->
+        <div id="report-empty" style="display:none;text-align:center;padding-top:40px;color:#9ca3af;font-size:13px;">Select a challenge to see how kebs responds.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =============== State =============== */
+var currentStep = 1;
+var totalSteps = 6;
+
+/* =============== Challenge data =============== */
+var challengeData = {
+  visibility: {
+    title: 'Flying blind is exhausting.',
+    desc: "You're making critical decisions on stale data while opportunities slip past in real-time.",
+    knows: ['Project health scattered across tools and Slack threads — not in trusted dashboards','By the time reports compile, the action window closes — reacting to history','Simple questions (capacity? profitability?) require days of investigation'],
+    loading: 'Understood · Loading your CEO view...',
+    chart: 38, chartLabel: 'Untracked',
+    stats: [{label:'Untracked',val:'38%',sub:'= $195K/yr'},{label:'Report Lag',val:'5 days',sub:'to insights'},{label:'RT Access',val:'<60s',sub:'with auto'},{label:'Confidence',val:'Low',sub:'Quality'}],
+    costs: [{name:'Unknown team capacity',sub:'Delayed hiring',amt:'$42K',dot:'#3B82F6'},{name:'Late health alerts',sub:'Crisis mode',amt:'$28K',dot:'#EF4444'},{name:'Budget tracking gaps',sub:'',amt:'$19K',dot:'#EF4444'}]
+  },
+  tracking: {
+    title: 'Manual tracking is killing productivity.',
+    desc: "Your team spends hours on spreadsheets instead of delivering value to clients.",
+    knows: ['Time entries scattered across 5+ tools with no single source of truth','Managers spend 3+ hours weekly compiling reports from fragmented data','Billable hours leak because nobody tracks them in real-time'],
+    loading: 'Understood · Loading your efficiency view...',
+    chart: 52, chartLabel: 'Manual',
+    stats: [{label:'Manual Hours',val:'52%',sub:'of tracking'},{label:'Tools Used',val:'5+',sub:'fragmented'},{label:'Time Lost',val:'3h/wk',sub:'per manager'},{label:'Accuracy',val:'Low',sub:'estimates'}],
+    costs: [{name:'Leaked billable hours',sub:'Unbilled time',amt:'$67K',dot:'#EF4444'},{name:'Report compilation overhead',sub:'Manual effort',amt:'$31K',dot:'#3B82F6'},{name:'Tool subscription waste',sub:'Overlap',amt:'$12K',dot:'#F59E0B'}]
+  },
+  deadlines: {
+    title: 'Missed deadlines erode trust.',
+    desc: "Projects slip silently until it's too late, damaging client relationships and revenue.",
+    knows: ['No proactive alerts when milestones are at risk — only fire drills','Dependencies between teams create invisible bottlenecks','Capacity planning is guesswork — overcommitted teams burn out'],
+    loading: 'Understood · Loading your delivery view...',
+    chart: 29, chartLabel: 'At Risk',
+    stats: [{label:'At Risk',val:'29%',sub:'of projects'},{label:'Avg Delay',val:'8 days',sub:'per project'},{label:'Overloaded',val:'34%',sub:'of team'},{label:'Client NPS',val:'6.2',sub:'declining'}],
+    costs: [{name:'Client penalties & discounts',sub:'SLA breaches',amt:'$54K',dot:'#EF4444'},{name:'Overtime & rush delivery',sub:'Burnout risk',amt:'$38K',dot:'#F59E0B'},{name:'Lost renewal revenue',sub:'Churn',amt:'$85K',dot:'#EF4444'}]
+  },
+  revenue: {
+    title: 'Revenue is leaking through the cracks.',
+    desc: "Unbilled hours, scope creep, and pricing gaps silently drain your profitability.",
+    knows: ['Up to 20% of billable work goes uninvoiced due to poor tracking','Scope changes are absorbed without adjusting contracts',"Pricing doesn't reflect actual cost of delivery"],
+    loading: 'Understood · Loading your profitability view...',
+    chart: 20, chartLabel: 'Leaked',
+    stats: [{label:'Revenue Leak',val:'20%',sub:'unbilled'},{label:'Scope Creep',val:'High',sub:'untracked'},{label:'Margin',val:'12%',sub:'vs 28% target'},{label:'Invoice Delay',val:'14 days',sub:'avg'}],
+    costs: [{name:'Unbilled project hours',sub:'Missed invoices',amt:'$92K',dot:'#EF4444'},{name:'Scope creep absorption',sub:'No change orders',amt:'$45K',dot:'#F59E0B'},{name:'Underpriced contracts',sub:'Cost mismatch',amt:'$33K',dot:'#EF4444'}]
+  }
+};
+
+/* =============== Navigation =============== */
+function goStep(dir) {
+  var next = currentStep + dir;
+  if (next < 1) return;
+  if (next > totalSteps) { window.location.href = 'executive-dashboard.html'; return; }
+  // Hide current
+  document.getElementById('step' + currentStep).classList.remove('active');
+  currentStep = next;
+  // Monitor-zoom transition — figure's monitor becomes the tablet
+  var tablet = document.getElementById('step5-tablet');
+  var illus  = document.getElementById('side-illustration');
+  if (currentStep === 5) {
+    if (illus) {
+      illus.classList.remove('returning');
+      illus.classList.add('zooming-in-monitor');
+      setTimeout(function(){ if (currentStep === 5) illus.style.visibility = 'hidden'; }, 700);
+    }
+    tablet.classList.remove('tablet-leave');
+    tablet.classList.add('tablet-enter-init');
+    tablet.style.visibility = 'visible';
+    tablet.style.display = 'block';
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){ tablet.classList.remove('tablet-enter-init'); });
+    });
+    var sel = document.getElementById('sel-challenge');
+    var hasSel = false;
+    if (sel) {
+      for (var i=0; i<sel.options.length; i++) { if (sel.options[i].selected && sel.options[i].value) { hasSel = true; break; } }
+    }
+    if (hasSel) {
+      onChallengeSelect(sel);
+    } else {
+      document.getElementById('report-shimmer').style.display = 'block';
+      document.getElementById('report-actual').style.display = 'none';
+      document.getElementById('report-empty').style.display = 'none';
+    }
+  } else {
+    tablet.classList.add('tablet-leave');
+    setTimeout(function(){ if (currentStep !== 5) { tablet.style.display = 'none'; tablet.classList.remove('tablet-leave'); } }, 320);
+    if (illus) {
+      illus.style.visibility = 'visible';
+      illus.classList.remove('zooming-in-monitor');
+      illus.classList.add('returning');
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){ illus.classList.remove('returning'); });
+      });
+    }
+  }
+  // Show next
+  document.getElementById('step' + currentStep).classList.add('active');
+  updateButtons();
+  updateSidebar();
+}
+
+function updateButtons() {
+  document.getElementById('btn-back').style.display = currentStep > 1 ? '' : 'none';
+  var next = document.getElementById('btn-next');
+  next.textContent = currentStep === totalSteps ? 'Finish' : 'Next';
+}
+
+function updateSidebar() {
+  for (var i = 1; i <= totalSteps; i++) {
+    var el = document.getElementById('sb-step-' + i);
+    el.classList.remove('done','current');
+    if (i < currentStep) el.classList.add('done');
+    else if (i === currentStep) el.classList.add('current');
+  }
+}
+
+function addInviteRow() {
+  var list = document.getElementById('invite-list');
+  var row = document.createElement('input');
+  row.type = 'email';
+  row.className = 'ob-input';
+  row.placeholder = 'name@example.com';
+  list.appendChild(row);
+}
+
+function dismissSignupView() {
+  var v = document.getElementById('signup-view');
+  if (v) { v.classList.add('hide'); setTimeout(function(){ v.style.display='none'; }, 500); }
+}
+function showAlmostView(provider) {
+  var a = document.getElementById('almost-view');
+  if (a) a.classList.add('show');
+}
+function dismissAlmostView() {
+  var a = document.getElementById('almost-view');
+  if (a) { a.classList.remove('show'); setTimeout(function(){ a.style.visibility='hidden'; }, 450); }
+  dismissSignupView();
+}
+function showSigninView() {
+  var s = document.getElementById('signin-view');
+  if (s) s.classList.add('show');
+}
+function dismissSigninView() {
+  var s = document.getElementById('signin-view');
+  if (s) s.classList.remove('show');
+  dismissSignupView();
+}
+function backToSignup() {
+  // Show signup (remove hide class), close any overlays above it
+  var sv = document.getElementById('signup-view');
+  if (sv) { sv.style.display = ''; sv.classList.remove('hide'); }
+  var si = document.getElementById('signin-view');
+  if (si) si.classList.remove('show');
+  var a = document.getElementById('almost-view');
+  if (a) a.classList.remove('show');
+  var fp = document.getElementById('forgot-view');
+  if (fp) fp.classList.remove('show');
+}
+function showForgotView() {
+  var f = document.getElementById('forgot-view');
+  if (f) f.classList.add('show');
+}
+
+// Reviews carousel
+var reviewIdx = 0;
+function reviewNav(dir) {
+  var track = document.getElementById('sv2-review-track');
+  if (!track) return;
+  var cards = track.querySelectorAll('.sv2-review-card');
+  var viewport = track.parentElement;
+  if (!cards.length) return;
+  var visible = Math.max(1, Math.round(viewport.offsetWidth / (cards[0].offsetWidth + 16)));
+  var maxIdx = Math.max(0, cards.length - visible);
+  reviewIdx = Math.max(0, Math.min(maxIdx, reviewIdx + dir));
+  var offset = reviewIdx * (cards[0].offsetWidth + 16);
+  track.style.transform = 'translateX(' + (-offset) + 'px)';
+}
+// Touch swipe support
+(function(){
+  var track = null, startX = null, startTransform = 0;
+  function onTouchStart(e){ track = document.getElementById('sv2-review-track'); if(!track)return; startX = (e.touches?e.touches[0]:e).clientX; }
+  function onTouchEnd(e){ if(!track||startX===null)return; var endX = (e.changedTouches?e.changedTouches[0]:e).clientX; var dx = endX - startX; if (Math.abs(dx) > 40) { reviewNav(dx < 0 ? 1 : -1); } startX=null; }
+  document.addEventListener('DOMContentLoaded', function(){
+    var viewport = document.querySelector('.sv2-review-cards');
+    if (!viewport) return;
+    viewport.addEventListener('touchstart', onTouchStart, {passive:true});
+    viewport.addEventListener('touchend', onTouchEnd);
+    viewport.addEventListener('mousedown', onTouchStart);
+    viewport.addEventListener('mouseup', onTouchEnd);
+  });
+})();
+function dismissForgotView() {
+  var f = document.getElementById('forgot-view');
+  if (f) f.classList.remove('show');
+}
+function toggleSv2Pwd() {
+  var p = document.getElementById('sv2-password');
+  var icon = document.getElementById('sv2-eye');
+  if (p.type === 'password') {
+    p.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    p.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+function toggleSignupPwd() {
+  var p = document.getElementById('signup-password');
+  var icon = document.getElementById('signup-eye');
+  if (p.type === 'password') {
+    p.type = 'text';
+    icon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';
+  } else {
+    p.type = 'password';
+    icon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+  }
+}
+
+/* =============== Typewriter animation =============== */
+function typeWrite(el, text, cb) {
+  if (!text) { if (cb) cb(); return; }
+  el.textContent = '';
+  var i = 0;
+  var speed = text.length > 40 ? 8 : text.length > 20 ? 14 : 22;
+  var interval = setInterval(function() {
+    el.textContent += text.charAt(i++);
+    if (i >= text.length) { clearInterval(interval); if (cb) setTimeout(cb, 80); }
+  }, speed);
+}
+
+function typeAllTargets(root, done) {
+  var targets = Array.prototype.slice.call(root.querySelectorAll('.type-target'));
+  targets.forEach(function(t) {
+    t.setAttribute('data-original', t.getAttribute('data-text') || '');
+    t.textContent = '';
+    t.classList.add('typing-shimmer');
+  });
+  var i = 0;
+  function next() {
+    if (i >= targets.length) { if (done) done(); return; }
+    var el = targets[i++];
+    var text = el.getAttribute('data-original');
+    typeWrite(el, text, function() {
+      el.classList.remove('typing-shimmer');
+      next();
+    });
+  }
+  next();
+}
+
+/* =============== Challenge selection =============== */
+function onChallengeSelect(sel) {
+  // For multi-select, pick the first selected option; otherwise use .value
+  var key = '';
+  if (sel.multiple || sel.dataset.multi === '1') {
+    for (var i=0; i<sel.options.length; i++) {
+      if (sel.options[i].selected && sel.options[i].value) { key = sel.options[i].value; break; }
+    }
+  } else {
+    key = sel.value;
+  }
+  var data = challengeData[key];
+  if (!data) return;
+  var shimmer = document.getElementById('report-shimmer');
+  var actual = document.getElementById('report-actual');
+  var empty = document.getElementById('report-empty');
+  empty.style.display = 'none';
+  actual.style.display = 'none';
+  shimmer.style.display = 'block';
+  setTimeout(function() {
+    var pct = data.chart;
+    var palette = [
+      { bg:'#fff5f0', border:'rgba(249,108,60,0.2)', valColor:'#f96c3c' },
+      { bg:'#f0f9ff', border:'rgba(74,123,247,0.2)', valColor:'#2d2d2d' },
+      { bg:'#f0fdf4', border:'rgba(124,176,131,0.2)', valColor:'#7cb083' },
+      { bg:'#fef3c7', border:'rgba(245,158,11,0.2)', valColor:'#2d2d2d' }
+    ];
+    var statsHtml = data.stats.map(function(s, i) {
+      var p = palette[i] || palette[0];
+      return '<div style="background:' + p.bg + ';border:1px solid ' + p.border + ';border-radius:8px;padding:6px 8px;">' +
+        '<div class="type-target" data-text="' + s.label + '" style="font-size:8px;color:#666;line-height:11px;"></div>' +
+        '<div class="type-target" data-text="' + s.val + '" style="font-size:14px;font-weight:700;color:' + p.valColor + ';line-height:19px;margin-top:2px;"></div>' +
+        '<div class="type-target" data-text="' + s.sub + '" style="font-size:7.5px;color:#666;line-height:11px;"></div>' +
+      '</div>';
+    }).join('');
+    var costsHtml = data.costs.map(function(c, i) {
+      var isLast = i === data.costs.length - 1;
+      return '<div style="padding:4px 0 5px;' + (isLast ? '' : 'border-bottom:1px solid #e5e7eb;') + '">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<div style="width:6px;height:6px;border-radius:50%;background:' + c.dot + ';flex-shrink:0;"></div>' +
+            '<span class="type-target" data-text="' + c.name + '" style="font-size:10px;font-weight:500;color:#2d2d2d;"></span>' +
+          '</div>' +
+          '<span class="type-target" data-text="' + c.amt + '" style="font-size:11px;font-weight:700;color:#FA5D2B;"></span>' +
+        '</div>' +
+        (c.sub ? '<div class="type-target" data-text="' + c.sub + '" style="font-size:8px;color:#666;margin-left:12px;margin-top:1px;"></div>' : '') +
+      '</div>';
+    }).join('');
+    actual.innerHTML =
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;">' +
+        '<svg width="32" height="36" viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>' +
+        '<span style="font-size:22px;font-weight:600;color:#FA5D2B;letter-spacing:-0.6px;">kebs</span>' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<p class="type-target" data-text="WE HEAR YOU" style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;"></p>' +
+        '<p class="type-target" data-text="' + (data.title + ' ' + data.desc).replace(/"/g,'&quot;') + '" style="font-size:14px;font-weight:500;color:#2d2d2d;line-height:1.45;"></p>' +
+      '</div>' +
+      '<div style="border-top:1px solid #e5e7eb;padding-top:12px;margin-bottom:14px;">' +
+        '<p class="type-target" data-text="WHAT WE KNOW" style="font-size:10px;font-weight:600;color:#919191;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;"></p>' +
+        '<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:12px;">' +
+          data.knows.map(function(k) {
+            return '<div style="display:flex;gap:6px;align-items:flex-start;">' +
+              '<span style="color:#f96c3c;font-size:11px;line-height:1.55;flex-shrink:0;">•</span>' +
+              '<span class="type-target" data-text="' + k.replace(/"/g,'&quot;') + '" style="font-size:11px;color:#000;line-height:1.55;"></span>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div style="background:#f9fafb;border-radius:10px;padding:8px 12px;">' +
+          '<p class="type-target" data-text="' + data.loading.replace(/"/g,'&quot;') + '" style="font-size:10px;font-weight:500;color:#666;"></p>' +
+        '</div>' +
+      '</div>' +
+      '<div style="margin-bottom:14px;">' +
+        '<p class="type-target" data-text="YOUR PORTFOLIO — RIGHT NOW" style="font-size:10px;font-weight:600;color:#999;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;"></p>' +
+        '<div style="display:flex;gap:8px;margin-bottom:8px;">' +
+          '<div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:10px;width:120px;height:128px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+            '<div style="position:relative;width:95px;height:95px;">' +
+              '<div style="position:absolute;inset:0;border-radius:50%;background:conic-gradient(' + palette[0].valColor + ' 0% ' + pct + '%, #e5e7eb ' + pct + '% 100%);"></div>' +
+              '<div style="position:absolute;inset:10px;background:#f9fafb;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;">' +
+                '<span style="font-size:16px;font-weight:700;color:' + palette[0].valColor + ';line-height:24px;">' + pct + '%</span>' +
+                '<span style="font-size:7.5px;color:#666;">' + data.chartLabel + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+          '<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;">' + statsHtml + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background:#f9fafb;border-radius:10px;padding:10px 12px;">' +
+        '<p class="type-target" data-text="Hidden Costs (Q1)" style="font-size:10px;font-weight:600;color:#2d2d2d;margin-bottom:6px;"></p>' +
+        '<div>' + costsHtml + '</div>' +
+      '</div>';
+    shimmer.style.display = 'none';
+    actual.style.display = 'block';
+    typeAllTargets(actual);
+  }, 900);
+}
+
+/* =============== Harvest-style custom dropdowns =============== */
+function enhanceSelects() {
+  document.querySelectorAll('select.ob-select').forEach(function(sel) {
+    if (sel.dataset.enhanced === '1') return;
+    sel.dataset.enhanced = '1';
+
+    // Build wrapper
+    var wrap = document.createElement('div');
+    wrap.className = 'hd-wrap';
+
+    var trigger = document.createElement('div');
+    trigger.className = 'hd-trigger placeholder';
+    trigger.tabIndex = 0;
+
+    var menu = document.createElement('div');
+    menu.className = 'hd-menu';
+
+    // Build options
+    var isMulti = sel.dataset.multi === '1' || sel.multiple;
+    var opts = Array.prototype.slice.call(sel.options);
+    var placeholder = '';
+
+    // Helper: render chips for multi-select trigger
+    function renderChips() {
+      trigger.innerHTML = '';
+      trigger.removeAttribute('title');
+      var chosen = menu.querySelectorAll('.hd-option.selected');
+      if (chosen.length === 0) {
+        var ph = document.createElement('span');
+        ph.className = 'hd-placeholder-text';
+        ph.textContent = placeholder || 'Select…';
+        trigger.appendChild(ph);
+        trigger.classList.add('placeholder');
+        return;
+      }
+      trigger.classList.remove('placeholder');
+      chosen.forEach(function(c){
+        var chip = document.createElement('span');
+        chip.className = 'hd-chip';
+        var lbl = document.createElement('span');
+        lbl.textContent = c.textContent;
+        chip.appendChild(lbl);
+        var x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'hd-chip-x';
+        x.setAttribute('aria-label','Remove ' + c.textContent);
+        x.textContent = '×';
+        x.addEventListener('click', function(e){
+          e.stopPropagation();
+          c.classList.remove('selected');
+          Array.prototype.forEach.call(sel.options, function(o2){
+            if (o2.value === c.dataset.value) o2.selected = false;
+          });
+          renderChips();
+          sel.dispatchEvent(new Event('change', { bubbles:true }));
+        });
+        chip.appendChild(x);
+        trigger.appendChild(chip);
+      });
+    }
+    opts.forEach(function(o) {
+      if (o.disabled && o.value === '') {
+        placeholder = o.textContent;
+        return;
+      }
+      var opt = document.createElement('div');
+      opt.className = 'hd-option';
+      opt.textContent = o.textContent;
+      opt.dataset.value = o.value || o.textContent;
+      opt.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (isMulti) {
+          // Toggle selection — keep menu open so user can pick several
+          opt.classList.toggle('selected');
+          // Sync native select <option> list
+          Array.prototype.forEach.call(sel.options, function(o2){
+            if (o2.value === opt.dataset.value) o2.selected = opt.classList.contains('selected');
+          });
+          renderChips();
+          // Fire change so preview can react to the first-picked challenge
+          sel.dispatchEvent(new Event('change', { bubbles:true }));
+        } else {
+          // Single-select: replace selection and close
+          sel.value = opt.dataset.value;
+          menu.querySelectorAll('.hd-option.selected').forEach(function(s){ s.classList.remove('selected'); });
+          opt.classList.add('selected');
+          trigger.textContent = opt.textContent;
+          trigger.classList.remove('placeholder');
+          wrap.classList.remove('open');
+          sel.dispatchEvent(new Event('change', { bubbles:true }));
+        }
+      });
+      menu.appendChild(opt);
+    });
+
+    // Initial trigger label
+    trigger.textContent = placeholder || 'Select…';
+
+    // Toggle open
+    trigger.addEventListener('click', function(e) {
+      e.stopPropagation();
+      // Close others
+      document.querySelectorAll('.hd-wrap.open').forEach(function(w){ if (w !== wrap) w.classList.remove('open'); });
+      wrap.classList.toggle('open');
+    });
+    trigger.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); trigger.click(); }
+      if (e.key === 'Escape') { wrap.classList.remove('open'); }
+    });
+
+    // Mount: native select stays (hidden) to hold the value; wrapper rendered in its place
+    sel.parentNode.insertBefore(wrap, sel);
+    wrap.appendChild(trigger);
+    wrap.appendChild(menu);
+  });
+
+  // Close on outside click
+  document.addEventListener('click', function() {
+    document.querySelectorAll('.hd-wrap.open').forEach(function(w){ w.classList.remove('open'); });
+  });
+}
+
+/* =============== Init =============== */
+updateButtons();
+updateSidebar();
+enhanceSelects();
+</script>
+
+</body>
+</html>
