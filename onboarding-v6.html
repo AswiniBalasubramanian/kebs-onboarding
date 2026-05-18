@@ -1339,6 +1339,18 @@
           <label class="ob4-label" for="ob-company">Company name</label>
           <input class="ob4-input" id="ob-company" type="text" placeholder="e.g. Acme Studios" oninput="onStep1Input()"/>
         </div>
+        <div class="ob4-field">
+          <label class="ob4-label" for="ob-website">Company website <span style="font-weight:400;color:#8a8579;">(optional)</span></label>
+          <input class="ob4-input" id="ob-website" type="url" placeholder="https://www.yourcompany.com" oninput="onStep1Input()"/>
+          <p class="ob4-helper">We'll use this to automatically detect your brand colours and logo.</p>
+        </div>
+        <div class="ob4-field">
+          <label class="ob4-label" for="ob-workspace-url">Your KEBS workspace URL</label>
+          <div style="display:flex;align-items:stretch;">
+            <input class="ob4-input" id="ob-workspace-url" type="text" placeholder="acme" style="flex:1;border-top-right-radius:0;border-bottom-right-radius:0;border-right:0;" oninput="onStep1Input()"/>
+            <span style="display:inline-flex;align-items:center;padding:0 14px;background:#F4F4F0;border:1px solid #E6E3DC;border-top-right-radius:8px;border-bottom-right-radius:8px;font-size:13px;color:#5c5e66;white-space:nowrap;">.kebs.app</span>
+          </div>
+        </div>
       </div>
 
       <!-- Screen 2 — About You & Your Company -->
@@ -1349,10 +1361,13 @@
           <label class="ob4-label" for="ob-role">What is your role?</label>
           <select class="ob4-select" id="ob-role" onchange="onStep2Change()">
             <option value="" disabled selected>Select your role</option>
-            <option value="pm">PM</option>
-            <option value="ceo">CEO / Founder</option>
-            <option value="sales">Sales Manager</option>
-            <option value="finance">Finance Lead</option>
+            <option value="ceo">CEO</option>
+            <option value="cfo">CFO</option>
+            <option value="coo">COO</option>
+            <option value="project-head">Project Head</option>
+            <option value="project-manager">Project Manager</option>
+            <option value="sales-head">Sales Head</option>
+            <option value="sales-manager">Sales Manager</option>
           </select>
         </div>
         <div class="ob4-field">
@@ -1567,27 +1582,10 @@
         <p class="ob4-sub">KEBS is better together. Invite a teammate to try it with you.</p>
 
         <div class="ob4-field">
-          <label class="ob4-eyebrow-label">Workspace invite link</label>
-          <div class="ob4-invite-link-row">
-            <input class="ob4-invite-link-input" id="ob-invite-link" readonly value="https://kebs.ai/join/workspace/abc123xyz"/>
-            <button type="button" class="ob4-copy-btn" onclick="copyInviteLink()">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.72-1.71"/></svg>
-              <span id="ob-copy-label">Copy link</span>
-            </button>
-          </div>
-          <p class="ob4-helper">Anyone with this link can join your workspace.</p>
-        </div>
-
-        <div class="ob4-field">
           <label class="ob4-eyebrow-label">Invite by email</label>
           <div class="ob4-invite-list" id="ob-invite-list">
             <div class="ob4-invite-row">
               <input class="ob4-input" type="email" placeholder="name@example.com"/>
-              <select class="ob4-select">
-                <option value="member" selected>Member</option>
-                <option value="admin">Admin</option>
-                <option value="viewer">Viewer</option>
-              </select>
             </div>
           </div>
           <button type="button" class="ob4-add-more" onclick="addInviteRow()">+ Add another</button>
@@ -2126,13 +2124,7 @@ function addInviteRow() {
   if (!list) return;
   var row = document.createElement('div');
   row.className = 'ob4-invite-row';
-  row.innerHTML =
-    '<input class="ob4-input" type="email" placeholder="name@example.com"/>' +
-    '<select class="ob4-select">' +
-    '<option value="member" selected>Member</option>' +
-    '<option value="admin">Admin</option>' +
-    '<option value="viewer">Viewer</option>' +
-    '</select>';
+  row.innerHTML = '<input class="ob4-input" type="email" placeholder="name@example.com"/>';
   list.appendChild(row);
 }
 function copyInviteLink() {
