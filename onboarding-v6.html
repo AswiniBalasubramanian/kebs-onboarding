@@ -881,6 +881,49 @@
     padding-right:40px;
   }
 
+  /* ─── Brand-styled dropdown popup — overlays <select.ob4-select> so the
+         option list matches the page vibe instead of the OS-default popup ─── */
+  .ob4-dd { position: relative; }
+  .ob4-dd-trigger {
+    /* Inherits closed-state look from .ob4-select via shared class */
+    display: flex; align-items: center; justify-content: space-between;
+    text-align: left;
+  }
+  .ob4-dd-trigger.is-placeholder .ob4-dd-value { color: #9ca3af; }
+  .ob4-dd-list {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0;
+    background: #fff; border: 1px solid #E6E3DC; border-radius: 10px;
+    padding: 6px; box-shadow: 0 12px 32px rgba(17,20,52,0.10), 0 2px 4px rgba(17,20,52,0.04);
+    max-height: 260px; overflow-y: auto;
+    z-index: 60; display: none;
+    list-style: none; margin: 0;
+    font-family: 'Poppins', sans-serif;
+  }
+  .ob4-dd.is-open .ob4-dd-list { display: block; }
+  .ob4-dd.is-open .ob4-dd-trigger {
+    border-color: #FA5D2B; box-shadow: 0 0 0 3px rgba(250,93,43,0.15);
+  }
+  .ob4-dd-option {
+    padding: 9px 12px; border-radius: 6px; cursor: pointer;
+    font-size: 14px; color: #1a1a1a; line-height: 1.3;
+    transition: background 0.12s, color 0.12s;
+  }
+  .ob4-dd-option:hover,
+  .ob4-dd-option.is-focus { background: #FFEEE5; color: #C8421A; }
+  .ob4-dd-option.is-selected {
+    background: #FFEEE5; color: #FA5D2B; font-weight: 600;
+  }
+  .ob4-dd-option.is-selected::after {
+    content: ''; float: right; width: 14px; height: 14px;
+    background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none'><path d='M3 8l3.5 3.5L13 5' stroke='%23FA5D2B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>") center/contain no-repeat;
+    margin-top: 2px;
+  }
+  /* Hide the native <select> visually but keep it in the DOM as source of truth */
+  .ob4-dd > select.ob4-select {
+    position: absolute; opacity: 0; width: 100%; height: 100%; top: 0; left: 0;
+    pointer-events: none;
+  }
+
   /* Tile buttons (role, team size) */
   .ob4-tile-grid { display:grid; gap:10px; }
   .ob4-tile-grid[data-cols="4"] { grid-template-columns:repeat(4, 1fr); }
@@ -2245,6 +2288,89 @@ function startCommandCenterLaunch() {
     document.body.classList.remove('launch-mode');
     document.body.classList.add('cc-mode');
   }, 2800);
+}
+
+/* ─── Brand-styled dropdown enhancer ───
+   Wraps each <select.ob4-select> with a parallel custom UI so the OPTION
+   POPUP matches the brand palette (orange #FA5D2B / cream #FFEEE5) instead
+   of the OS-default blue highlight. The native <select> stays in the DOM
+   as the source of truth — onChange handlers (onStep2Change /
+   onStep3Change) keep working without modification because we dispatch a
+   real 'change' event on the native element after each selection. */
+function enhanceSelectDropdowns() {
+  var selects = document.querySelectorAll('select.ob4-select');
+  Array.prototype.forEach.call(selects, function (sel) {
+    if (sel.dataset.enhanced === '1') return;
+    sel.dataset.enhanced = '1';
+
+    var shell = document.createElement('div');
+    shell.className = 'ob4-dd';
+    sel.parentNode.insertBefore(shell, sel);
+    shell.appendChild(sel);
+
+    var trigger = document.createElement('button');
+    trigger.type = 'button';
+    trigger.className = 'ob4-select ob4-dd-trigger';
+    var valueSpan = document.createElement('span');
+    valueSpan.className = 'ob4-dd-value';
+    trigger.appendChild(valueSpan);
+    shell.appendChild(trigger);
+
+    var list = document.createElement('ul');
+    list.className = 'ob4-dd-list';
+    list.setAttribute('role', 'listbox');
+    shell.appendChild(list);
+
+    function refreshLabel() {
+      var opt = sel.options[sel.selectedIndex];
+      var hasValue = sel.value !== '';
+      valueSpan.textContent = opt ? opt.textContent : '';
+      trigger.classList.toggle('is-placeholder', !hasValue);
+    }
+    function closeDD() { shell.classList.remove('is-open'); }
+
+    Array.prototype.forEach.call(sel.options, function (opt, i) {
+      var li = document.createElement('li');
+      li.className = 'ob4-dd-option';
+      li.setAttribute('role', 'option');
+      li.dataset.value = opt.value;
+      li.textContent = opt.textContent;
+      if (opt.disabled) { li.style.display = 'none'; list.appendChild(li); return; }
+      if (i === sel.selectedIndex && opt.value !== '') li.classList.add('is-selected');
+      li.addEventListener('click', function () {
+        sel.value = opt.value;
+        sel.dispatchEvent(new Event('change', { bubbles: true }));
+        Array.prototype.forEach.call(list.children, function (n) { n.classList.remove('is-selected'); });
+        li.classList.add('is-selected');
+        refreshLabel();
+        closeDD();
+      });
+      list.appendChild(li);
+    });
+
+    trigger.addEventListener('click', function (e) {
+      e.stopPropagation();
+      shell.classList.toggle('is-open');
+    });
+    document.addEventListener('click', function (e) {
+      if (!shell.contains(e.target)) closeDD();
+    });
+    trigger.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        shell.classList.add('is-open');
+      } else if (e.key === 'Escape') {
+        closeDD();
+      }
+    });
+
+    refreshLabel();
+  });
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', enhanceSelectDropdowns);
+} else {
+  enhanceSelectDropdowns();
 }
 
 // Init
