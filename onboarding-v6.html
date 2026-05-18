@@ -1346,13 +1346,14 @@
         <h1 class="ob4-h">Tell Us About You &amp; Your Company</h1>
         <p class="ob4-sub">Pick the role, industry, and team size so we can tune the dashboards, reports, and benchmarks for you.</p>
         <div class="ob4-field">
-          <label class="ob4-label">What is your role?</label>
-          <div class="ob4-tile-grid" data-cols="4" data-field="role">
-            <button type="button" class="ob4-tile" data-value="pm" onclick="pickTile(this)">PM</button>
-            <button type="button" class="ob4-tile" data-value="ceo" onclick="pickTile(this)">CEO / Founder</button>
-            <button type="button" class="ob4-tile" data-value="sales" onclick="pickTile(this)">Sales Manager</button>
-            <button type="button" class="ob4-tile" data-value="finance" onclick="pickTile(this)">Finance Lead</button>
-          </div>
+          <label class="ob4-label" for="ob-role">What is your role?</label>
+          <select class="ob4-select" id="ob-role" onchange="onStep2Change()">
+            <option value="" disabled selected>Select your role</option>
+            <option value="pm">PM</option>
+            <option value="ceo">CEO / Founder</option>
+            <option value="sales">Sales Manager</option>
+            <option value="finance">Finance Lead</option>
+          </select>
         </div>
         <div class="ob4-field">
           <label class="ob4-label">Team size</label>
@@ -1957,6 +1958,7 @@ function pickTile(btn) {
   refreshContinue();
 }
 function onStep2Change() {
+  answers.role     = document.getElementById('ob-role').value     || '';
   answers.industry = document.getElementById('ob-industry').value || '';
   refreshContinue();
 }
