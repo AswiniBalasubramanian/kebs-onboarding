@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>KEBS Onboarding</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Site entry point: send visitors straight to the onboarding-v6 flow,
+     which is the canonical starting screen for this prototype.
+     Uses BOTH meta-refresh (works without JavaScript) and a JS replace
+     (no extra history entry, instant). -->
+<meta http-equiv="refresh" content="0; url=onboarding-v6.html">
+<link rel="canonical" href="onboarding-v6.html">
+<script>window.location.replace('onboarding-v6.html');</script>
+<style>
+  body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center;
+         font-family: 'IBM Plex Sans', system-ui, sans-serif; color: #525252; background: #F5F4F1; }
+  a { color: #FA5D2B; font-weight: 600; text-decoration: none; }
+  a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+  <p>Redirecting to <a href="onboarding-v6.html">onboarding</a>…</p>
+</body>
+</html>

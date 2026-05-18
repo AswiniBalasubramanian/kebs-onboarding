@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>KEBS — Onboarding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif; }
+  html, body { width: 100%; height: 100vh; overflow: hidden; background: #f4f5f7; }
+  body { display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+  .ob4-card {
+    width: min(1280px, 100%);
+    height: min(780px, calc(100vh - 40px));
+    max-height: 820px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 24px 64px rgba(15, 23, 42, 0.14), 0 4px 10px rgba(15, 23, 42, 0.05);
+    display: grid;
+    grid-template-columns: minmax(0, 58%) minmax(0, 42%);
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* ================= LEFT PANE ================= */
+  .ob4-left {
+    padding: clamp(28px, 3.2vw, 48px) clamp(36px, 4.4vw, 64px) 100px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .ob4-brand { display: flex; align-items: center; gap: 10px; margin-bottom: clamp(32px, 4vw, 56px); flex-shrink: 0; }
+  .ob4-brand-logo { width: 34px; height: 38px; flex-shrink: 0; }
+  .ob4-brand-name { font-size: 20px; font-weight: 600; color: #0f172a; letter-spacing: -0.4px; }
+  .ob4-brand-name .light { color: #FA5D2B; font-weight: 500; }
+
+  .ob4-screen { display: none; flex: 1; flex-direction: column; }
+  .ob4-screen.active { display: flex; animation: fadeSlide 0.3s ease; }
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  .ob4-h {
+    font-size: clamp(22px, 2.2vw, 30px);
+    font-weight: 700; color: #0f172a;
+    letter-spacing: -0.9px; line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .ob4-sub {
+    font-size: clamp(13px, 1vw, 15px);
+    color: #64748b; line-height: 1.55;
+    margin-bottom: clamp(22px, 2.4vw, 32px);
+  }
+
+  /* Chip options */
+  .ob4-chips { display: flex; flex-wrap: wrap; gap: 10px; align-content: flex-start; }
+  .ob4-chip {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 8px 18px 8px 8px;
+    background: #ffffff; border: 1px solid #e5e7eb;
+    border-radius: 999px;
+    font-size: 13.5px; font-weight: 500; color: #0f172a;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .ob4-chip:hover { border-color: #FA5D2B; background: #fff8f4; }
+  .ob4-chip.selected { border-color: #FA5D2B; background: #fff3eb; box-shadow: 0 0 0 3px rgba(250, 93, 43, 0.12); }
+  .ob4-chip.selected .ob4-chip-icon { background: #FA5D2B; color: #ffffff; }
+  .ob4-chip-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #fff5ef; color: #FA5D2B;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+  .ob4-chip-icon svg { width: 14px; height: 14px; stroke-width: 2; }
+
+  /* Tool chip variant — uses image icon */
+  .ob4-tool-icon {
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: #fff;
+    overflow: hidden;
+  }
+  .ob4-tool-icon svg { width: 18px; height: 18px; }
+
+  .ob4-finish-box {
+    background: linear-gradient(135deg, #fff8f3 0%, #ffe2cf 100%);
+    border: 1px solid #fdc8b0;
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-top: 6px;
+  }
+  .ob4-finish-box h3 { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 6px; }
+  .ob4-finish-box p  { font-size: 13.5px; color: #475569; line-height: 1.55; }
+
+  /* ================= RIGHT PANE ================= */
+  .ob4-right {
+    background: linear-gradient(165deg, #fff5ef 0%, #ffe2cf 60%, #ffd5bd 100%);
+    display: flex; align-items: center; justify-content: center;
+    padding: 24px;
+    overflow: hidden;
+    position: relative;
+  }
+  .ob4-illus { display: none; width: 100%; height: 100%; max-width: 520px; max-height: 560px; }
+  .ob4-illus.active { display: block; animation: fadeSlide 0.35s ease; }
+
+  /* ================= FOOTER ================= */
+  .ob4-footer {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    padding: 14px clamp(20px, 3vw, 40px);
+    display: flex; align-items: center; justify-content: space-between;
+    background: #ffffff; border-top: 1px solid #f1f5f9;
+    z-index: 10;
+  }
+  .ob4-back, .ob4-continue {
+    padding: 10px 18px; font-size: 13.5px; font-weight: 500;
+    border-radius: 8px; border: none; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.15s;
+  }
+  .ob4-back { background: transparent; color: #475569; }
+  .ob4-back:hover { background: #f1f5f9; }
+  .ob4-back[hidden] { visibility: hidden; }
+  .ob4-continue { background: #FA5D2B; color: #ffffff; font-weight: 600; padding: 10px 22px; }
+  .ob4-continue:hover:not(:disabled) { background: #DC4A18; box-shadow: 0 2px 8px rgba(250, 93, 43, 0.3); }
+  .ob4-continue:disabled { background: #e2e8f0; color: #94a3b8; cursor: not-allowed; }
+
+  .ob4-dots { display: flex; gap: 8px; align-items: center; }
+  .ob4-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #cbd5e1;
+    transition: all 0.25s ease;
+  }
+  .ob4-dot.active { background: #FA5D2B; width: 22px; border-radius: 4px; }
+  .ob4-dot.done { background: #fdc8b0; }
+
+  /* Responsive fallback */
+  @media (max-width: 960px) {
+    .ob4-card { grid-template-columns: 1fr; height: auto; max-height: none; }
+    .ob4-right { min-height: 260px; }
+    .ob4-left { padding-bottom: 120px; }
+  }
+  @media (max-width: 540px) {
+    body { padding: 8px; }
+    .ob4-card { border-radius: 12px; }
+    .ob4-left { padding: 20px 20px 120px; }
+    .ob4-h { font-size: 20px !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="ob4-card">
+  <!-- ================= LEFT ================= -->
+  <div class="ob4-left">
+    <div class="ob4-brand">
+      <svg class="ob4-brand-logo" viewBox="0 0 317 357" fill="none"><path d="M104.566 44.717V105.644C104.566 116.265 95.027 124.276 84.754 122.226L37.424 112.724L0 150.92L82.552 167.317C100.897 171.042 119.792 165.081 132.817 151.479C142.907 140.859 148.594 126.698 148.594 111.979V0L104.566 44.717Z" fill="#FA5D2B"/><path d="M212.38 44.717V104.712C212.38 115.891 222.457 124.276 233.084 122.04L279.439 112.724L317 150.92L234.549 167.317C216.228 171.042 197.355 165.081 184.346 151.479C174.086 141.045 168.406 126.884 168.406 112.166V0L212.38 44.717Z" fill="#FA5D2B"/><path d="M104.566 311.958V249.609C104.566 239.745 95.761 232.301 86.038 234.161L37.424 243.839L0 205.685L82.552 189.307C100.897 185.586 119.792 191.541 132.817 205.128C142.907 215.736 148.594 229.88 148.594 244.583V356.625L104.566 311.958Z" fill="#FA5D2B"/><path d="M212.434 311.908V248.559C212.434 239.057 220.873 231.977 230.045 233.839L279.576 243.715L317 205.705L234.448 189.308C216.103 185.583 197.208 191.544 184.183 205.146C174.093 215.766 168.406 229.927 168.406 244.646V356.625L212.434 311.908Z" fill="#FA5D2B"/></svg>
+      <div class="ob4-brand-name">KEBS</div>
+    </div>
+
+    <!-- Screen 1 — Priority -->
+    <div class="ob4-screen active" data-step="1" data-field="priority" data-required="1">
+      <h1 class="ob4-h">What's most important for you right now?</h1>
+      <p class="ob4-sub">We'll guide your setup based on your priority</p>
+      <div class="ob4-chips">
+        <button type="button" class="ob4-chip" data-value="visibility" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></span>
+          Clear visibility into projects &amp; revenue
+        </button>
+        <button type="button" class="ob4-chip" data-value="automation" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          Saving time on manual work
+        </button>
+        <button type="button" class="ob4-chip" data-value="fast-start" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20L10 14M14 10l6-6M10 14v6M14 10l6-6M10 14h-6M14 10V4"/><path d="M14 10c0-4 6-6 6-6s-2 6-6 6z" fill="currentColor" fill-opacity="0.15"/></svg></span>
+          Getting started quickly
+        </button>
+        <button type="button" class="ob4-chip" data-value="structure" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="4" rx="1"/><rect x="3" y="11" width="12" height="4" rx="1"/><rect x="3" y="18" width="18" height="4" rx="1"/></svg></span>
+          A more structured delivery process
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 2 — Role -->
+    <div class="ob4-screen" data-step="2" data-field="role" data-required="1">
+      <h1 class="ob4-h">What best describes your role?</h1>
+      <p class="ob4-sub">This helps us tailor your home dashboard and reports</p>
+      <div class="ob4-chips">
+        <button type="button" class="ob4-chip" data-value="pm" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="15" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg></span>
+          PM
+        </button>
+        <button type="button" class="ob4-chip" data-value="ceo" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg></span>
+          CEO / Founder
+        </button>
+        <button type="button" class="ob4-chip" data-value="sales" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l6-6 4 4 7-7"/><path d="M14 8h6v6"/></svg></span>
+          Sales Manager
+        </button>
+        <button type="button" class="ob4-chip" data-value="finance" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5A3.5 3.5 0 0 0 9.5 12h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+          Finance Lead
+        </button>
+        <button type="button" class="ob4-chip" data-value="ops" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5h0a1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span>
+          Admin / Ops
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 3 — Current tools -->
+    <div class="ob4-screen" data-step="3" data-field="current" data-required="1">
+      <h1 class="ob4-h">How do you currently manage projects &amp; billing?</h1>
+      <p class="ob4-sub">This helps us recommend the best way to get started</p>
+      <div class="ob4-chips">
+        <button type="button" class="ob4-chip" data-value="psa" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h10M7 16h6"/></svg></span>
+          We use another PSA / work management tool
+        </button>
+        <button type="button" class="ob4-chip" data-value="spreadsheet" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></span>
+          We use spreadsheets &amp; email
+        </button>
+        <button type="button" class="ob4-chip" data-value="mix" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="4"/><circle cx="17" cy="7" r="4"/><circle cx="7" cy="17" r="4"/><circle cx="17" cy="17" r="4"/></svg></span>
+          A mix of tools — nothing unified
+        </button>
+        <button type="button" class="ob4-chip" data-value="none" onclick="pickChip(this)">
+          <span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg></span>
+          We don't have a proper system yet
+        </button>
+      </div>
+    </div>
+
+    <!-- Screen 4 — Challenges (multi-select) -->
+    <div class="ob4-screen" data-step="4" data-field="challenges" data-required="1" data-multi="1">
+      <h1 class="ob4-h">Pick the challenges you want to solve</h1>
+      <p class="ob4-sub">Select any that apply — we'll configure KEBS to surface them first</p>
+      <div class="ob4-chips">
+        <button type="button" class="ob4-chip" data-value="visibility" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 14l3-3 3 3 4-5"/></svg></span>Revenue visibility &amp; predictability</button>
+        <button type="button" class="ob4-chip" data-value="invoicing" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h12l4 4v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M10 12h6M10 16h4M10 8h2"/></svg></span>Missed or delayed invoicing</button>
+        <button type="button" class="ob4-chip" data-value="data" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"/></svg></span>Cross-system data inconsistency</button>
+        <button type="button" class="ob4-chip" data-value="utilization" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="4"/><path d="M17 11a3 3 0 1 0 0-6"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 20c0-2 1-3.5 3-4.5"/></svg></span>Poor resource utilization</button>
+        <button type="button" class="ob4-chip" data-value="timesheet" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2.5M9 2h6"/></svg></span>Timesheet leakage</button>
+        <button type="button" class="ob4-chip" data-value="margin" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M6 8c0-2 2-4 6-4s6 2 6 4-4 2-6 2-6 1-6 3 3 4 6 4 6-2 6-4"/></svg></span>Pricing &amp; discounting leakage</button>
+        <button type="button" class="ob4-chip" data-value="handover" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M12 3l9 9-9 9"/></svg></span>Sales → delivery handover gaps</button>
+        <button type="button" class="ob4-chip" data-value="integration" onclick="pickChip(this)"><span class="ob4-chip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="13" width="8" height="8" rx="1"/><path d="M11 7h6M7 11v6"/></svg></span>Integration / master-data failures</button>
+      </div>
+    </div>
+
+    <!-- Screen 5 — Tools used (multi-select) -->
+    <div class="ob4-screen" data-step="5" data-field="tools" data-multi="1">
+      <h1 class="ob4-h">Do you use any of these tools?</h1>
+      <p class="ob4-sub">💡 These are a few of our most popular integrations — you can find others in the automation centre</p>
+      <div class="ob4-chips">
+        <button type="button" class="ob4-chip" data-value="outlook" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#0078D4;"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="12" height="12" rx="1" fill="#fff"/><rect x="15" y="7" width="6" height="10" rx="1" fill="#fff" opacity="0.8"/></svg></span>Outlook calendar</button>
+        <button type="button" class="ob4-chip" data-value="slack" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#4A154B;"><svg viewBox="0 0 24 24" fill="#fff"><rect x="4" y="10" width="3" height="3" rx="1"/><rect x="10" y="4" width="3" height="3" rx="1"/><rect x="17" y="10" width="3" height="3" rx="1"/><rect x="10" y="17" width="3" height="3" rx="1"/></svg></span>Slack</button>
+        <button type="button" class="ob4-chip" data-value="zoom" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#2D8CFF;"><svg viewBox="0 0 24 24" fill="#fff"><rect x="3" y="8" width="12" height="8" rx="2"/><path d="M15 10l5-3v10l-5-3z"/></svg></span>Zoom</button>
+        <button type="button" class="ob4-chip" data-value="teams" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#5059C9;"><svg viewBox="0 0 24 24" fill="#fff"><rect x="3" y="6" width="10" height="12" rx="1"/><text x="5" y="15" font-size="7" font-weight="700" fill="#5059C9">T</text><circle cx="17" cy="9" r="3"/><path d="M14 13h6v5a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2z"/></svg></span>Microsoft Teams</button>
+        <button type="button" class="ob4-chip" data-value="gcal" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#fff;border:1px solid #e5e7eb;"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="16" rx="2" fill="#4285F4"/><rect x="4" y="9" width="16" height="12" rx="0" fill="#fff"/><text x="8" y="18" font-size="8" font-weight="700" fill="#4285F4">31</text></svg></span>Google calendar</button>
+        <button type="button" class="ob4-chip" data-value="hubspot" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#FF7A59;"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="16" cy="13" r="4"/><circle cx="8"  cy="9"  r="2"/><path d="M8 11v4M11 12l3-1" stroke="#fff" stroke-width="1.6" fill="none"/></svg></span>HubSpot</button>
+        <button type="button" class="ob4-chip" data-value="sfdc" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#00A1E0;"><svg viewBox="0 0 24 24" fill="#fff"><path d="M5 14c-2 0-2 3 1 3h12c3 0 3-4 0-4 0-3-4-4-6-2-1-2-5-1-5 1-2 0-3 1-2 2z"/></svg></span>Salesforce</button>
+        <button type="button" class="ob4-chip" data-value="qb" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#2CA01C;"><svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="8" fill="none" stroke="#fff" stroke-width="2.5"/><text x="9" y="16" font-size="10" font-weight="700">qb</text></svg></span>QuickBooks</button>
+        <button type="button" class="ob4-chip" data-value="jira" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#0052CC;"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 12l8-8 8 8-8 8z" fill-opacity="0.45"/><path d="M12 4l4 4-4 4-4-4z"/></svg></span>Jira</button>
+        <button type="button" class="ob4-chip" data-value="ms365" onclick="pickChip(this)"><span class="ob4-tool-icon" style="background:#D83B01;"><svg viewBox="0 0 24 24" fill="#fff"><path d="M4 6l10-2v16L4 18z"/><path d="M14 4l6 2v12l-6 2z" opacity="0.7"/></svg></span>Microsoft 365</button>
+      </div>
+    </div>
+
+    <!-- Screen 6 — Finish -->
+    <div class="ob4-screen" data-step="6">
+      <h1 class="ob4-h">You're all set!</h1>
+      <p class="ob4-sub">Based on your answers, we've picked a starter experience. You can always adjust it from Settings later.</p>
+      <div class="ob4-finish-box">
+        <h3>Your personalised KEBS is ready</h3>
+        <p>Dashboards, reports, and automations will be tuned around the challenges you picked. Expect your home to highlight the signals that matter most to your role.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= RIGHT ================= -->
+  <div class="ob4-right">
+    <!-- Illustration 1 — Connected workspace -->
+    <svg class="ob4-illus active" data-step="1" viewBox="0 0 520 560" fill="none">
+      <defs>
+        <radialGradient id="sphere1" cx="45%" cy="35%" r="65%"><stop offset="0%" stop-color="#ffffff"/><stop offset="65%" stop-color="#fff0e5"/><stop offset="100%" stop-color="#ffc9a6"/></radialGradient>
+      </defs>
+      <circle cx="260" cy="300" r="200" stroke="#FA5D2B" stroke-opacity="0.28" stroke-width="1.5" fill="none"/>
+      <circle cx="260" cy="300" r="120" stroke="#FA5D2B" stroke-opacity="0.45" stroke-width="1.5" fill="none"/>
+      <circle cx="260" cy="300" r="54"  fill="url(#sphere1)" stroke="#FDBA9A"/>
+      <path d="M260 280v40M240 300h40" stroke="#FA5D2B" stroke-opacity="0.32" stroke-width="2" stroke-linecap="round"/>
+      <!-- Calendar card -->
+      <g transform="translate(90 130)">
+        <rect width="210" height="98" rx="10" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <g font-family="Poppins" font-size="10" fill="#94a3b8"><text x="18" y="24">28</text><text x="62" y="24">29</text><text x="106" y="24">30</text><text x="152" y="24">31</text><text x="18" y="76">01</text><text x="62" y="76">02</text><text x="106" y="76">03</text><text x="152" y="76">04</text></g>
+        <rect x="16" y="32" width="26" height="5" rx="2" fill="#FA5D2B"/>
+        <rect x="144" y="32" width="30" height="5" rx="2" fill="#C2410C"/>
+        <rect x="58" y="80" width="14" height="12" fill="#FDBA9A"/>
+      </g>
+      <!-- Bar chart card -->
+      <g transform="translate(60 370)">
+        <rect width="222" height="128" rx="10" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <g font-family="Poppins" font-size="10" fill="#94a3b8"><text x="18" y="30">40</text><text x="18" y="66">20</text><text x="22" y="102">0</text></g>
+        <rect x="48" y="38" width="22" height="62" fill="#FA5D2B"/>
+        <rect x="78" y="54" width="22" height="46" fill="#FDBA9A"/>
+        <rect x="108" y="64" width="22" height="36" fill="#FDBA9A"/>
+        <rect x="138" y="72" width="22" height="28" fill="#FDBA9A"/>
+        <rect x="168" y="78" width="22" height="22" fill="#FDBA9A"/>
+        <path d="M186 46 L238 94" stroke="#0f172a" stroke-width="1.6" fill="none"/>
+        <path d="M235 88 L244 96 L232 100 z" fill="#0f172a"/>
+      </g>
+      <!-- Avatars -->
+      <g><circle cx="400" cy="200" r="28" fill="#ffffff" stroke="#fdc8b0"/><circle cx="400" cy="192" r="7" fill="#FA5D2B"/><path d="M384 217 Q400 206 416 217" stroke="#FA5D2B" fill="none" stroke-width="3"/></g>
+      <g><circle cx="95"  cy="290" r="22" fill="#ffffff" stroke="#fdc8b0"/><circle cx="95"  cy="283" r="5.5" fill="#FA5D2B"/><path d="M80 304 Q95 295 110 304" stroke="#FA5D2B" fill="none" stroke-width="2.6"/></g>
+      <g><circle cx="400" cy="400" r="22" fill="#ffffff" stroke="#fdc8b0"/><circle cx="400" cy="393" r="5.5" fill="#FA5D2B"/><path d="M385 414 Q400 405 415 414" stroke="#FA5D2B" fill="none" stroke-width="2.6"/></g>
+      <g transform="translate(320 320)"><rect width="34" height="24" rx="2" fill="#ffffff" stroke="#FA5D2B" stroke-width="1.3"/><path d="M2 3 L17 14 L32 3" stroke="#FA5D2B" fill="none" stroke-width="1.3"/></g>
+    </svg>
+
+    <!-- Illustration 2 — Profile card -->
+    <svg class="ob4-illus" data-step="2" viewBox="0 0 520 560" fill="none">
+      <g transform="translate(130 90)">
+        <rect width="260" height="380" rx="18" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <circle cx="130" cy="100" r="52" fill="#FDBA9A"/>
+        <circle cx="130" cy="90" r="17" fill="#ffffff"/>
+        <path d="M100 128 Q130 110 160 128 L160 144 L100 144 z" fill="#ffffff"/>
+        <rect x="28" y="188" width="5"   height="18" rx="2" fill="#FA5D2B"/>
+        <rect x="42" y="192" width="190" height="10" rx="3" fill="#e5e7eb"/>
+        <rect x="28" y="218" width="5"   height="18" rx="2" fill="#FA5D2B"/>
+        <rect x="42" y="222" width="190" height="10" rx="3" fill="#e5e7eb"/>
+        <rect x="42" y="252" width="170" height="10" rx="3" fill="#f1f5f9"/>
+        <rect x="42" y="272" width="140" height="10" rx="3" fill="#f1f5f9"/>
+      </g>
+      <g transform="translate(210 400)">
+        <rect width="220" height="92" rx="10" fill="#ffffff" stroke="#fdc8b0" opacity="0.94"/>
+        <rect x="20" y="26" width="18" height="50" fill="#FA5D2B"/>
+        <rect x="44" y="34" width="18" height="42" fill="#FDBA9A"/>
+        <rect x="68" y="42" width="18" height="34" fill="#FA5D2B"/>
+        <rect x="92" y="50" width="18" height="26" fill="#FDBA9A"/>
+        <rect x="116" y="56" width="18" height="20" fill="#FA5D2B"/>
+        <rect x="140" y="62" width="18" height="14" fill="#FDBA9A"/>
+        <rect x="164" y="66" width="18" height="10" fill="#FA5D2B"/>
+      </g>
+      <path d="M280 150 Q310 130 338 172" stroke="#0f172a" stroke-width="1.8" fill="none"/>
+      <path d="M334 166 L346 180 L330 184 z" fill="#0f172a"/>
+    </svg>
+
+    <!-- Illustration 3 — Sales funnel + calendar + budget -->
+    <svg class="ob4-illus" data-step="3" viewBox="0 0 520 560" fill="none">
+      <g transform="translate(70 90)">
+        <rect width="380" height="250" rx="12" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <text x="28" y="40" font-family="Poppins" font-size="17" font-weight="600" fill="#0f172a">Projects pipeline</text>
+        <g font-family="Poppins" font-size="10" fill="#94a3b8"><text x="28" y="84">40</text><text x="28" y="138">20</text><text x="32" y="186">0</text></g>
+        <rect x="72"  y="74"  width="38" height="112" fill="#FA5D2B"/>
+        <rect x="122" y="102" width="38" height="84"  fill="#FA5D2B" opacity="0.85"/>
+        <rect x="172" y="120" width="38" height="66"  fill="#FDBA9A"/>
+        <rect x="222" y="138" width="38" height="48"  fill="#FDBA9A" opacity="0.75"/>
+        <rect x="272" y="152" width="38" height="34"  fill="#FDBA9A" opacity="0.55"/>
+        <g font-family="Poppins" font-size="9.5" fill="#64748b"><text x="74"  y="210">Scoping</text><text x="122" y="210">Proposal</text><text x="172" y="210">Running</text><text x="224" y="210">Closing</text><text x="280" y="210">Billed</text></g>
+      </g>
+      <g transform="translate(50 370)">
+        <rect width="220" height="136" rx="12" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <g font-family="Poppins" font-size="10" fill="#94a3b8"><text x="18" y="30">Mon</text><text x="62" y="30">Tue</text><text x="108" y="30">Wed</text><text x="154" y="30">Thu</text><text x="18" y="60">28</text><text x="62" y="60">29</text><text x="108" y="60">30</text><text x="154" y="60">31</text><text x="18" y="102">01</text><text x="62" y="102">02</text><text x="108" y="102">03</text><text x="154" y="102">04</text></g>
+        <rect x="106" y="68" width="24" height="24" fill="#FA5D2B"/>
+        <rect x="16" y="114" width="38" height="8" rx="2" fill="#FDBA9A"/>
+        <rect x="148" y="114" width="38" height="8" rx="2" fill="#F59E0B"/>
+      </g>
+      <g transform="translate(290 400)">
+        <rect width="178" height="80" rx="12" fill="#FA5D2B" opacity="0.94"/>
+        <rect x="18" y="16" width="110" height="8" rx="3" fill="#ffffff" opacity="0.7"/>
+        <text x="18" y="58" font-family="Poppins" font-size="20" font-weight="700" fill="#ffffff">$1,420,600</text>
+      </g>
+      <path d="M150 394 Q110 350 134 270" stroke="#0f172a" stroke-width="1.6" fill="none"/>
+      <path d="M130 280 L140 262 L150 280 z" fill="#0f172a"/>
+    </svg>
+
+    <!-- Illustration 4 — Challenges preview -->
+    <svg class="ob4-illus" data-step="4" viewBox="0 0 520 560" fill="none">
+      <g transform="translate(80 90)">
+        <rect width="360" height="210" rx="14" fill="#ffffff" stroke="#fdc8b0" opacity="0.96"/>
+        <rect x="0" y="0" width="360" height="48" rx="14" fill="#fff5ef"/>
+        <rect x="0" y="34" width="360" height="14" fill="#fff5ef"/>
+        <circle cx="24" cy="24" r="5" fill="#FA5D2B"/>
+        <circle cx="40" cy="24" r="5" fill="#FDBA9A"/>
+        <circle cx="56" cy="24" r="5" fill="#fdc8b0"/>
+        <text x="28" y="84" font-family="Poppins" font-size="15" font-weight="600" fill="#0f172a">Revenue at risk</text>
+        <rect x="28" y="98" width="120" height="5" rx="2" fill="#FA5D2B"/>
+        <g>
+          <rect x="28" y="120" width="150" height="10" rx="3" fill="#e5e7eb"/>
+          <rect x="28" y="138" width="190" height="10" rx="3" fill="#e5e7eb"/>
+          <rect x="28" y="156" width="170" height="10" rx="3" fill="#e5e7eb"/>
+          <rect x="28" y="174" width="130" height="10" rx="3" fill="#e5e7eb"/>
+        </g>
+      </g>
+      <g transform="translate(160 320)">
+        <rect width="240" height="200" rx="14" fill="#ffffff" stroke="#fdc8b0" opacity="0.98"/>
+        <text x="24" y="38" font-family="Poppins" font-size="14" font-weight="600" fill="#0f172a">Utilization — this week</text>
+        <g font-family="Poppins" font-size="10" fill="#94a3b8"><text x="24" y="74">100%</text><text x="24" y="110">50%</text><text x="30" y="146">0</text></g>
+        <rect x="68"  y="60"  width="22" height="88" fill="#FA5D2B"/>
+        <rect x="96"  y="76"  width="22" height="72" fill="#FDBA9A"/>
+        <rect x="124" y="58"  width="22" height="90" fill="#FA5D2B"/>
+        <rect x="152" y="82"  width="22" height="66" fill="#FDBA9A"/>
+        <rect x="180" y="90"  width="22" height="58" fill="#FDBA9A"/>
+        <g font-family="Poppins" font-size="9" fill="#64748b"><text x="70" y="166">M</text><text x="100" y="166">T</text><text x="128" y="166">W</text><text x="156" y="166">T</text><text x="184" y="166">F</text></g>
+      </g>
+    </svg>
+
+    <!-- Illustration 5 — Integrations / Contacts -->
+    <svg class="ob4-illus" data-step="5" viewBox="0 0 520 560" fill="none">
+      <rect x="100" y="110" width="340" height="380" rx="18" fill="#FDBA9A" opacity="0.5"/>
+      <g transform="translate(66 90)">
+        <rect width="380" height="400" rx="18" fill="#ffffff" stroke="#fdc8b0" opacity="0.98"/>
+        <rect x="0" y="0" width="380" height="56" rx="18" fill="#fff5ef"/>
+        <rect x="0" y="40" width="380" height="16" fill="#fff5ef"/>
+        <!-- sidebar -->
+        <rect x="20" y="80" width="120" height="36" rx="8" fill="#ffe2cf"/>
+        <g font-family="Poppins" font-size="13" fill="#0f172a" font-weight="500"><text x="42" y="102">Contacts</text><text x="42" y="138">Leads</text><text x="42" y="172">Deals</text><text x="42" y="206">Accounts</text></g>
+        <circle cx="30" cy="96"  r="5" fill="#FA5D2B"/>
+        <circle cx="30" cy="132" r="5" fill="#FDBA9A"/>
+        <circle cx="30" cy="166" r="5" fill="#FDBA9A"/>
+        <circle cx="30" cy="200" r="5" fill="#FDBA9A"/>
+        <!-- content -->
+        <text x="170" y="104" font-family="Poppins" font-size="24" font-weight="700" fill="#0f172a">Contacts</text>
+        <rect x="170" y="120" width="56" height="5" rx="2" fill="#ec4899"/>
+        <rect x="170" y="138" width="4" height="84" rx="2" fill="#ec4899"/>
+        <g><rect x="186" y="142" width="160" height="9" rx="3" fill="#e5e7eb"/><rect x="186" y="158" width="150" height="9" rx="3" fill="#e5e7eb"/><rect x="186" y="174" width="158" height="9" rx="3" fill="#e5e7eb"/><rect x="186" y="190" width="140" height="9" rx="3" fill="#e5e7eb"/></g>
+        <rect x="170" y="246" width="56" height="5" rx="2" fill="#F59E0B"/>
+        <rect x="170" y="264" width="4" height="66" rx="2" fill="#F59E0B"/>
+        <g><rect x="186" y="268" width="150" height="9" rx="3" fill="#e5e7eb"/><rect x="186" y="284" width="158" height="9" rx="3" fill="#e5e7eb"/><rect x="186" y="300" width="140" height="9" rx="3" fill="#e5e7eb"/></g>
+      </g>
+    </svg>
+
+    <!-- Illustration 6 — Finish / celebration -->
+    <svg class="ob4-illus" data-step="6" viewBox="0 0 520 560" fill="none">
+      <defs>
+        <radialGradient id="done1" cx="50%" cy="50%" r="60%"><stop offset="0%" stop-color="#ffffff"/><stop offset="100%" stop-color="#fdc8b0"/></radialGradient>
+      </defs>
+      <circle cx="260" cy="280" r="110" fill="url(#done1)" stroke="#FDBA9A" stroke-width="2"/>
+      <path d="M215 280 L250 315 L310 255" stroke="#FA5D2B" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- confetti -->
+      <g>
+        <rect x="120" y="120" width="10" height="10" fill="#FA5D2B" transform="rotate(20 125 125)"/>
+        <rect x="380" y="150" width="10" height="10" fill="#FDBA9A" transform="rotate(-30 385 155)"/>
+        <rect x="100" y="420" width="10" height="10" fill="#FDBA9A" transform="rotate(10 105 425)"/>
+        <rect x="400" y="420" width="10" height="10" fill="#FA5D2B" transform="rotate(-20 405 425)"/>
+        <circle cx="160" cy="220" r="5" fill="#F59E0B"/>
+        <circle cx="360" cy="380" r="5" fill="#F59E0B"/>
+        <circle cx="400" cy="280" r="5" fill="#FA5D2B"/>
+        <circle cx="120" cy="340" r="5" fill="#FDBA9A"/>
+      </g>
+      <text x="260" y="440" text-anchor="middle" font-family="Poppins" font-size="16" font-weight="600" fill="#0f172a">Welcome to KEBS</text>
+    </svg>
+  </div>
+
+  <!-- ================= FOOTER ================= -->
+  <div class="ob4-footer">
+    <button type="button" class="ob4-back" id="ob4-back" onclick="prevStep()" hidden>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      Back
+    </button>
+    <div class="ob4-dots" id="ob4-dots"></div>
+    <button type="button" class="ob4-continue" id="ob4-continue" onclick="nextStep()" disabled>
+      Continue
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+    </button>
+  </div>
+</div>
+
+<script>
+/* ============ State ============ */
+var totalSteps = 6;
+var currentStep = 1;
+var answers = { priority:'', role:'', current:'', challenges:[], tools:[] };
+
+/* ============ Dot pagination ============ */
+(function buildDots(){
+  var dots = document.getElementById('ob4-dots');
+  for (var i=1; i<=totalSteps; i++){
+    var d = document.createElement('span');
+    d.className = 'ob4-dot' + (i===1?' active':'');
+    d.dataset.step = i;
+    dots.appendChild(d);
+  }
+})();
+
+/* ============ Chip selection ============ */
+function pickChip(btn) {
+  var screen = btn.closest('.ob4-screen');
+  var isMulti = screen.dataset.multi === '1';
+  var field = screen.dataset.field;
+  if (isMulti) {
+    btn.classList.toggle('selected');
+    var vals = Array.prototype.filter.call(screen.querySelectorAll('.ob4-chip.selected'), function(){return true;})
+      .map ? Array.from(screen.querySelectorAll('.ob4-chip.selected')).map(function(c){return c.dataset.value;}) : [];
+    answers[field] = vals;
+  } else {
+    screen.querySelectorAll('.ob4-chip').forEach(function(c){ c.classList.remove('selected'); });
+    btn.classList.add('selected');
+    answers[field] = btn.dataset.value;
+  }
+  refreshContinue();
+}
+
+/* ============ Navigation ============ */
+function refreshContinue() {
+  var screen = document.querySelector('.ob4-screen[data-step="' + currentStep + '"]');
+  var btn = document.getElementById('ob4-continue');
+  var required = screen && screen.dataset.required === '1';
+  var field = screen && screen.dataset.field;
+  var v = field ? answers[field] : '';
+  var ok = !required || (Array.isArray(v) ? v.length > 0 : !!v);
+  btn.disabled = !ok;
+  if (currentStep === totalSteps) {
+    btn.innerHTML = 'Finish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+  } else {
+    btn.innerHTML = 'Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
+  }
+}
+
+function goToStep(n) {
+  if (n < 1 || n > totalSteps) return;
+  document.querySelectorAll('.ob4-screen').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.ob4-illus').forEach(function(i){ i.classList.remove('active'); });
+  var screen = document.querySelector('.ob4-screen[data-step="' + n + '"]');
+  var illus  = document.querySelector('.ob4-illus[data-step="' + n + '"]');
+  if (screen) screen.classList.add('active');
+  if (illus)  illus.classList.add('active');
+  // dots
+  document.querySelectorAll('.ob4-dot').forEach(function(d){
+    var s = parseInt(d.dataset.step, 10);
+    d.classList.remove('active', 'done');
+    if (s === n) d.classList.add('active');
+    else if (s < n) d.classList.add('done');
+  });
+  // back visibility
+  var back = document.getElementById('ob4-back');
+  if (n === 1) back.setAttribute('hidden', ''); else back.removeAttribute('hidden');
+  currentStep = n;
+  refreshContinue();
+}
+
+function nextStep() {
+  if (currentStep < totalSteps) {
+    goToStep(currentStep + 1);
+  } else {
+    // Finish — could redirect to dashboard
+    try { window.location.href = 'executive-dashboard.html'; } catch(e) {}
+  }
+}
+function prevStep() { if (currentStep > 1) goToStep(currentStep - 1); }
+
+// Init
+refreshContinue();
+</script>
+</body>
+</html>

@@ -1,0 +1,3788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1440" />
+<title>KAIS — Control Tower</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,200..700,0..1,-50..200&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        colors: {
+          sidebar: '#1B1B1D',
+          sidebarHover: '#2A2A2C',
+          accent: '#E7401D',
+          accentSoft: '#FFF1ED',
+          accentBorder: '#FCD9CF',
+          logo: '#F4D03F',
+          canvas: '#F4F1EE',
+          surface: '#FFFFFF',
+          border: '#EDEAE6',
+          borderStrong: '#E2DED9',
+          ink: {
+            100: '#0D0D0D',
+            80: '#2A2A2A',
+            60: '#6C6864',
+            40: '#A6A29D',
+          },
+          pos: { text: '#1F9D55', bg: '#E8F5EE' },
+          warn: { text: '#D97706', bg: '#FEF3C7' },
+          dang: { text: '#DC2626', bg: '#FEE2E2' },
+          teal: { avatar: '#0E7C7B' },
+        },
+        fontFamily: {
+          sans: ['"DM Sans"', 'system-ui', 'sans-serif'],
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(13,13,13,0.04)',
+        },
+      },
+    },
+  };
+</script>
+<style>
+  html, body { font-family: 'DM Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+  html { overflow-x: hidden; }
+  body { background-color: #F4F1EE; color: #0D0D0D; overflow-x: hidden; }
+  .ms { font-family: 'Material Symbols Outlined'; font-weight: 400; font-style: normal; line-height: 1; letter-spacing: normal; text-transform: none; display: inline-block; white-space: nowrap; word-wrap: normal; direction: ltr; font-feature-settings: 'liga'; -webkit-font-feature-settings: 'liga'; -webkit-font-smoothing: antialiased; }
+  .ms-20 { font-size: 20px; }
+  .ms-18 { font-size: 18px; }
+  .ms-16 { font-size: 16px; }
+  .ms-14 { font-size: 14px; }
+  .kais-mark {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    letter-spacing: 0.18em;
+    font-weight: 700;
+    color: #E7401D;
+    font-size: 11px;
+  }
+  /* Sidebar v6-style: icon + label */
+  .nav-item {
+    width: 100%; padding: 8px 4px 7px; display: flex; flex-direction: column;
+    align-items: center; gap: 3px; color: #A6A29D; cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 120ms, color 120ms, border-color 120ms;
+    position: relative;
+  }
+  .nav-item .nav-icon { font-size: 20px; line-height: 1; }
+  .nav-item .nav-label {
+    font-size: 9.5px; font-weight: 500; letter-spacing: 0.01em;
+    line-height: 1.1; text-align: center;
+  }
+  .nav-item:hover { background: #26262A; color: #FFFFFF; }
+  .nav-item.active {
+    background: #2A1714; color: #FF6B45;
+    border-left-color: #E7401D;
+  }
+  .nav-item.active .nav-icon, .nav-item.active .nav-label { color: #FF6B45; }
+  .nav-divider { width: 36px; height: 1px; background: #2F2F31; margin: 6px auto; }
+  .nav-category {
+    padding: 10px 4px 4px; font-size: 8.5px; font-weight: 700;
+    letter-spacing: 0.1em; color: #5E5B57; text-align: center; text-transform: uppercase;
+  }
+  /* Pin indicator (top-right of nav item) */
+  .nav-item .nav-pin { position: absolute; top: 6px; right: 6px; width: 5px; height: 5px; border-radius: 50%; background: #E7401D; opacity: 0; transition: opacity 120ms; }
+  .nav-item.pinned .nav-pin { opacity: 1; }
+  /* Dropdown chip */
+  .chip-select { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px solid #EDEAE6; border-radius: 8px; background: #FFFFFF; font-size: 13px; color: #0D0D0D; cursor: pointer; transition: border-color 120ms; }
+  .chip-select:hover { border-color: #D4CFC8; }
+  .chip-select .label { color: #6C6864; font-size: 12px; }
+  .chip-select .sep { width: 1px; height: 12px; background: #E2DED9; }
+  /* Segmented control */
+  .seg { display: inline-flex; align-items: center; background: #F4F1EE; padding: 3px; border-radius: 10px; gap: 2px; }
+  .seg button { padding: 6px 14px; font-size: 13px; font-weight: 500; color: #6C6864; border-radius: 7px; transition: all 120ms; }
+  .seg button.active { background: #FFFFFF; color: #0D0D0D; box-shadow: 0 1px 2px rgba(13,13,13,0.06); }
+  .seg.accent button.active { background: #E7401D; color: #FFFFFF; box-shadow: none; }
+  /* KPI card */
+  .kpi { background: #FFFFFF; border: 1px solid #EDEAE6; border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 6px; min-height: 116px; position: relative; }
+  .kpi-info { position: absolute; top: 12px; right: 12px; color: #A6A29D; font-size: 13px; pointer-events: none; }
+  .kpi-label { font-size: 11.5px; color: #6C6864; letter-spacing: 0; font-weight: 400; white-space: nowrap; padding-right: 18px; overflow: hidden; text-overflow: ellipsis; }
+  .kpi-value { font-size: 26px; font-weight: 600; color: #0D0D0D; line-height: 1.15; letter-spacing: -0.01em; white-space: nowrap; }
+  .kpi-sub { font-size: 11.5px; color: #6C6864; line-height: 1.4; }
+  /* Pill */
+  .pill { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  /* Toggle switch */
+  .toggle { width: 30px; height: 18px; background: #E2DED9; border-radius: 999px; position: relative; cursor: pointer; transition: background 120ms; flex-shrink: 0; }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: #FFFFFF; border-radius: 50%; box-shadow: 0 1px 2px rgba(0,0,0,0.15); transition: left 140ms; }
+  .toggle.on { background: #1F9D55; }
+  .toggle.on::after { left: 14px; }
+  /* Table */
+  table.gov { width: 100%; border-collapse: separate; border-spacing: 0; }
+  table.gov th { font-size: 12px; font-weight: 500; color: #6C6864; text-align: left; padding: 12px 12px; vertical-align: middle; }
+  table.gov td { font-size: 13.5px; color: #0D0D0D; padding: 16px 12px; vertical-align: middle; border-top: 1px solid #EDEAE6; }
+  table.gov tr.total td { font-weight: 600; }
+  /* RAI gauge bar in table */
+  .rai-track { width: 100px; height: 6px; background: #F2F4F7; border-radius: 999px; overflow: hidden; }
+  .rai-fill { height: 100%; border-radius: 999px; }
+  /* Hex warning glyph */
+  .hex-warn { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; }
+  /* AI insight gradient segments */
+  .ai-bar { display: flex; gap: 3px; align-items: center; }
+  .ai-bar > span { height: 14px; border-radius: 3px; flex: 1; }
+  /* Number-grey for placeholder fields */
+  .num-muted { color: #A6A29D; }
+  /* Avatar */
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #FFFFFF; flex-shrink: 0; }
+  .avatar.c { background: linear-gradient(135deg, #5EE0E0 0%, #22C5C5 100%); color: #0D4D4D; font-weight: 700; }
+  .avatar.la { background: #0E7C7B; }
+  /* Sparkline svg sizing */
+  .sparkline { width: 96px; height: 30px; display: block; }
+  /* Misc */
+  .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 8px; color: #6C6864; transition: background 120ms, color 120ms; cursor: pointer; border: 1px solid transparent; }
+  .icon-btn:hover { background: #FFFFFF; color: #0D0D0D; border-color: #EDEAE6; }
+  .icon-btn.bordered { border: 1px solid #EDEAE6; background: #FFFFFF; }
+  /* Search */
+  .search { width: 320px; height: 36px; background: #FFFFFF; border: 1px solid #EDEAE6; border-radius: 8px; display: flex; align-items: center; padding: 0 12px; gap: 8px; }
+  .search input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 13px; font-family: inherit; color: #0D0D0D; }
+  .search input::placeholder { color: #A6A29D; }
+  /* Right rail */
+  .right-rail { position: fixed; top: 64px; right: 16px; display: flex; flex-direction: column; gap: 10px; z-index: 30; }
+  .rail-btn { width: 32px; height: 32px; border-radius: 8px; background: #FFFFFF; border: 1px solid #EDEAE6; display: flex; align-items: center; justify-content: center; color: #6C6864; cursor: pointer; }
+  .rail-btn.send { transform: rotate(-25deg); }
+  .rail-tab { position: fixed; right: 0; top: 70px; }
+  .rail-bottom { position: fixed; right: 16px; bottom: 24px; display: flex; flex-direction: column; gap: 10px; }
+  /* Risk Actions button */
+  .btn-outline { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #EDEAE6; background: #FFFFFF; border-radius: 8px; font-size: 13px; color: #0D0D0D; font-weight: 500; cursor: pointer; transition: border-color 120ms; }
+  .btn-outline:hover { border-color: #D4CFC8; }
+  /* Hierarchy chip group */
+  .h-chip { width: 18px; height: 18px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #FFFFFF; font-size: 10px; font-weight: 700; }
+
+  /* Clickable KPI affordance */
+  .kpi.clickable { cursor: pointer; transition: border-color 140ms, box-shadow 140ms, transform 140ms; }
+  .kpi.clickable:hover { border-color: #E2DED9; box-shadow: 0 4px 14px rgba(13,13,13,0.06); transform: translateY(-1px); }
+
+  /* Drawer system */
+  .drawer-backdrop {
+    position: fixed; inset: 0; background: rgba(20,18,16,0.42);
+    backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+  .drawer-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .deepdive {
+    position: fixed; top: 0; bottom: 0; right: 340px;
+    width: 1020px; background: #FFFFFF;
+    box-shadow: -12px 0 40px rgba(13,13,13,0.10);
+    z-index: 110; transform: translateX(calc(100% + 340px));
+    transition: transform 320ms cubic-bezier(0.22,0.61,0.36,1);
+    display: flex; flex-direction: column;
+    overflow: hidden;
+  }
+  .deepdive.open { transform: translateX(0); }
+
+  /* ── RRC form styling ── */
+  /* ID strip — premium executive data strip */
+  .id-strip {
+    display: flex;
+    border: 1px solid #EDEAE6;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #FAFAF8 100%);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.7) inset,
+      0 1px 2px rgba(13,13,13,0.03);
+  }
+  /* Hairline accent at top of strip — echoes the drawer's gradient header */
+  .id-strip::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(231,64,29,0.35) 8%,
+      rgba(245,158,11,0.35) 50%,
+      rgba(244,208,63,0.25) 92%,
+      transparent 100%);
+    z-index: 1;
+  }
+  .id-chip {
+    display: flex; flex-direction: column;
+    padding: 14px 18px 13px;
+    flex: 1; min-width: 0;
+    position: relative;
+    transition: background 200ms ease;
+  }
+  /* Soft gradient divider between chips */
+  .id-chip + .id-chip::before {
+    content: ''; position: absolute;
+    left: 0; top: 16px; bottom: 16px; width: 1px;
+    background: linear-gradient(180deg, transparent, #EDEAE6 25%, #EDEAE6 75%, transparent);
+  }
+  .id-chip:hover {
+    background: linear-gradient(180deg, rgba(255,241,237,0.4) 0%, rgba(255,241,237,0.15) 100%);
+  }
+  .id-chip .id-kicker {
+    display: flex; align-items: center; gap: 5px;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.14em;
+    color: #8B857F;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 200ms ease;
+  }
+  .id-chip .id-kicker .ms {
+    font-size: 12px;
+    color: #B8B0A8;
+    flex-shrink: 0;
+    transition: color 200ms ease;
+  }
+  .id-chip:hover .id-kicker { color: #2A2A2A; }
+  .id-chip:hover .id-kicker .ms { color: #6C6864; }
+  .id-chip .id-val {
+    font-size: 15.5px; font-weight: 600;
+    color: #0D0D0D;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .id-chip .id-val.muted {
+    color: #C6C0BA; font-weight: 500;
+    font-size: 18px; line-height: 1;
+  }
+
+  /* Accent chip — Quote ID gets coral treatment */
+  .id-chip.accent {
+    background:
+      linear-gradient(180deg, rgba(231,64,29,0.04) 0%, rgba(231,64,29,0.015) 60%, transparent 100%);
+  }
+  .id-chip.accent .id-kicker { color: #E7401D; }
+  .id-chip.accent .id-kicker .ms { color: #E7401D; }
+  .id-chip.accent .id-val { color: #0D0D0D; }
+  .id-chip.accent::after {
+    content: '';
+    position: absolute;
+    left: 18px; right: 18px; bottom: 0;
+    height: 2.5px;
+    background: linear-gradient(90deg, #E7401D 0%, #F59E0B 80%, #F4D03F 100%);
+    border-radius: 2px 2px 0 0;
+  }
+  /* Subtle pulse on accent dot via decorative element */
+  .id-chip.accent .id-kicker::before {
+    content: '';
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #E7401D;
+    box-shadow: 0 0 0 2px rgba(231,64,29,0.15);
+    flex-shrink: 0;
+    margin-right: 1px;
+    animation: accentPulse 2.4s ease-in-out infinite;
+  }
+  @keyframes accentPulse {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(231,64,29,0.15); }
+    50%      { box-shadow: 0 0 0 5px rgba(231,64,29,0.05); }
+  }
+
+  .drop-zone {
+    border: 1.5px dashed #D4CFC8; border-radius: 12px; padding: 22px 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    background: #FFFFFF;
+    background-image:
+      radial-gradient(circle at 12% 30%, #FCD9CF 1px, transparent 1.5px),
+      radial-gradient(circle at 14% 70%, #FFE4DE 1px, transparent 1.5px),
+      radial-gradient(circle at 88% 28%, #FFE4DE 1px, transparent 1.5px),
+      radial-gradient(circle at 86% 72%, #FCD9CF 1px, transparent 1.5px);
+  }
+
+  .field-label { display: block; font-size: 11.5px; color: #2A2A2A; font-weight: 500; margin-bottom: 6px; }
+  .field-label .req { color: #E7401D; margin-left: 2px; }
+  .field-label .ms { font-size: 13px; color: #A6A29D; vertical-align: -2px; margin-left: 3px; }
+
+  .field {
+    display: flex; align-items: center; gap: 8px;
+    height: 40px; padding: 0 12px;
+    border: 1px solid #EDEAE6; border-radius: 8px;
+    background: #FFFFFF;
+    font-size: 13.5px; color: #0D0D0D;
+    transition: border-color 120ms;
+  }
+  .field input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 13.5px; font-family: inherit; min-width: 0; }
+  .field input::placeholder { color: #A6A29D; }
+  .field .ph { color: #A6A29D; flex: 1; }
+  .field .caret { color: #6C6864; font-size: 18px; flex-shrink: 0; }
+  .field.required-empty { border-color: #FCA5A5; }
+  .field.required-empty .ph { color: #FCA5A5; }
+  .field.locked { background: #F4F1EE; }
+
+  .field-help { font-size: 11px; color: #A6A29D; margin-top: 4px; }
+
+  /* Segmented toggles */
+  .toggle-pills {
+    display: flex; height: 40px; border: 1px solid #FECDD4; border-radius: 8px; overflow: hidden;
+    background: #FFFFFF;
+  }
+  .toggle-pills .pill-opt {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #6C6864; cursor: pointer;
+    transition: background 140ms, color 140ms;
+  }
+  .toggle-pills .pill-opt.active { background: #FFE4DE; color: #E7401D; font-weight: 500; }
+
+  /* Generate JD button */
+  .btn-ai {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border: 1px solid #FCD9CF; border-radius: 8px;
+    background: #FFF1ED; color: #E7401D;
+    font-size: 12.5px; font-weight: 500; cursor: pointer;
+    transition: background 140ms, border-color 140ms;
+  }
+  .btn-ai:hover { background: #FFE4DE; border-color: #FCA5A5; }
+  .btn-ai .ms { font-size: 14px; }
+
+  .btn-skills, .btn-criteria {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 6px 12px; border: 1px solid #EDEAE6; border-radius: 8px;
+    background: #FFFFFF; color: #0D0D0D;
+    font-size: 12.5px; font-weight: 500; cursor: pointer;
+    transition: border-color 140ms;
+  }
+  .btn-skills:hover, .btn-criteria:hover { border-color: #D4CFC8; }
+
+  .empty-state { font-size: 12.5px; color: #6C6864; padding: 2px 0; }
+
+  .section-h { font-size: 14.5px; font-weight: 600; color: #0D0D0D; display: flex; align-items: center; gap: 6px; }
+  .section-h .ms { font-size: 14px; color: #A6A29D; }
+  .section-h-accent { color: #E7401D; }
+
+  .form-section + .form-section { border-top: 1px solid #EDEAE6; padding-top: 22px; margin-top: 22px; }
+
+  .coord-card {
+    background: #F7F5F2; border: 1px dashed #E2DED9; border-radius: 12px;
+    padding: 14px 18px; display: flex; align-items: center; gap: 12px;
+  }
+  .coord-icon {
+    width: 36px; height: 36px; border-radius: 50%; background: #EDEAE6;
+    display: flex; align-items: center; justify-content: center; color: #6C6864;
+  }
+
+  /* Acceptance criteria row */
+  .crit-row { display: flex; align-items: center; gap: 10px; }
+  .crit-num { width: 26px; height: 26px; border-radius: 50%; background: #F4F1EE; color: #6C6864; font-size: 11.5px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+  /* Skill chip dot */
+  .skill-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .skill-dot.primary { background: #E7401D; }
+  .skill-dot.secondary { background: #6C6864; }
+
+  /* ── Approval table & cards ── */
+  .ap-toolbar { display: flex; align-items: center; gap: 8px; padding: 0 0 14px; }
+
+  /* View mode toggle */
+  .ap-view-toggle {
+    display: inline-flex; align-items: center;
+    background: #F4F1EE; padding: 3px; border-radius: 8px; gap: 2px;
+  }
+  .ap-view-toggle button {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 11px; font-size: 12px; color: #6C6864; font-weight: 500;
+    border-radius: 6px; transition: background 140ms, color 140ms; cursor: pointer;
+    border: 0; background: transparent;
+  }
+  .ap-view-toggle button:hover { color: #0D0D0D; }
+  .ap-view-toggle button.active {
+    background: #FFFFFF; color: #0D0D0D;
+    box-shadow: 0 1px 2px rgba(13,13,13,0.06);
+  }
+  .ap-view-toggle button .ms { font-size: 13px; }
+
+  /* Table */
+  .ap-table-frame {
+    border: 1px solid #EDEAE6; border-radius: 10px;
+    overflow: hidden; background: #FFFFFF;
+  }
+  .ap-table-wrap {
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+  .ap-table-wrap::-webkit-scrollbar { height: 8px; }
+  .ap-table-wrap::-webkit-scrollbar-thumb { background: #DAD5CE; border-radius: 4px; }
+  .ap-table-wrap::-webkit-scrollbar-track { background: #F7F5F2; }
+
+  .ap-row {
+    display: grid;
+    grid-template-columns: 36px 110px 110px minmax(180px,1.4fr) 110px 130px 96px 130px 130px 80px 140px;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: #0D0D0D;
+    border-bottom: 1px solid #EDEAE6;
+    background: #FFFFFF;
+    min-width: 1352px;
+  }
+  .ap-row > div { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+  .ap-row.head {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6C6864;
+    background: #FBF9F6;
+    border-bottom: 1px solid #E2DED9;
+  }
+  .ap-row.head > div { display: flex; align-items: center; gap: 4px; }
+  .ap-row.head .sort-ico { font-size: 12px; color: #A6A29D; }
+  .ap-row:not(.head):hover { background: #FBF9F6; }
+  .candidate-id, .job-id, .request-id { color: #0D0D0D; font-variant-numeric: tabular-nums; }
+  .ap-row .candidate-id { font-weight: 500; }
+  .ap-row .job-id       { font-weight: 500; }
+  .ap-row .request-id   { font-weight: 600; }
+
+  /* Sticky columns */
+  .ap-row .sticky-l-1 {
+    position: sticky; left: 0; z-index: 3;
+    background: #FFFFFF;
+  }
+  .ap-row .sticky-l-2 {
+    position: sticky; left: 60px; z-index: 3;
+    background: #FFFFFF;
+    box-shadow: 8px 0 12px -8px rgba(13,13,13,0.06);
+  }
+  .ap-row .sticky-r {
+    position: sticky; right: 0; z-index: 3;
+    background: #FFFFFF;
+    box-shadow: -8px 0 12px -8px rgba(13,13,13,0.06);
+  }
+  .ap-row.head .sticky-l-1, .ap-row.head .sticky-l-2, .ap-row.head .sticky-r { background: #FBF9F6; }
+  .ap-row:not(.head):hover .sticky-l-1,
+  .ap-row:not(.head):hover .sticky-l-2,
+  .ap-row:not(.head):hover .sticky-r { background: #FBF9F6; }
+
+  .ap-check { display: flex; align-items: center; justify-content: center; }
+  .ap-check input { width: 14px; height: 14px; accent-color: #E7401D; cursor: pointer; }
+
+  .ap-creator { display: flex; align-items: center; gap: 6px; }
+  .ap-creator .av {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, #F4D03F 0%, #D9A800 100%);
+    color: #5B4400; font-size: 9.5px; font-weight: 700;
+    display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ap-creator span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ap-dl {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 6px;
+    color: #6C6864; cursor: pointer;
+    border: 1px solid transparent;
+    transition: background 140ms, border-color 140ms;
+  }
+  .ap-dl:hover { background: #FFFFFF; border-color: #EDEAE6; color: #0D0D0D; }
+  .ap-actions { display: flex; gap: 5px; flex-shrink: 0; }
+  .btn-reject {
+    padding: 4px 12px;
+    border: 1.5px solid #DC2626; border-radius: 6px;
+    background: transparent;
+    font-size: 11.5px; color: #DC2626; font-weight: 600;
+    cursor: pointer; transition: background 140ms, border-color 140ms, color 140ms;
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .btn-reject:hover {
+    background: #FEF2F2;
+    border-color: #B91C1C; color: #B91C1C;
+  }
+  .btn-reject:active { transform: translateY(0.5px); }
+  .btn-approve {
+    padding: 4px 12px; border: 0; border-radius: 6px;
+    background: linear-gradient(135deg, #15803D 0%, #166534 100%);
+    color: #FFFFFF; font-size: 11.5px; font-weight: 600;
+    cursor: pointer; transition: background 140ms, box-shadow 140ms, transform 80ms;
+    box-shadow: 0 1px 2px rgba(20,83,45,0.35);
+    flex-shrink: 0; white-space: nowrap;
+  }
+  .btn-approve:hover {
+    background: linear-gradient(135deg, #166534 0%, #14532D 100%);
+    box-shadow: 0 2px 6px rgba(20,83,45,0.4);
+  }
+  .btn-approve:active { transform: translateY(0.5px); }
+
+  /* Card view */
+  .ap-card-wrap {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0,1fr));
+    gap: 12px;
+  }
+  .ap-card {
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    transition: border-color 160ms, box-shadow 160ms;
+  }
+  .ap-card:hover { border-color: #E2DED9; box-shadow: 0 4px 14px rgba(13,13,13,0.05); }
+  .ap-card .card-top { display: flex; align-items: center; gap: 8px; font-size: 11.5px; }
+  .ap-card .card-top input { margin: 0; width: 13px; height: 13px; accent-color: #E7401D; }
+  .ap-card .card-name { font-size: 14px; font-weight: 600; color: #0D0D0D; line-height: 1.25; }
+  .ap-card .card-name .designation { font-size: 11px; color: #6C6864; font-weight: 500; margin-left: 6px; }
+  .ap-card .card-job { font-size: 11.5px; color: #6C6864; display: flex; align-items: center; gap: 5px; }
+  .ap-card .card-job .dot { color: #D4CFC8; }
+  .ap-card .card-ctc { font-size: 14px; font-weight: 600; color: #0D0D0D; letter-spacing: -0.01em; }
+  .ap-card .card-creator { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: #6C6864; padding-top: 9px; border-top: 1px solid #EDEAE6; }
+  .ap-card .card-creator .ap-dl { margin-left: auto; }
+  .ap-card .card-actions { display: flex; gap: 8px; }
+  .ap-card .card-actions button { flex: 1; padding: 6px 10px; font-size: 12px; }
+
+  /* ── Risk register form ── */
+  .risk-checkbox {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 8px;
+    border: 1px solid #EDEAE6;
+    border-radius: 8px;
+    background: #FFFFFF;
+    cursor: pointer;
+    transition: border-color 140ms, background 140ms;
+    font-size: 13px; color: #2A2A2A;
+  }
+  .risk-checkbox:hover { border-color: #D4CFC8; }
+  .risk-checkbox input { width: 14px; height: 14px; accent-color: #E7401D; cursor: pointer; margin: 0; }
+  .risk-checkbox:has(input:checked) { border-color: #FCD9CF; background: #FFF1ED; color: #E7401D; font-weight: 500; }
+
+  .rte-toolbar {
+    display: flex; align-items: center; gap: 2px;
+    padding: 6px 8px;
+    border: 1px solid #EDEAE6;
+    border-radius: 8px 8px 0 0;
+    background: #FAFAF8;
+    border-bottom: 1px solid #E2DED9;
+  }
+  .rte-btn {
+    width: 28px; height: 28px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #2A2A2A;
+    border-radius: 4px;
+    cursor: pointer; transition: background 120ms, color 120ms;
+    border: 0; background: transparent;
+    font-family: inherit;
+  }
+  .rte-btn:hover { background: #FFFFFF; color: #0D0D0D; }
+  .rte-btn .ms { font-size: 16px; color: #6C6864; }
+  .rte-btn:hover .ms { color: #0D0D0D; }
+  .rte-btn.is-italic { font-style: italic; }
+  .rte-btn.is-bold { font-weight: 700; }
+  .rte-btn.is-under { text-decoration: underline; }
+  .rte-btn.is-strike { text-decoration: line-through; }
+  .rte-sep { width: 1px; height: 16px; background: #E2DED9; margin: 0 4px; flex-shrink: 0; }
+  .rte-content {
+    min-height: 120px;
+    border: 1px solid #EDEAE6;
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    padding: 12px 14px;
+    font-size: 13.5px; line-height: 1.55;
+    outline: none;
+    background: #FFFFFF;
+    color: #0D0D0D;
+  }
+  .rte-content:empty::before {
+    content: attr(data-placeholder);
+    color: #A6A29D;
+    font-style: italic;
+  }
+  .rte-content:focus { border-color: #D4CFC8; }
+
+  .btn-save-risk {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 22px;
+    border: 0; border-radius: 8px;
+    background: #E7401D; color: #FFFFFF;
+    font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: background 140ms;
+    box-shadow: 0 1px 2px rgba(231,64,29,0.3);
+  }
+  .btn-save-risk:hover { background: #C2310D; }
+
+  /* ── CTA form ── */
+  .cta-textarea {
+    width: 100%; min-height: 130px;
+    padding: 12px 14px;
+    border: 1px solid #EDEAE6; border-radius: 8px;
+    background: #FFFFFF;
+    font-size: 13.5px; line-height: 1.5;
+    font-family: inherit; color: #0D0D0D;
+    outline: none; resize: vertical;
+    transition: border-color 140ms;
+  }
+  .cta-textarea:focus { border-color: #D4CFC8; }
+  .cta-counter { font-size: 11px; color: #A6A29D; margin-top: 4px; }
+
+  .prio-pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid #EDEAE6; border-radius: 999px;
+    background: #FFFFFF; cursor: pointer;
+    font-size: 12.5px; color: #2A2A2A; font-weight: 500;
+    transition: border-color 140ms, background 140ms;
+  }
+  .prio-pill .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .prio-pill .dot.high { background: #F97316; }
+  .prio-pill .dot.med  { background: #3B82F6; }
+  .prio-pill .dot.low  { background: #9CA3AF; }
+  .prio-pill:hover { border-color: #D4CFC8; }
+  .prio-pill.active.high { border-color: #FED7AA; background: #FFF7ED; color: #C2410C; }
+  .prio-pill.active.med  { border-color: #BFDBFE; background: #EFF6FF; color: #1E40AF; }
+  .prio-pill.active.low  { border-color: #E5E7EB; background: #F9FAFB; color: #374151; }
+
+  .add-chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 4px 6px 4px;
+    cursor: pointer;
+    font-size: 13px; color: #6C6864; font-weight: 500;
+    transition: color 140ms;
+    background: transparent; border: 0;
+  }
+  .add-chip:hover { color: #E7401D; }
+  .add-chip .add-circ {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #F2F4F7; color: #6C6864;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; transition: background 140ms, color 140ms;
+  }
+  .add-chip:hover .add-circ { background: #FFE4DE; color: #E7401D; }
+  .add-chip .ms { font-size: 14px; color: #6C6864; }
+  .add-chip:hover .ms { color: #E7401D; }
+
+  .btn-create-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 22px;
+    border: 0; border-radius: 8px;
+    background: #E7401D; color: #FFFFFF;
+    font-size: 13.5px; font-weight: 600;
+    cursor: pointer; transition: background 140ms;
+    box-shadow: 0 2px 4px rgba(231,64,29,0.25);
+  }
+  .btn-create-cta:hover { background: #C2310D; }
+  .btn-create-cta .ms { font-size: 16px; }
+
+  .field.locked-light { background: #F7F5F2; color: #6C6864; }
+
+  /* ── Meeting view ── */
+  .mtype-card, .ctype-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px;
+    border: 1px solid #EDEAE6; border-radius: 10px;
+    background: #FFFFFF;
+    cursor: pointer; transition: all 140ms;
+    flex: 1; min-width: 0; text-align: left;
+    color: #2A2A2A;
+  }
+  .mtype-card:hover, .ctype-card:hover { border-color: #D4CFC8; }
+  .mtype-card.active, .ctype-card.active {
+    border-color: #FCD9CF; background: #FFF1ED; color: #0D0D0D;
+  }
+  .mtype-card .icon-tile, .ctype-card .icon-tile {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #F4F1EE; color: #6C6864;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: background 140ms, color 140ms;
+  }
+  .mtype-card .icon-tile .ms, .ctype-card .icon-tile .ms { font-size: 16px; }
+  .mtype-card.active .icon-tile, .ctype-card.active .icon-tile {
+    background: #FFE4DE; color: #E7401D;
+  }
+  .mtype-card .title, .ctype-card .title { font-size: 13px; font-weight: 600; line-height: 1.2; }
+  .mtype-card .sub, .ctype-card .sub { font-size: 11px; color: #6C6864; margin-top: 2px; }
+
+  /* Collab type — 2x2 visual grid */
+  .ctype-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+
+  /* Attendee chips */
+  .attendee-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .attendee-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 5px 10px 5px 5px;
+    background: #F4F1EE; border-radius: 999px;
+    font-size: 12px; color: #2A2A2A;
+    transition: background 140ms;
+    cursor: pointer;
+  }
+  .attendee-chip:hover { background: #EDEAE6; }
+  .attendee-chip .av {
+    width: 22px; height: 22px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 9.5px; font-weight: 700; color: #FFFFFF;
+    flex-shrink: 0;
+  }
+  .attendee-chip .av.c1 { background: linear-gradient(135deg, #F97316, #DC2626); }
+  .attendee-chip .av.c2 { background: linear-gradient(135deg, #3B82F6, #6366F1); }
+  .attendee-chip .av.c3 { background: linear-gradient(135deg, #22C55E, #15803D); }
+  .attendee-chip .av.c4 { background: linear-gradient(135deg, #F4D03F, #D9A800); color: #5B4400; }
+  .attendee-chip .av.c5 { background: linear-gradient(135deg, #A855F7, #7C3AED); }
+  .attendee-chip .x { color: #6C6864; cursor: pointer; transition: color 140ms; }
+  .attendee-chip:hover .x { color: #DC2626; }
+  .attendee-chip .x .ms { font-size: 13px; }
+
+  /* Toast notification */
+  .toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: #0D0D0D; color: #FFFFFF;
+    padding: 12px 20px 12px 16px; border-radius: 12px;
+    font-size: 13px; font-weight: 500;
+    box-shadow: 0 12px 32px rgba(13,13,13,0.25);
+    z-index: 200;
+    display: flex; align-items: center; gap: 10px;
+    transform: translateY(24px); opacity: 0;
+    transition: transform 280ms cubic-bezier(0.22,0.61,0.36,1), opacity 280ms;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast .toast-ico {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #22C55E;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .toast .toast-ico .ms { font-size: 14px; color: #FFFFFF; font-weight: 700; }
+
+  /* ── Quick Collab chat interface ── */
+  /* When the collab view is active, the scroll wrapper and view fill height */
+  #raiDrawer .overflow-y-auto:has(> [data-view="collab"]:not([hidden])) {
+    display: flex; flex-direction: column;
+  }
+  /* Ensure hidden views always stay hidden — override any display:flex on the view */
+  .drawer-view[hidden] { display: none !important; }
+  .drawer-view[data-view="collab"]:not([hidden]) {
+    flex: 1; min-height: 0;
+    display: flex; flex-direction: column;
+  }
+  .qc-wrap {
+    display: flex; flex-direction: column;
+    flex: 1; min-height: 0;
+    background: linear-gradient(180deg, #F8F6F2 0%, #F4F1EE 100%);
+    position: relative;
+  }
+  .qc-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 22px;
+    background: #F4F1EE;
+    border-bottom: 1px solid #EDEAE6;
+    position: relative; z-index: 2;
+  }
+  .qc-header-l { display: flex; align-items: center; gap: 12px; }
+  .qc-header-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: #FFE4DE; color: #E7401D;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .qc-header-icon .ms { font-size: 18px; }
+  .qc-title {
+    font-size: 16px; font-weight: 700; color: #0D0D0D;
+    line-height: 1.1;
+  }
+  .qc-id {
+    font-size: 12.5px; color: #6C6864;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .qc-header-r { display: flex; align-items: center; gap: 4px; }
+
+  /* Chat scroll area — flex grows, scrolls internally */
+  .qc-chat {
+    flex: 1 1 0; min-height: 0;
+    overflow-y: auto;
+    padding: 28px 22px;
+    position: relative;
+  }
+  /* Background pattern — subtle KAIS marks scattered */
+  .qc-chat::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 16% 22%, rgba(231,64,29,0.04) 0, transparent 18px),
+      radial-gradient(circle at 84% 18%, rgba(244,208,63,0.05) 0, transparent 22px),
+      radial-gradient(circle at 30% 78%, rgba(231,64,29,0.03) 0, transparent 18px),
+      radial-gradient(circle at 78% 64%, rgba(244,208,63,0.04) 0, transparent 20px);
+    pointer-events: none;
+  }
+  /* Business doodle wallpaper background — drop doodle-bg.png next to this HTML */
+  .qc-doodle-bg {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    background-image: url('./doodle-bg.png');
+    background-repeat: repeat;
+    background-size: 600px auto;
+    opacity: 0.35;
+  }
+
+  .qc-msg {
+    display: flex; align-items: flex-end; gap: 10px;
+    margin-bottom: 14px;
+    position: relative; z-index: 1;
+  }
+  .qc-msg.out { justify-content: flex-end; }
+  .qc-msg.out .qc-bubble {
+    background: linear-gradient(135deg, #F97316 0%, #E7401D 100%);
+    border-color: transparent;
+    color: #FFFFFF;
+    border-bottom-right-radius: 4px;
+    box-shadow: 0 2px 8px rgba(231,64,29,0.22);
+  }
+  .qc-msg.out .qc-bubble .qc-time { color: rgba(255,255,255,0.8); }
+  .qc-msg.out .qc-bubble .qc-time .ms { color: rgba(255,255,255,0.95); }
+  .qc-msg.in  { justify-content: flex-start; }
+  .qc-msg.in  .qc-bubble { background: #FFFFFF; border-bottom-left-radius: 4px; }
+  .qc-bubble {
+    max-width: 60%;
+    padding: 10px 14px 8px;
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(13,13,13,0.04);
+    border: 1px solid #EDEAE6;
+    font-size: 13.5px;
+    color: #0D0D0D;
+    line-height: 1.45;
+  }
+  .qc-bubble .qc-time {
+    font-size: 10.5px;
+    color: #A6A29D;
+    margin-top: 4px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .qc-bubble .qc-time .ms { font-size: 11px; color: #1F9D55; }
+  .qc-avatar {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10.5px; font-weight: 700; color: #FFFFFF;
+    flex-shrink: 0;
+    box-shadow: 0 1px 2px rgba(13,13,13,0.08);
+  }
+  .qc-avatar.purple { background: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%); }
+  .qc-avatar.coral  { background: linear-gradient(135deg, #F97316 0%, #E7401D 100%); }
+  .qc-avatar.teal   { background: linear-gradient(135deg, #14B8A6 0%, #0E7C7B 100%); }
+  .qc-avatar.blue   { background: linear-gradient(135deg, #3B82F6 0%, #1E40AF 100%); }
+
+  /* Composer — pinned bottom of qc-wrap */
+  .qc-composer {
+    flex-shrink: 0;
+    padding: 12px 22px 16px;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid #EDEAE6;
+    position: relative; z-index: 2;
+  }
+  .qc-composer-top {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+  }
+  .qc-send-label { font-size: 12px; color: #6C6864; }
+  .qc-visibility {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 999px;
+    font-size: 12px; color: #2A2A2A; font-weight: 500;
+    cursor: pointer; transition: border-color 140ms;
+    position: relative;
+  }
+  .qc-visibility:hover { border-color: #D4CFC8; }
+  .qc-visibility .ms { font-size: 13px; color: #6C6864; }
+  .qc-visibility .caret { font-size: 14px; }
+  .qc-refresh {
+    margin-left: auto;
+    width: 28px; height: 28px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #E7401D; cursor: pointer;
+    background: transparent; border: 0;
+    transition: background 140ms, transform 400ms;
+  }
+  .qc-refresh:hover { background: #FFE4DE; }
+  .qc-refresh.spin { transform: rotate(360deg); }
+  .qc-refresh .ms { font-size: 17px; }
+
+  .qc-input-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 6px 6px 6px 6px;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 999px;
+    transition: border-color 140ms;
+  }
+  .qc-input-row:focus-within { border-color: #D4CFC8; }
+  .qc-add {
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #F4F1EE; color: #6C6864;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 0;
+    flex-shrink: 0;
+    transition: background 140ms, color 140ms;
+  }
+  .qc-add:hover { background: #FFE4DE; color: #E7401D; }
+  .qc-add .ms { font-size: 16px; }
+  .qc-input-row input {
+    flex: 1; border: 0; outline: 0; background: transparent;
+    font-size: 13.5px; font-family: inherit; color: #0D0D0D;
+    min-width: 0;
+  }
+  .qc-input-row input::placeholder { color: #A6A29D; }
+  .qc-send-btn {
+    width: 32px; height: 32px; border-radius: 50%;
+    background: linear-gradient(135deg, #F97316 0%, #E7401D 100%);
+    color: #FFFFFF;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; border: 0;
+    flex-shrink: 0;
+    transition: transform 140ms, box-shadow 140ms;
+    box-shadow: 0 2px 6px rgba(231,64,29,0.3);
+  }
+  .qc-send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 10px rgba(231,64,29,0.35); }
+  .qc-send-btn .ms { font-size: 16px; }
+  .qc-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+  .qc-hint {
+    font-size: 11px; color: #A6A29D;
+    margin-top: 8px;
+    text-align: left;
+  }
+
+  /* Visibility dropdown menu */
+  .qc-vis-menu {
+    position: absolute; bottom: calc(100% + 6px); left: 0;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(13,13,13,0.10);
+    z-index: 300;
+    padding: 4px; min-width: 180px;
+    animation: ddOpen 140ms cubic-bezier(0.22,0.61,0.36,1);
+  }
+  .qc-vis-menu .dd-option { padding: 8px 10px; }
+  .qc-vis-menu .dd-option .ms { font-size: 14px; color: #6C6864; }
+
+  /* ── Working dropdown menu ── */
+  .field.dd-trigger { cursor: pointer; position: relative; user-select: none; }
+  .field.dd-trigger .ph { cursor: pointer; }
+  .field.dd-open { border-color: #FCD9CF; box-shadow: 0 0 0 3px rgba(231,64,29,0.08); }
+  .field.dd-open .caret { transform: rotate(180deg); }
+  .field .caret { transition: transform 180ms ease; }
+  .dd-menu {
+    position: absolute;
+    top: calc(100% + 6px); left: 0; right: 0;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(13,13,13,0.10);
+    max-height: 260px; overflow-y: auto;
+    z-index: 300;
+    padding: 4px;
+    animation: ddOpen 140ms cubic-bezier(0.22,0.61,0.36,1);
+  }
+  @keyframes ddOpen {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .dd-option {
+    padding: 8px 12px;
+    font-size: 13px; color: #2A2A2A;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 100ms, color 100ms;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .dd-option:hover { background: #F4F1EE; color: #0D0D0D; }
+  .dd-option.active { background: #FFF1ED; color: #E7401D; font-weight: 500; }
+  .dd-option.active::after {
+    content: 'check'; font-family: 'Material Symbols Outlined';
+    font-size: 16px; color: #E7401D; margin-left: auto;
+  }
+  /* ─── Custom Date / Time pickers (Material-style, KAIS-themed) ─── */
+  .field.date-field, .field.time-field { position: relative; cursor: pointer; user-select: none; }
+  .field.date-field .dt-val, .field.time-field .dt-val {
+    flex: 1; font-size: 13.5px; color: #0D0D0D;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .field.date-field .dt-val.empty, .field.time-field .dt-val.empty { color: #A6A29D; }
+
+  /* Date picker popover */
+  .dp-pop {
+    position: absolute; top: calc(100% + 8px); left: 0;
+    width: 296px;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(13,13,13,0.12), 0 2px 6px rgba(13,13,13,0.04);
+    z-index: 400;
+    padding: 14px;
+    animation: ddOpen 180ms cubic-bezier(0.22,0.61,0.36,1);
+  }
+  .dp-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  .dp-title {
+    font-size: 13.5px; font-weight: 600; color: #0D0D0D;
+    display: flex; align-items: center; gap: 4px;
+    cursor: pointer; padding: 4px 8px; border-radius: 6px;
+    transition: background 140ms;
+  }
+  .dp-title:hover { background: #F4F1EE; }
+  .dp-title .ms { font-size: 16px; color: #6C6864; }
+  .dp-nav {
+    width: 28px; height: 28px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    color: #6C6864; cursor: pointer; border: 0; background: transparent;
+    transition: background 140ms, color 140ms;
+  }
+  .dp-nav:hover { background: #F4F1EE; color: #0D0D0D; }
+  .dp-nav .ms { font-size: 18px; }
+  .dp-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  }
+  .dp-dow {
+    text-align: center; font-size: 10.5px; font-weight: 600;
+    color: #A6A29D; letter-spacing: 0.06em;
+    padding: 6px 0 4px;
+    text-transform: uppercase;
+  }
+  .dp-cell {
+    height: 34px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #2A2A2A;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 120ms, color 120ms;
+    font-variant-numeric: tabular-nums;
+  }
+  .dp-cell.other { color: #D4CFC8; }
+  .dp-cell:hover:not(.selected) { background: #FFF1ED; color: #E7401D; }
+  .dp-cell.today {
+    box-shadow: inset 0 0 0 1.5px #E7401D;
+    color: #E7401D; font-weight: 600;
+  }
+  .dp-cell.selected {
+    background: linear-gradient(135deg, #F97316 0%, #E7401D 100%);
+    color: #FFFFFF; font-weight: 600;
+    box-shadow: 0 2px 6px rgba(231,64,29,0.3);
+  }
+  .dp-footer {
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid #EDEAE6;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .dp-link {
+    background: transparent; border: 0; padding: 6px 10px;
+    font-size: 12px; font-weight: 500; color: #E7401D;
+    border-radius: 6px; cursor: pointer;
+    transition: background 140ms;
+  }
+  .dp-link:hover { background: #FFF1ED; }
+  .dp-link.muted { color: #6C6864; }
+  .dp-link.muted:hover { background: #F4F1EE; color: #0D0D0D; }
+
+  /* Year picker grid */
+  .dp-years {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px;
+    padding: 4px 0;
+  }
+  .dp-year {
+    height: 36px; display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: #2A2A2A;
+    border-radius: 7px; cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: background 120ms, color 120ms;
+  }
+  .dp-year:hover:not(.selected) { background: #FFF1ED; color: #E7401D; }
+  .dp-year.selected {
+    background: linear-gradient(135deg, #F97316 0%, #E7401D 100%);
+    color: #FFFFFF; font-weight: 600;
+  }
+
+  /* Time picker popover */
+  .tp-pop {
+    position: absolute; top: calc(100% + 8px); left: 0;
+    width: 260px;
+    background: #FFFFFF;
+    border: 1px solid #EDEAE6;
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(13,13,13,0.12), 0 2px 6px rgba(13,13,13,0.04);
+    z-index: 400;
+    padding: 14px;
+    animation: ddOpen 180ms cubic-bezier(0.22,0.61,0.36,1);
+  }
+  .tp-display {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px;
+    background: #F4F1EE;
+    border-radius: 10px;
+    padding: 12px 10px;
+    margin-bottom: 12px;
+  }
+  .tp-num {
+    font-size: 24px; font-weight: 600;
+    color: #0D0D0D;
+    letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
+    min-width: 36px; text-align: center;
+    cursor: pointer;
+    padding: 2px 6px; border-radius: 6px;
+    transition: background 140ms, color 140ms;
+  }
+  .tp-num:hover { background: rgba(231,64,29,0.08); color: #E7401D; }
+  .tp-num.active {
+    background: #FFFFFF;
+    color: #E7401D;
+    box-shadow: 0 1px 3px rgba(13,13,13,0.08);
+  }
+  .tp-colon { font-size: 22px; font-weight: 500; color: #6C6864; }
+  .tp-period {
+    display: inline-flex; flex-direction: column;
+    background: #FFFFFF;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-left: 6px;
+    box-shadow: 0 1px 2px rgba(13,13,13,0.06);
+  }
+  .tp-period button {
+    padding: 5px 10px;
+    border: 0; background: transparent;
+    font-size: 11px; font-weight: 600;
+    color: #6C6864;
+    cursor: pointer;
+    transition: background 140ms, color 140ms;
+  }
+  .tp-period button.active {
+    background: linear-gradient(135deg, #F97316, #E7401D);
+    color: #FFFFFF;
+  }
+
+  .tp-scroll-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    max-height: 180px;
+  }
+  .tp-col {
+    display: flex; flex-direction: column;
+    gap: 2px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    padding: 2px;
+  }
+  .tp-col::-webkit-scrollbar { width: 6px; }
+  .tp-col::-webkit-scrollbar-thumb { background: #DAD5CE; border-radius: 3px; }
+  .tp-col::-webkit-scrollbar-track { background: transparent; }
+  .tp-col-label {
+    font-size: 10.5px; font-weight: 600;
+    color: #A6A29D; letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .tp-opt {
+    text-align: center;
+    padding: 7px 8px;
+    font-size: 13px;
+    color: #2A2A2A;
+    border-radius: 7px;
+    cursor: pointer;
+    font-variant-numeric: tabular-nums;
+    transition: background 120ms, color 120ms;
+  }
+  .tp-opt:hover:not(.selected) { background: #FFF1ED; color: #E7401D; }
+  .tp-opt.selected {
+    background: linear-gradient(135deg, #F97316 0%, #E7401D 100%);
+    color: #FFFFFF; font-weight: 600;
+  }
+  .deepdive::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, #E7401D 0%, #F59E0B 60%, #F4D03F 100%);
+  }
+
+  .askkais {
+    position: fixed; top: 0; bottom: 0; right: 0; width: 340px;
+    background: #FFFFFF; border-left: 1px solid #EDEAE6;
+    z-index: 105; transform: translateX(100%);
+    transition: transform 320ms cubic-bezier(0.22,0.61,0.36,1) 60ms;
+    display: flex; flex-direction: column;
+  }
+  .askkais.open { transform: translateX(0); }
+
+  .dd-tab { padding: 10px 0; font-size: 13.5px; font-weight: 500; color: #6C6864; border-bottom: 2px solid transparent; cursor: pointer; transition: color 140ms, border-color 140ms; margin-right: 28px; }
+  .dd-tab.active { color: #E7401D; border-bottom-color: #E7401D; }
+  .dd-tab:hover:not(.active) { color: #0D0D0D; }
+
+  .stat-cell { padding: 16px 0; }
+  .stat-label { font-size: 12px; color: #6C6864; margin-bottom: 6px; }
+  .stat-value { font-size: 26px; font-weight: 600; color: #0D0D0D; line-height: 1.1; letter-spacing: -0.01em; }
+  .stat-value .denom { color: #A6A29D; font-weight: 500; font-size: 18px; }
+  .stat-sub { font-size: 11.5px; color: #A6A29D; margin-top: 4px; }
+
+  .insight-card { display: flex; gap: 10px; padding: 14px 14px; border-radius: 10px; border: 1px solid; font-size: 13px; line-height: 1.55; }
+  .insight-card.warn { background: #FFFBEB; border-color: #FDE68A; }
+  .insight-card.info { background: #EFF6FF; border-color: #BFDBFE; }
+  .insight-card.ok   { background: #ECFDF5; border-color: #A7F3D0; }
+  .insight-card .ico { flex-shrink: 0; font-size: 17px; line-height: 1; margin-top: 1px; }
+
+  .try-card { display: flex; gap: 10px; padding: 10px 12px; border: 1px solid #EDEAE6; border-radius: 10px; background: #FFFFFF; cursor: pointer; transition: border-color 140ms, background 140ms; }
+  .try-card:hover { border-color: #FCD9CF; background: #FFFBF9; }
+  .try-card .bulb { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+
+  .kais-input { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #EDEAE6; border-radius: 12px; background: #FFFFFF; }
+  .kais-input input { flex: 1; border: 0; outline: 0; background: transparent; font-size: 13px; font-family: inherit; color: #0D0D0D; }
+  .kais-input input::placeholder { color: #A6A29D; }
+  .kais-send { width: 28px; height: 28px; border-radius: 8px; background: #0D0D0D; color: #FFFFFF; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+</style>
+</head>
+<body class="min-w-[1440px]">
+
+<!-- SIDEBAR (command-center-v6 style: icon + label, dark KAIS theme) -->
+<aside class="fixed left-0 top-0 bottom-0 bg-sidebar flex flex-col z-40 overflow-y-auto" style="width:72px;border-right:1px solid #0E0E10;">
+  <!-- Brand header — Kebs logo (KAIS orange) -->
+  <div class="flex items-center justify-center py-3 mb-1">
+    <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(231,64,29,0.14);">
+      <svg width="26" height="29" viewBox="0 0 48 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="kebsGrad" x1="0" y1="0" x2="48" y2="54" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stop-color="#F97316"/>
+            <stop offset="100%" stop-color="#E7401D"/>
+          </linearGradient>
+        </defs>
+        <path d="M15.8334 6.77103V15.9966C15.8334 17.6047 14.3889 18.8178 12.8333 18.5075L5.66667 17.0686L0 22.8522L12.5 25.335C15.2778 25.8991 18.1389 24.9965 20.1111 22.937C21.6388 21.3288 22.5 19.1845 22.5 16.9558V0L15.8334 6.77103Z" fill="url(#kebsGrad)"/>
+        <path d="M32.1585 6.77103V15.8554C32.1585 17.5482 33.6843 18.8178 35.2935 18.4792L42.3126 17.0686L48 22.8522L35.5154 25.335C32.7411 25.8991 29.8835 24.9965 27.9137 22.937C26.3601 21.357 25.5 19.2127 25.5 16.984V0L32.1585 6.77103Z" fill="url(#kebsGrad)"/>
+        <path d="M15.8334 47.2365V37.7956C15.8334 36.3021 14.5 35.1748 13.0278 35.4565L5.66667 36.922L0 31.1448L12.5 28.6648C15.2778 28.1013 18.1389 29.0031 20.1111 31.0603C21.6388 32.6667 22.5 34.8084 22.5 37.0347V54L15.8334 47.2365Z" fill="url(#kebsGrad)"/>
+        <path d="M32.1666 47.229V37.6367C32.1666 36.1979 33.4445 35.1258 34.8333 35.4078L42.3333 36.9032L48 31.1478L35.5001 28.665C32.7222 28.1013 29.8611 29.0036 27.8889 31.0631C26.3611 32.6712 25.5 34.8155 25.5 37.0442V54L32.1666 47.229Z" fill="url(#kebsGrad)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Nav items -->
+  <nav class="flex flex-col flex-1">
+    <div class="nav-item" data-name="home">
+      <span class="ms nav-icon">home</span>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item active" data-name="control tower" aria-current="page">
+      <span class="ms nav-icon">apps</span>
+      <span class="nav-label">Analytics</span>
+    </div>
+    <div class="nav-item" data-name="kais ai">
+      <span class="ms nav-icon">auto_awesome</span>
+      <span class="nav-label">Kais AI</span>
+    </div>
+    <div class="nav-item" data-name="inbox">
+      <span class="ms nav-icon">inbox</span>
+      <span class="nav-label">Inbox</span>
+    </div>
+
+    <div class="nav-category">Plan</div>
+    <div class="nav-item" data-name="projects">
+      <span class="ms nav-icon">assignment</span>
+      <span class="nav-label">Projects</span>
+    </div>
+    <div class="nav-item" data-name="people">
+      <span class="ms nav-icon">group</span>
+      <span class="nav-label">People</span>
+    </div>
+    <div class="nav-item" data-name="planning">
+      <span class="ms nav-icon">event_note</span>
+      <span class="nav-label">Planning</span>
+    </div>
+
+    <div class="nav-category">CRM</div>
+    <div class="nav-item" data-name="accounts">
+      <span class="ms nav-icon">business</span>
+      <span class="nav-label">Accounts</span>
+    </div>
+    <div class="nav-item" data-name="opps">
+      <span class="ms nav-icon">trending_up</span>
+      <span class="nav-label">Opps</span>
+    </div>
+    <div class="nav-item" data-name="deals">
+      <span class="ms nav-icon">handshake</span>
+      <span class="nav-label">Deals</span>
+    </div>
+
+    <div class="nav-category">Finance</div>
+    <div class="nav-item" data-name="finance">
+      <span class="ms nav-icon">payments</span>
+      <span class="nav-label">Finance</span>
+    </div>
+    <div class="nav-item" data-name="invoices">
+      <span class="ms nav-icon">summarize</span>
+      <span class="nav-label">Invoices</span>
+    </div>
+  </nav>
+
+  <!-- Bottom -->
+  <div class="border-t" style="border-color:#0E0E10;">
+    <div class="nav-item" data-name="settings">
+      <span class="ms nav-icon">settings</span>
+      <span class="nav-label">Settings</span>
+    </div>
+    <div class="flex items-center justify-center py-3">
+      <div class="avatar la w-8 h-8 text-[12px]">LA</div>
+    </div>
+  </div>
+</aside>
+
+<!-- Bottom-right rail icons -->
+<div class="rail-bottom z-30">
+  <button class="rail-btn" aria-label="Download"><span class="ms ms-18">download</span></button>
+  <button class="rail-btn" aria-label="Share"><span class="ms ms-18">share</span></button>
+</div>
+
+<!-- MAIN -->
+<main class="pr-12 pl-6 py-5" style="margin-left:72px;">
+
+  <!-- HEADER -->
+  <header class="flex items-center justify-between mb-5">
+    <div class="flex items-center gap-2 text-[15px]">
+      <span class="text-ink-60">Analytics</span>
+      <span class="ms ms-18 text-ink-40">chevron_right</span>
+      <span class="text-ink-100 font-semibold text-[18px]">Control Tower</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="search">
+        <span class="ms ms-18 text-ink-40">search</span>
+        <input type="text" placeholder="Search metrics..." />
+      </div>
+      <button class="icon-btn bordered" aria-label="Apps"><span class="ms ms-18">apps</span></button>
+      <button class="icon-btn bordered" aria-label="Notifications"><span class="ms ms-18">notifications</span></button>
+      <div class="avatar la w-8 h-8 text-[12px]">LA</div>
+    </div>
+  </header>
+
+  <!-- FILTER BAR -->
+  <section class="bg-surface border border-border rounded-xl px-4 py-3 mb-4 flex items-center gap-3 shadow-card">
+    <span class="text-ink-60 text-[13px] mr-2">Quick Filters</span>
+
+    <button class="chip-select">
+      <span class="label">Period</span><span class="sep"></span>
+      <span>Apr 2025 – Mar 2026</span>
+      <span class="ms ms-18 text-ink-40">expand_more</span>
+    </button>
+    <button class="chip-select">
+      <span class="label">Sales Region</span><span class="sep"></span>
+      <span>All Regions</span>
+      <span class="ms ms-18 text-ink-40">expand_more</span>
+    </button>
+    <button class="chip-select">
+      <span class="label">Entity</span><span class="sep"></span>
+      <span>All Entities</span>
+      <span class="ms ms-18 text-ink-40">expand_more</span>
+    </button>
+    <button class="chip-select">
+      <span class="label">Sub Division</span><span class="sep"></span>
+      <span>All Sub Divisions</span>
+      <span class="ms ms-18 text-ink-40">expand_more</span>
+    </button>
+
+    <div class="ml-auto seg">
+      <button class="active">Global</button>
+      <button>Presales</button>
+      <button>Delivery</button>
+    </div>
+  </section>
+
+  <!-- FINANCIAL OVERVIEW -->
+  <section class="bg-surface border border-border rounded-2xl p-6 mb-4 shadow-card">
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-[15px] font-semibold text-ink-100">Financial Overview</h2>
+      <button class="icon-btn bordered" aria-label="Settings"><span class="ms ms-18">tune</span></button>
+    </div>
+
+    <!-- TOP ROW — 6 KPI cards -->
+    <div class="grid grid-cols-6 gap-3 mb-3">
+
+      <!-- 1 Target Achievement -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Target Achievement</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">
+          37.16 M <span class="text-ink-40 font-normal text-[20px]">/ 45.0 M</span>
+        </div>
+        <div class="kpi-sub text-pos-text font-medium">82.6% achieved</div>
+      </div>
+
+      <!-- 2 Revenue Gap -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Revenue Gap</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value text-dang-text">–7.84 M</div>
+        <div class="kpi-sub text-dang-text font-medium">17% of $45M target · Widening</div>
+      </div>
+
+      <!-- 3 Revenue at Risk -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Revenue at Risk</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value text-dang-text flex items-center gap-2">
+          –8.4M
+          <span class="pill" style="background:#FFE4DE;color:#C2410C;font-weight:600;">
+            <span class="ms" style="font-size:13px;">warning</span> HIGH RISK
+          </span>
+        </div>
+        <div class="kpi-sub text-pos-text font-medium">18.7% of total revenue</div>
+      </div>
+
+      <!-- 4 Forecast Accuracy -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Forecast Accuracy %</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">94%</div>
+        <div class="kpi-sub text-pos-text font-medium">Highly reliable</div>
+      </div>
+
+      <!-- 5 Pipeline Coverage -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Pipeline Coverage</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">1.17x</div>
+        <div class="kpi-sub">
+          <span class="text-pos-text font-medium">$9.20M / $7.84M gap</span>
+          <span class="pill ml-1" style="background:#E8F5EE;color:#1F9D55;">+85% vs last yr</span>
+        </div>
+      </div>
+
+      <!-- 6 Utilization Efficiency -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Utilization Efficiency</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">83%</div>
+        <div class="kpi-sub text-pos-text font-medium">~$1.2M lost potential</div>
+      </div>
+    </div>
+
+    <!-- BOTTOM ROW — 3 small + 1 wide AI Insight -->
+    <div class="grid gap-3" style="grid-template-columns: 1fr 1fr 1fr 3fr;">
+
+      <!-- 7 Billing Realization -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Billing Realization</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">89%</div>
+        <div class="kpi-sub text-pos-text font-medium">$31.2M / $35.0M realized</div>
+      </div>
+
+      <!-- 8 Adjustment & Dependency -->
+      <div class="kpi">
+        <div class="kpi-label">
+          <span>Adjustment &amp; Dependency</span>
+        </div>
+        <span class="ms kpi-info">info</span>
+        <div class="kpi-value">3.80 M</div>
+        <div class="kpi-sub text-dang-text font-medium">
+          8.4% <span class="ms" style="font-size:12px;color:#D97706;">warning</span> of forecast · Unstable
+        </div>
+      </div>
+
+      <!-- 9 RAI Score with sparkline -->
+      <div class="kpi clickable" id="raiCard" style="position:relative;">
+        <div class="kpi-label">
+          <span>RAI Score</span>
+          <span class="flex items-center gap-1">
+            <span class="ms ms-14 text-ink-40">unfold_more</span>
+            <span class="ms ms-14 text-ink-40">info</span>
+          </span>
+        </div>
+        <div class="kpi-value text-pos-text">82%</div>
+        <div style="height:36px;">
+          <svg class="sparkline" viewBox="0 0 96 30" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="sparkFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#1F9D55" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#1F9D55" stop-opacity="0.02"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,24 C8,22 14,20 20,18 C26,16 30,14 36,13 C42,12 48,10 54,9 C60,8 66,7 72,6 C78,5 84,4 96,3 L96,30 L0,30 Z" fill="url(#sparkFill)"/>
+            <path d="M0,24 C8,22 14,20 20,18 C26,16 30,14 36,13 C42,12 48,10 54,9 C60,8 66,7 72,6 C78,5 84,4 96,3" fill="none" stroke="#1F9D55" stroke-width="1.5"/>
+            <circle cx="92" cy="4" r="2.2" fill="#1F9D55"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- 10 AI Insight wide -->
+      <div class="kpi" style="padding:18px 20px;">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="ms" style="color:#F59E0B;font-size:18px;">auto_awesome</span>
+            <span class="font-semibold text-[14px] text-ink-100">AI Insight</span>
+            <span class="pill" style="background:#F2F4F7;color:#6C6864;">FY 25-26</span>
+            <span class="pill" style="background:#FFE4DE;color:#C2410C;font-weight:600;">Need Attention</span>
+          </div>
+          <div class="text-[12px] text-ink-60 flex items-center gap-3">
+            <span><span class="text-ink-100 font-medium">Current</span> 3.1M/mo</span>
+            <span class="text-ink-40">·</span>
+            <span><span class="text-ink-100 font-medium">Required</span> 4.4M/mo</span>
+          </div>
+        </div>
+
+        <div class="flex items-end justify-between mt-2">
+          <div class="flex items-baseline gap-2">
+            <span class="text-[13px] text-ink-60">Gap</span>
+            <span class="text-[22px] font-semibold text-dang-text">–$13M</span>
+            <span class="text-[13px] text-dang-text font-medium">(24%)</span>
+          </div>
+        </div>
+
+        <!-- Bar with marker -->
+        <div style="position:relative;margin-top:4px;">
+          <div class="ai-bar">
+            <span style="background:#16A34A"></span>
+            <span style="background:#22C55E"></span>
+            <span style="background:#65A30D"></span>
+            <span style="background:#84CC16"></span>
+            <span style="background:#A3A012"></span>
+            <span style="background:#CA8A04"></span>
+            <span style="background:#D97706"></span>
+            <span style="background:#EA580C"></span>
+            <span style="background:#F97316"></span>
+            <span style="background:#FB923C"></span>
+            <span style="background:#FCA5A5"></span>
+            <span style="background:#FECACA"></span>
+            <span style="background:#FEE2E2"></span>
+            <span style="background:#FEF2F2"></span>
+          </div>
+          <!-- Marker pin -->
+          <div style="position:absolute;left:62%;top:-14px;display:flex;flex-direction:column;align-items:center;">
+            <div style="width:10px;height:10px;border-radius:50%;background:#E7401D;border:2px solid #FFFFFF;box-shadow:0 1px 3px rgba(231,64,29,0.4);"></div>
+            <div style="width:1px;height:24px;background:#E7401D;"></div>
+          </div>
+        </div>
+
+        <div class="text-[12px] text-ink-60 mt-3 leading-relaxed">
+          At current pace, company will miss target by <span class="font-semibold text-ink-100">Gap (-$13M)</span> unless top 5 risks are addressed.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVENUE GOVERNANCE -->
+  <section class="bg-surface border border-border rounded-2xl p-6 mb-6 shadow-card">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-[15px] font-semibold text-ink-100">Revenue Governance</h2>
+      <div class="flex items-center gap-3">
+        <div class="seg accent">
+          <button class="active">Fiscal</button>
+          <button>Monthly</button>
+          <button>Quarterly</button>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="toggle" id="trendToggle"></div>
+          <span class="text-[13px] text-ink-80">Show Trend</span>
+        </div>
+        <button class="btn-outline">
+          <span class="ms ms-16" style="color:#E7401D;">flag</span>
+          Risk &amp; Actions
+        </button>
+        <button class="icon-btn bordered" aria-label="Settings"><span class="ms ms-18">tune</span></button>
+      </div>
+    </div>
+
+    <!-- Sub header / column row -->
+    <div style="background:#FAFAF8;border:1px solid #EDEAE6;border-radius:10px;overflow:hidden;">
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:10px 16px;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-2">
+          <span class="text-[13px] text-ink-80 font-medium">Hierarchy</span>
+          <span class="flex items-center gap-1 ml-1">
+            <span class="h-chip" style="background:#22C5C5;">C</span>
+            <span class="h-chip" style="background:#3B82F6;">P</span>
+            <span class="h-chip" style="background:#F4D03F;color:#7A5C00;">O</span>
+          </span>
+          <span class="ms ms-14 text-ink-40 ml-1">info</span>
+          <span class="ml-auto flex items-center gap-1">
+            <span class="ms ms-16 text-ink-60">unfold_more</span>
+            <span class="ms ms-16 text-ink-60">filter_list</span>
+          </span>
+        </div>
+        <div class="text-[12px] text-ink-60 font-medium">Target</div>
+        <div class="text-[12px] text-ink-60 font-medium">Actual</div>
+        <div class="text-[12px] text-ink-60 font-medium">Forecast</div>
+        <div class="text-[12px] text-ink-60 font-medium">Latest Estimate</div>
+        <div class="text-[12px] text-ink-60 font-medium">Variance</div>
+        <div class="text-[12px] text-ink-60 font-medium">Billable</div>
+        <div class="text-[12px] text-ink-60 font-medium">Collected</div>
+        <div class="text-[12px] text-ink-60 font-medium">RAI Score</div>
+      </div>
+
+      <!-- TOTAL -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="font-semibold text-ink-100 text-[14px]">Total</div>
+        <div class="font-semibold text-[14px]">41.0M</div>
+        <div class="font-semibold text-[14px]">23.8M</div>
+        <div class="font-semibold text-[14px]">7.7M</div>
+        <div class="font-semibold text-[14px]">31.5M</div>
+        <div class="font-semibold text-[14px] text-pos-text">+17.2M</div>
+        <div class="font-semibold text-[14px]">26.6M</div>
+        <div class="font-semibold text-[14px]">22.7M</div>
+        <div class="font-semibold text-[14px] text-ink-40">—</div>
+      </div>
+
+      <!-- Axion Corp -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium">Axion Corp</div>
+            <div class="text-[11.5px] text-ink-60">CUS-1041</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">8.0M</div>
+        <div class="text-[13.5px] num-muted">5.1M</div>
+        <div class="text-[13.5px] num-muted">1.1M</div>
+        <div class="text-[13.5px]">6.2M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+2.9M</div>
+        <div class="text-[13.5px]">5.7M</div>
+        <div class="text-[13.5px]">5.2M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] text-pos-text font-semibold">82%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:82%;background:#22C55E;"></div></div>
+        </div>
+      </div>
+
+      <!-- EuroNex AG -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium flex items-center gap-1.5">
+              EuroNex AG
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L22 8V16L12 22L2 16V8L12 2Z" fill="#F59E0B"/>
+                <text x="12" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF" font-family="DM Sans">!</text>
+              </svg>
+            </div>
+            <div class="text-[11.5px] text-ink-60">CUS-1192</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">5.8M</div>
+        <div class="text-[13.5px] num-muted">3.0M</div>
+        <div class="text-[13.5px] num-muted">1.2M</div>
+        <div class="text-[13.5px]">4.2M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+2.8M</div>
+        <div class="text-[13.5px]">3.6M</div>
+        <div class="text-[13.5px]">3.1M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] font-semibold" style="color:#D97706;">68%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:68%;background:linear-gradient(90deg,#F59E0B 0%,#FCD34D 100%);"></div></div>
+        </div>
+      </div>
+
+      <!-- GulfCore Holdings -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium flex items-center gap-1.5">
+              GulfCore Holdings
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L22 8V16L12 22L2 16V8L12 2Z" fill="#F59E0B"/>
+                <text x="12" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF" font-family="DM Sans">!</text>
+              </svg>
+            </div>
+            <div class="text-[11.5px] text-ink-60">CUS-2204</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">10.4M</div>
+        <div class="text-[13.5px] num-muted">6.4M</div>
+        <div class="text-[13.5px] num-muted">1.5M</div>
+        <div class="text-[13.5px]">7.9M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+4.0M</div>
+        <div class="text-[13.5px]">6.9M</div>
+        <div class="text-[13.5px]">5.8M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] font-semibold" style="color:#D97706;">71%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:71%;background:linear-gradient(90deg,#F59E0B 0%,#FCD34D 100%);"></div></div>
+        </div>
+      </div>
+
+      <!-- Nordic Pulp & Paper -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium">Nordic Pulp &amp; Paper</div>
+            <div class="text-[11.5px] text-ink-60">CUS-1308</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">6.2M</div>
+        <div class="text-[13.5px] num-muted">4.1M</div>
+        <div class="text-[13.5px] num-muted">1.3M</div>
+        <div class="text-[13.5px]">5.4M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+1.8M</div>
+        <div class="text-[13.5px]">4.6M</div>
+        <div class="text-[13.5px]">4.3M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] text-pos-text font-semibold">86%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:86%;background:#22C55E;"></div></div>
+        </div>
+      </div>
+
+      <!-- Sable Logistics -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;border-bottom:1px solid #EDEAE6;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium flex items-center gap-1.5">
+              Sable Logistics
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L22 8V16L12 22L2 16V8L12 2Z" fill="#DC2626"/>
+                <text x="12" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="#FFFFFF" font-family="DM Sans">!</text>
+              </svg>
+            </div>
+            <div class="text-[11.5px] text-ink-60">CUS-1487</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">4.5M</div>
+        <div class="text-[13.5px] num-muted">2.2M</div>
+        <div class="text-[13.5px] num-muted">0.9M</div>
+        <div class="text-[13.5px]">3.1M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+1.4M</div>
+        <div class="text-[13.5px]">2.8M</div>
+        <div class="text-[13.5px]">2.1M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] font-semibold text-dang-text">58%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:58%;background:#DC2626;"></div></div>
+        </div>
+      </div>
+
+      <!-- Helio Pharma (last, no bottom border via inline) -->
+      <div style="display:grid;grid-template-columns: 280px repeat(8, 1fr);align-items:center;padding:14px 16px;background:#FFFFFF;">
+        <div class="flex items-center gap-3">
+          <span class="ms ms-18 text-ink-40">chevron_right</span>
+          <div class="avatar c w-7 h-7">C</div>
+          <div>
+            <div class="text-[13.5px] text-ink-100 font-medium">Helio Pharma</div>
+            <div class="text-[11.5px] text-ink-60">CUS-1620</div>
+          </div>
+        </div>
+        <div class="text-[13.5px]">5.1M</div>
+        <div class="text-[13.5px] num-muted">3.0M</div>
+        <div class="text-[13.5px] num-muted">1.0M</div>
+        <div class="text-[13.5px]">4.4M</div>
+        <div class="text-[13.5px] text-pos-text font-medium">+2.1M</div>
+        <div class="text-[13.5px]">3.7M</div>
+        <div class="text-[13.5px]">3.4M</div>
+        <div class="flex items-center gap-2">
+          <span class="text-[13.5px] text-pos-text font-semibold">79%</span>
+          <div class="rai-track"><div class="rai-fill" style="width:79%;background:linear-gradient(90deg,#22C55E 0%,#84CC16 100%);"></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span class="toast-ico"><span class="ms">check</span></span>
+  <span class="toast-msg">Saved</span>
+</div>
+
+<!-- ═══════════════ DRAWER: RAI deep-dive + Ask kais ═══════════════ -->
+<div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+<aside class="deepdive" id="raiDrawer">
+  <!-- Header -->
+  <div class="px-8 pt-6 pb-4">
+    <h3 id="drawerTitle" class="text-[20px] font-semibold text-ink-100 leading-tight">Resource Request Creation</h3>
+    <div id="drawerSubtitle" class="text-[12.5px] text-ink-60 mt-1">Project Manager · Maveric NXT Limited · FY 2025–26</div>
+  </div>
+
+
+  <!-- Scrollable form body -->
+  <div class="overflow-y-auto" style="flex:1;">
+    <!-- ═══════════ View: Resource Request Creation ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="rrc">
+
+      <!-- ID Chips row (RRC only) -->
+      <div class="pb-5">
+        <div class="id-strip">
+          <div class="id-chip accent">
+            <div class="id-kicker"><span class="ms">description</span>Quote ID</div>
+            <div class="id-val">3552</div>
+          </div>
+          <div class="id-chip">
+            <div class="id-kicker"><span class="ms">task_alt</span>Product Line ID</div>
+            <div class="id-val">10887</div>
+          </div>
+          <div class="id-chip">
+            <div class="id-kicker"><span class="ms">work_outline</span>Product Line</div>
+            <div class="id-val">Project Manager</div>
+          </div>
+          <div class="id-chip">
+            <div class="id-kicker"><span class="ms">payments</span>Currency</div>
+            <div class="id-val">USD</div>
+          </div>
+          <div class="id-chip">
+            <div class="id-kicker"><span class="ms">location_on</span>Location</div>
+            <div class="id-val muted">—</div>
+          </div>
+          <div class="id-chip">
+            <div class="id-kicker"><span class="ms">apartment</span>Entity</div>
+            <div class="id-val" title="Maveric NXT Limited">Maveric NXT Ltd.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Upload Job Description -->
+      <div class="form-section" style="border-top:0;padding-top:0;margin-top:0;">
+        <label class="field-label" style="font-size:13px;font-weight:600;color:#0D0D0D;margin-bottom:10px;">Upload Job Description</label>
+        <div class="drop-zone">
+          <div class="flex items-center gap-4 flex-1">
+            <svg width="44" height="32" viewBox="0 0 44 32" fill="none">
+              <path d="M11 24a8 8 0 0 1-1-15.94A10 10 0 0 1 33 12a7 7 0 0 1 0 14" stroke="#A6A29D" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 14v12" stroke="#6C6864" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M17.5 18.5L22 14l4.5 4.5" stroke="#6C6864" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+            <div class="text-[14px] text-ink-80">
+              Drag And Drop File Here Or <span class="font-semibold text-ink-100 underline decoration-2 underline-offset-4 cursor-pointer">Choose File</span>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-between mt-2">
+          <span class="field-help">Supported Formats: PDF, DOC, DOCX</span>
+          <span class="field-help">Maximum Size: 5MB</span>
+        </div>
+      </div>
+
+      <!-- Request Details -->
+      <div class="form-section">
+        <div class="section-h mb-4">Request Details <span class="ms">info</span></div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="field-label">Required Position <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field required-empty"><span class="ph">Select Position</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Requested No Of Positions <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field"><input type="text" placeholder="e.g. 3" /></div>
+          </div>
+          <div>
+            <label class="field-label">Required Work Experience <span class="req">*</span></label>
+            <div class="field required-empty"><span class="ph">Select Work Experience</span><span class="ms caret">expand_more</span></div>
+          </div>
+        </div>
+
+        <div class="mt-5 flex items-center justify-between mb-2">
+          <label class="field-label" style="margin:0;">Additional Details <span class="text-ink-40 font-normal">(optional)</span></label>
+          <button class="btn-ai">
+            <span class="ms">auto_awesome</span>
+            Generate JD &amp; Skills with AI
+          </button>
+        </div>
+        <textarea rows="3" placeholder="Describe the job requirements, responsibilities, and expectations..." class="w-full px-3 py-2.5 text-[13.5px] border border-border rounded-lg outline-none placeholder:text-ink-40 resize-y" style="min-height:84px;"></textarea>
+      </div>
+
+      <!-- Job Description -->
+      <div class="form-section">
+        <div class="section-h mb-3">Job Description <span class="ms">info</span></div>
+        <label class="field-label">Description</label>
+        <textarea rows="5" placeholder="Describe the job requirements, responsibilities, and expectations..." class="w-full px-3 py-2.5 text-[13.5px] border border-border rounded-lg outline-none placeholder:text-ink-40 resize-y" style="min-height:120px;"></textarea>
+      </div>
+
+      <!-- Basic Details -->
+      <div class="form-section">
+        <div class="section-h mb-4">Basic Details</div>
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <label class="field-label">Request Start Date <span class="req">*</span></label>
+            <div class="field"><span class="ph">Enter Request Start Date</span><span class="ms caret">calendar_today</span></div>
+          </div>
+          <div>
+            <label class="field-label">Request End Date <span class="req">*</span></label>
+            <div class="field"><span class="ph">Enter Request End Date</span><span class="ms caret">calendar_today</span></div>
+          </div>
+          <div>
+            <label class="field-label">Requested Closure Date <span class="req">*</span></label>
+            <div class="field"><span class="ph">Enter Requested Closure Date</span><span class="ms caret">calendar_today</span></div>
+          </div>
+          <div>
+            <label class="field-label">Utilization Capacity <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field"><input type="text" value="100" /></div>
+          </div>
+
+          <div>
+            <label class="field-label">Commercial <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field required-empty"><span class="ph">Select Commercial</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Priority <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field required-empty locked"><span class="ph">Select Priority</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Project Role <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="field required-empty"><span class="ph">Select role</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Customer <span class="req">*</span></label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">3099-Scen-1</span><span class="ms caret">expand_more</span></div>
+          </div>
+
+          <div>
+            <label class="field-label">Request Context <span class="req">*</span></label>
+            <div class="field required-empty"><span class="ph">Select Request Context</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Work Location <span class="req">*</span></label>
+            <div class="field required-empty"><span class="ph">Select location</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Nationality</label>
+            <div class="field"><span class="ph">Select Nationality</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Employment Type</label>
+            <div class="field"><span class="ph">Select Employment Type</span><span class="ms caret">expand_more</span></div>
+          </div>
+
+          <div>
+            <label class="field-label">Days Elapsed</label>
+            <div class="field locked"><input type="text" placeholder="Enter Days Elapsed" /></div>
+          </div>
+          <div>
+            <label class="field-label">Booking Type <span class="req">*</span> <span class="ms">info</span></label>
+            <div class="toggle-pills" data-toggle="booking">
+              <div class="pill-opt active">Hard</div>
+              <div class="pill-opt">Soft</div>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Work Mode <span class="req">*</span></label>
+            <div class="toggle-pills" data-toggle="workmode">
+              <div class="pill-opt active">Onsite</div>
+              <div class="pill-opt">Offshore</div>
+            </div>
+          </div>
+          <div>
+            <label class="field-label">Need Client Interview</label>
+            <div class="toggle-pills" data-toggle="interview">
+              <div class="pill-opt">Yes</div>
+              <div class="pill-opt active">No</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Required Skills -->
+      <div class="form-section">
+        <div class="section-h mb-4">Required Skills</div>
+        <div class="flex items-center justify-between py-2">
+          <div class="flex items-center gap-2">
+            <span class="skill-dot primary"></span>
+            <span class="text-[13px] font-medium text-ink-100">Primary Skills</span>
+            <span class="ms" style="font-size:13px;color:#A6A29D;">info</span>
+          </div>
+          <button class="btn-skills"><span class="ms" style="font-size:14px;">add</span>Add Skills</button>
+        </div>
+        <div class="empty-state">No primary skills added yet.</div>
+
+        <div class="flex items-center justify-between mt-5 py-2">
+          <div class="flex items-center gap-2">
+            <span class="skill-dot secondary"></span>
+            <span class="text-[13px] font-medium text-ink-100">Secondary Skills</span>
+            <span class="ms" style="font-size:13px;color:#A6A29D;">info</span>
+          </div>
+          <button class="btn-skills"><span class="ms" style="font-size:14px;">add</span>Add Skills</button>
+        </div>
+        <div class="empty-state">No secondary skills added yet.</div>
+      </div>
+
+      <!-- Acceptance Criteria -->
+      <div class="form-section">
+        <div class="flex items-center justify-between mb-3">
+          <div class="section-h">Acceptance Criteria <span class="ms">info</span></div>
+          <button class="btn-criteria"><span class="ms" style="font-size:14px;">add</span>Add Criteria</button>
+        </div>
+        <div class="crit-row">
+          <div class="crit-num">1</div>
+          <div class="field" style="flex:1;"><input type="text" placeholder="Enter Criteria..." /></div>
+        </div>
+      </div>
+
+      <!-- Organization Details -->
+      <div class="form-section">
+        <div class="section-h mb-4">Organization Details <span class="ms">info</span></div>
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <label class="field-label">Region <span class="req">*</span></label>
+            <div class="field required-empty"><span class="ph">Select Region</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Entity <span class="req">*</span></label>
+            <div class="field required-empty"><span class="ph">Select Entity</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Division <span class="req">*</span></label>
+            <div class="field required-empty locked"><span class="ph">Select Division</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Sub Division <span class="req">*</span></label>
+            <div class="field required-empty locked"><span class="ph">Select Sub Division</span><span class="ms caret">expand_more</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assisted Coordinator -->
+      <div class="form-section">
+        <div class="text-[10.5px] font-semibold text-ink-60 mb-2" style="letter-spacing:0.12em;">ASSISTED COORDINATOR</div>
+        <div class="coord-card">
+          <div class="coord-icon"><span class="ms ms-18">person_add</span></div>
+          <div>
+            <div class="text-[13px] text-ink-80">Pending selection...</div>
+            <div class="text-[12px] text-ink-60">Will be assigned automatically</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view: rrc -->
+
+    <!-- ═══════════ View: Direct Allocation ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="direct" hidden>
+
+      <!-- Allocation Details -->
+      <div class="form-section" style="border-top:0;padding-top:0;margin-top:0;">
+        <div class="section-h section-h-accent mb-4">Allocation Details</div>
+        <div class="grid grid-cols-3 gap-4">
+          <div>
+            <label class="field-label">Search Employee <span class="req">*</span></label>
+            <div class="field"><input type="text" placeholder="Search for member" /><span class="ms caret">search</span></div>
+          </div>
+          <div>
+            <label class="field-label">Allocation Type <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div></div>
+
+          <div>
+            <label class="field-label">Start Date <span class="req">*</span></label>
+            <div class="field"><span class="ph">DD-MMM-YYYY</span><span class="ms caret" style="color:#E7401D;">calendar_today</span></div>
+          </div>
+          <div>
+            <label class="field-label">End Date <span class="req">*</span></label>
+            <div class="field"><span class="ph">DD-MMM-YYYY</span><span class="ms caret" style="color:#E7401D;">calendar_today</span></div>
+          </div>
+          <div>
+            <label class="field-label">Allocation Percentage <span class="req">*</span></label>
+            <div class="field"><input type="text" placeholder="" /></div>
+          </div>
+
+          <div>
+            <label class="field-label">Work Mode <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project Details -->
+      <div class="form-section">
+        <div class="section-h section-h-accent mb-4">Project Details</div>
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <label class="field-label">Project Role <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Allocation Position</label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Work City</label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Work Premise <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+
+          <div>
+            <label class="field-label">Reports To <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Travel Type <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Shift <span class="req">*</span></label>
+            <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div></div>
+        </div>
+      </div>
+
+      <!-- Quote Details -->
+      <div class="form-section">
+        <div class="section-h section-h-accent mb-4">Quote Details</div>
+
+        <div class="mb-4">
+          <label class="field-label">Quote Position</label>
+          <div class="field locked"><span style="color:#0D0D0D;flex:1;">Project Manager</span><span class="ms caret">expand_more</span></div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-4">
+          <div>
+            <label class="field-label">Quote Entity</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">Maveric NXT Limited – UK</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Division</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">Assurance (ASE)</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Sub Division</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">Retail (RTIL)</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Location</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">Abu Dhabi</span><span class="ms caret">expand_more</span></div>
+          </div>
+
+          <div>
+            <label class="field-label">Quote Currency</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">USD</span><span class="ms caret">expand_more</span></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Revenue</label>
+            <div class="field locked"><input type="text" value="10" readonly style="color:#0D0D0D;" /></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Cost</label>
+            <div class="field locked"><input type="text" value="0" readonly style="color:#0D0D0D;" /></div>
+          </div>
+          <div>
+            <label class="field-label">Quote Unit</label>
+            <div class="field locked"><span style="color:#0D0D0D;flex:1;">Hour</span><span class="ms caret">expand_more</span></div>
+          </div>
+        </div>
+
+        <div class="mt-4" style="max-width:240px;">
+          <label class="field-label">Actual Billable Hours</label>
+          <div class="field"><input type="text" placeholder="" /></div>
+        </div>
+      </div>
+
+      <!-- Enterprise Structure -->
+      <div class="form-section">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="section-h section-h-accent" style="margin:0;">Enterprise Structure</div>
+          <button class="icon-btn" style="width:24px;height:24px;border:0;" aria-label="Edit">
+            <span class="ms" style="font-size:14px;color:#E7401D;">edit</span>
+          </button>
+        </div>
+        <div class="grid grid-cols-3 gap-4 py-2">
+          <div>
+            <div class="text-[11px] text-ink-60 mb-1.5" style="letter-spacing:0.04em;">Entity</div>
+            <div class="text-[13.5px] text-ink-80">Maveric NXT Limited – UK</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-ink-60 mb-1.5" style="letter-spacing:0.04em;">Division</div>
+            <div class="text-[13.5px] text-ink-80">Assurance (ASE)</div>
+          </div>
+          <div>
+            <div class="text-[11px] text-ink-60 mb-1.5" style="letter-spacing:0.04em;">Sub Division</div>
+            <div class="text-[13.5px] text-ink-80">Retail (RTIL)</div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /view: direct -->
+
+    <!-- ═══════════ View: Approve Pending Resource Request ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="approval" hidden>
+
+      <!-- Toolbar -->
+      <div class="ap-toolbar">
+        <span class="text-[12.5px] text-ink-60 mr-auto">8 candidates awaiting approval</span>
+        <div class="ap-view-toggle" id="apViewToggle">
+          <button data-mode="table" class="active"><span class="ms">view_list</span>Table</button>
+          <button data-mode="card"><span class="ms">view_module</span>Cards</button>
+        </div>
+        <button class="icon-btn" aria-label="Search"><span class="ms ms-16">search</span></button>
+        <button class="icon-btn" aria-label="View"><span class="ms ms-16">tune</span></button>
+        <button class="icon-btn" aria-label="Filter"><span class="ms ms-16">filter_list</span></button>
+      </div>
+
+      <!-- Table view -->
+      <div class="ap-table-frame" id="apTableView">
+        <div class="ap-table-wrap">
+          <div class="ap-row head">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2">Request ID <span class="ms sort-ico">unfold_more</span></div>
+            <div>Candidate ID <span class="ms sort-ico">unfold_more</span></div>
+            <div>Candidate Name <span class="ms sort-ico">unfold_more</span></div>
+            <div>Job ID <span class="ms sort-ico">unfold_more</span></div>
+            <div>Job Name <span class="ms sort-ico">unfold_more</span></div>
+            <div>Designation</div>
+            <div>CTC</div>
+            <div>Approval Cre…</div>
+            <div>Offer Let…</div>
+            <div class="sticky-r">Actions</div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1023</div>
+            <div class="candidate-id">#96674492</div>
+            <div title="Rathinaswamy Alagar M.">Rathinaswamy Alagar M.</div>
+            <div class="job-id">#JOB190700</div>
+            <div>testing</div>
+            <div>COO</div>
+            <div>₹500000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1024</div>
+            <div class="candidate-id">#96674508</div>
+            <div>Vrruei Sdkio</div>
+            <div class="job-id">#JOB191786</div>
+            <div>Sample Job 242</div>
+            <div>CTO</div>
+            <div>Rs 50000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1025</div>
+            <div class="candidate-id">#96674391</div>
+            <div>Insdej Endnd</div>
+            <div class="job-id">#JOB189807</div>
+            <div>Lateral Job</div>
+            <div>Deve</div>
+            <div>₹500000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1026</div>
+            <div class="candidate-id">#96674392</div>
+            <div>Yeard Yeuss</div>
+            <div class="job-id">#JOB189807</div>
+            <div>Lateral Job</div>
+            <div>CFO</div>
+            <div>₹600000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1027</div>
+            <div class="candidate-id">#96674396</div>
+            <div>Anusha Jaithwala</div>
+            <div class="job-id">#JOB189807</div>
+            <div>Lateral Job</div>
+            <div>FCT</div>
+            <div>₹890000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1028</div>
+            <div class="candidate-id">#96674470</div>
+            <div>Mnikam Sask</div>
+            <div class="job-id">#JOB99915</div>
+            <div>deve</div>
+            <div>WEEW</div>
+            <div>₹20000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1029</div>
+            <div class="candidate-id">#96674014</div>
+            <div title="Anil Krishna Mogalaturthi">Anil Krishna Mogalaturthi</div>
+            <div class="job-id">#JOB99915</div>
+            <div>deve</div>
+            <div>CER</div>
+            <div>₹9000000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+
+          <div class="ap-row" style="border-bottom:0;">
+            <div class="ap-check sticky-l-1"><input type="checkbox" /></div>
+            <div class="sticky-l-2 request-id">#REQ-1030</div>
+            <div class="candidate-id">#96674308</div>
+            <div>Quilay Wahr</div>
+            <div class="job-id">#JOB99915</div>
+            <div>deve</div>
+            <div>EXU</div>
+            <div>₹700000/- p.m.</div>
+            <div class="ap-creator"><span class="av">PM</span><span>Project Ma…</span></div>
+            <div><span class="ap-dl"><span class="ms" style="font-size:15px;">download</span></span></div>
+            <div class="ap-actions sticky-r"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card view -->
+      <div class="ap-card-wrap" id="apCardView" hidden>
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1023</span><span class="job-id ml-auto">#JOB190700</span></div>
+          <div class="card-name">Rathinaswamy Alagar M.<span class="designation">COO</span></div>
+          <div class="card-job"><span>testing</span><span class="dot">·</span><span class="candidate-id">#96674492</span></div>
+          <div class="card-ctc">₹500000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1024</span><span class="job-id ml-auto">#JOB191786</span></div>
+          <div class="card-name">Vrruei Sdkio<span class="designation">CTO</span></div>
+          <div class="card-job"><span>Sample Job 242</span><span class="dot">·</span><span class="candidate-id">#96674508</span></div>
+          <div class="card-ctc">Rs 50000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1025</span><span class="job-id ml-auto">#JOB189807</span></div>
+          <div class="card-name">Insdej Endnd<span class="designation">Deve</span></div>
+          <div class="card-job"><span>Lateral Job</span><span class="dot">·</span><span class="candidate-id">#96674391</span></div>
+          <div class="card-ctc">₹500000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1026</span><span class="job-id ml-auto">#JOB189807</span></div>
+          <div class="card-name">Yeard Yeuss<span class="designation">CFO</span></div>
+          <div class="card-job"><span>Lateral Job</span><span class="dot">·</span><span class="candidate-id">#96674392</span></div>
+          <div class="card-ctc">₹600000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1027</span><span class="job-id ml-auto">#JOB189807</span></div>
+          <div class="card-name">Anusha Jaithwala<span class="designation">FCT</span></div>
+          <div class="card-job"><span>Lateral Job</span><span class="dot">·</span><span class="candidate-id">#96674396</span></div>
+          <div class="card-ctc">₹890000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1028</span><span class="job-id ml-auto">#JOB99915</span></div>
+          <div class="card-name">Mnikam Sask<span class="designation">WEEW</span></div>
+          <div class="card-job"><span>deve</span><span class="dot">·</span><span class="candidate-id">#96674470</span></div>
+          <div class="card-ctc">₹20000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1029</span><span class="job-id ml-auto">#JOB99915</span></div>
+          <div class="card-name">Anil Krishna Mogalaturthi<span class="designation">CER</span></div>
+          <div class="card-job"><span>deve</span><span class="dot">·</span><span class="candidate-id">#96674014</span></div>
+          <div class="card-ctc">₹9000000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+
+        <div class="ap-card">
+          <div class="card-top"><input type="checkbox" /><span class="request-id">#REQ-1030</span><span class="job-id ml-auto">#JOB99915</span></div>
+          <div class="card-name">Quilay Wahr<span class="designation">EXU</span></div>
+          <div class="card-job"><span>deve</span><span class="dot">·</span><span class="candidate-id">#96674308</span></div>
+          <div class="card-ctc">₹700000<span class="text-ink-60 font-normal text-[12px]"> / month</span></div>
+          <div class="card-creator"><span class="av" style="width:20px;height:20px;font-size:9px;background:linear-gradient(135deg,#F4D03F 0%,#D9A800 100%);border-radius:50%;color:#5B4400;font-weight:700;display:inline-flex;align-items:center;justify-content:center;">PM</span><span>Project Manager</span><span class="ap-dl"><span class="ms" style="font-size:14px;">download</span></span></div>
+          <div class="card-actions"><button class="btn-reject">Reject</button><button class="btn-approve">Approve</button></div>
+        </div>
+      </div>
+
+    </div><!-- /view: approval -->
+
+    <!-- ═══════════ View: Add Risk Entry ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="risk" hidden>
+
+      <!-- Row 1: Risk Name + Due Date -->
+      <div class="grid gap-4 mb-5" style="grid-template-columns: 2fr 1fr;">
+        <div>
+          <label class="field-label">Risk Name <span class="req">*</span></label>
+          <div class="field"><input type="text" placeholder="Enter here" /></div>
+        </div>
+        <div>
+          <label class="field-label">Due Date</label>
+          <div class="field"><span class="ph">DD-MMM-YYYY</span><span class="ms caret" style="color:#E7401D;">calendar_today</span></div>
+        </div>
+      </div>
+
+      <!-- Row 2: Status / Priority / Potential Impact -->
+      <div class="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label class="field-label">Risk Status <span class="req">*</span></label>
+          <div class="field"><span style="color:#0D0D0D;flex:1;">Open</span><span class="ms caret">expand_more</span></div>
+        </div>
+        <div>
+          <label class="field-label">Priority <span class="req">*</span></label>
+          <div class="field required-empty"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+        </div>
+        <div>
+          <label class="field-label">Potential Impact</label>
+          <div class="field"><span style="color:#0D0D0D;flex:1;">Low</span><span class="ms caret">expand_more</span></div>
+        </div>
+      </div>
+
+      <!-- Row 3: Responsible / Response / Likelihood -->
+      <div class="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label class="field-label">Responsible person</label>
+          <div class="field"><input type="text" placeholder="Search for member" /><span class="ms caret">search</span></div>
+        </div>
+        <div>
+          <label class="field-label">Response</label>
+          <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+        </div>
+        <div>
+          <label class="field-label">Likelihood</label>
+          <div class="field"><span class="ph">Select One</span><span class="ms caret">expand_more</span></div>
+        </div>
+      </div>
+
+      <!-- Impact Areas -->
+      <div class="mb-5">
+        <div class="text-[13px] font-semibold text-ink-100 mb-2.5">Impact Areas</div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <label class="risk-checkbox"><input type="checkbox" />Budget</label>
+          <label class="risk-checkbox"><input type="checkbox" />Schedule</label>
+          <label class="risk-checkbox"><input type="checkbox" />Quality</label>
+          <label class="risk-checkbox"><input type="checkbox" />Scope</label>
+          <label class="risk-checkbox"><input type="checkbox" />Resources</label>
+        </div>
+      </div>
+
+      <!-- Risk Description -->
+      <div class="mb-5">
+        <div class="text-[13px] font-semibold text-ink-100 mb-2.5">Risk Description</div>
+        <div class="rte-toolbar">
+          <button class="rte-btn is-bold" type="button" title="Bold">B</button>
+          <button class="rte-btn is-italic" type="button" title="Italic">I</button>
+          <button class="rte-btn is-strike" type="button" title="Strikethrough">S</button>
+          <button class="rte-btn is-under" type="button" title="Underline">U</button>
+          <div class="rte-sep"></div>
+          <button class="rte-btn" type="button" title="Align left"><span class="ms">format_align_left</span></button>
+          <button class="rte-btn" type="button" title="Align center"><span class="ms">format_align_center</span></button>
+          <button class="rte-btn" type="button" title="Align right"><span class="ms">format_align_right</span></button>
+          <button class="rte-btn" type="button" title="Justify"><span class="ms">format_align_justify</span></button>
+          <div class="rte-sep"></div>
+          <button class="rte-btn" type="button" title="Bulleted list"><span class="ms">format_list_bulleted</span></button>
+          <button class="rte-btn" type="button" title="Numbered list"><span class="ms">format_list_numbered</span></button>
+        </div>
+        <div class="rte-content" contenteditable="true" id="riskDescription" data-placeholder="Description"></div>
+      </div>
+
+      <!-- Resolution -->
+      <div class="mb-5">
+        <div class="text-[13px] font-semibold text-ink-100 mb-2.5">Resolution</div>
+        <div class="rte-toolbar">
+          <button class="rte-btn is-bold" type="button" title="Bold">B</button>
+          <button class="rte-btn is-italic" type="button" title="Italic">I</button>
+          <button class="rte-btn is-strike" type="button" title="Strikethrough">S</button>
+          <button class="rte-btn is-under" type="button" title="Underline">U</button>
+          <div class="rte-sep"></div>
+          <button class="rte-btn" type="button" title="Align left"><span class="ms">format_align_left</span></button>
+          <button class="rte-btn" type="button" title="Align center"><span class="ms">format_align_center</span></button>
+          <button class="rte-btn" type="button" title="Align right"><span class="ms">format_align_right</span></button>
+          <button class="rte-btn" type="button" title="Justify"><span class="ms">format_align_justify</span></button>
+          <div class="rte-sep"></div>
+          <button class="rte-btn" type="button" title="Bulleted list"><span class="ms">format_list_bulleted</span></button>
+          <button class="rte-btn" type="button" title="Numbered list"><span class="ms">format_list_numbered</span></button>
+        </div>
+        <div class="rte-content" contenteditable="true" id="riskResolution" data-placeholder="Resolution"></div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="flex items-center justify-end gap-3 pt-3">
+        <button class="btn-outline" id="riskCancel" data-action="cancel">Cancel</button>
+        <button class="btn-save-risk" data-action="save">Save</button>
+      </div>
+
+    </div><!-- /view: risk -->
+
+    <!-- ═══════════ View: Creating CTA ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="cta" hidden>
+
+      <!-- Row 1: CTA ID + Module -->
+      <div class="grid grid-cols-2 gap-5 mb-5">
+        <div>
+          <label class="field-label">CTA ID <span class="req">*</span></label>
+          <div class="field locked-light"><span style="flex:1;">CTA-XX</span></div>
+        </div>
+        <div>
+          <label class="field-label">Module</label>
+          <div class="field"><span class="ph">Select Module</span><span class="ms caret">expand_more</span></div>
+        </div>
+      </div>
+
+      <!-- CTA Description -->
+      <div class="mb-5">
+        <label class="field-label">CTA Description <span class="req">*</span></label>
+        <textarea class="cta-textarea" maxlength="255" id="ctaDescription" placeholder=""></textarea>
+        <div class="cta-counter"><span id="ctaCount">0</span>/255</div>
+      </div>
+
+      <!-- Row 2: Due Date + Assignee -->
+      <div class="grid grid-cols-2 gap-5 mb-5">
+        <div>
+          <label class="field-label">Due Date <span class="req">*</span></label>
+          <div class="field"><span class="ph">&nbsp;</span><span class="ms caret" style="color:#6C6864;">calendar_today</span></div>
+        </div>
+        <div>
+          <label class="field-label">Assignee <span class="req">*</span></label>
+          <div class="field"><span class="ph">Select</span><span class="ms caret">expand_more</span></div>
+        </div>
+      </div>
+
+      <!-- Priority -->
+      <div class="mb-5">
+        <div class="field-label" style="margin-bottom:8px;">Priority</div>
+        <div class="flex items-center gap-2" id="ctaPriority">
+          <button class="prio-pill high" type="button" data-prio="high"><span class="dot high"></span>High</button>
+          <button class="prio-pill med" type="button" data-prio="med"><span class="dot med"></span>Medium</button>
+          <button class="prio-pill low" type="button" data-prio="low"><span class="dot low"></span>Low</button>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="mb-5">
+        <div class="field-label" style="margin-bottom:8px;">Tags</div>
+        <button class="add-chip" type="button">
+          <span class="add-circ"><span class="ms" style="font-size:14px;">add</span></span>
+          Add Tags
+        </button>
+      </div>
+
+      <!-- Attachment -->
+      <div class="mb-6">
+        <div class="field-label" style="margin-bottom:8px;">Attachment</div>
+        <button class="add-chip" type="button">
+          <span class="ms" style="font-size:16px;color:#6C6864;">attach_file</span>
+          Add attachments
+        </button>
+      </div>
+
+      <!-- Action bar -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button class="btn-outline" id="ctaCancel" data-action="cancel">Cancel</button>
+        <button class="btn-create-cta" data-action="create">
+          Create
+          <span class="ms">arrow_forward</span>
+        </button>
+      </div>
+
+    </div><!-- /view: cta -->
+
+    <!-- ═══════════ View: Scheduling Meetings ═══════════ -->
+    <div class="drawer-view px-8 pb-8" data-view="meeting" hidden>
+
+      <!-- Meeting Title -->
+      <div class="mb-5">
+        <label class="field-label">Meeting Title <span class="req">*</span></label>
+        <div class="field"><input type="text" placeholder="e.g. Q4 Resource Planning Sync" /></div>
+      </div>
+
+      <!-- Date / Time / Duration -->
+      <div class="grid grid-cols-3 gap-4 mb-5">
+        <div>
+          <label class="field-label">Date <span class="req">*</span></label>
+          <div class="field"><span class="ph">DD-MMM-YYYY</span><span class="ms caret" style="color:#E7401D;">calendar_today</span></div>
+        </div>
+        <div>
+          <label class="field-label">Time <span class="req">*</span></label>
+          <div class="field"><span class="ph">--:-- AM</span><span class="ms caret">schedule</span></div>
+        </div>
+        <div>
+          <label class="field-label">Duration <span class="req">*</span></label>
+          <div class="field"><span style="color:#0D0D0D;flex:1;">30 minutes</span><span class="ms caret">expand_more</span></div>
+        </div>
+      </div>
+
+      <!-- Meeting Type -->
+      <div class="mb-5">
+        <div class="field-label" style="margin-bottom:8px;">Meeting Type</div>
+        <div class="grid grid-cols-3 gap-3" id="mtypeGroup">
+          <button class="mtype-card active" type="button" data-mtype="video">
+            <span class="icon-tile"><span class="ms">videocam</span></span>
+            <div><div class="title">Video Call</div><div class="sub">Google Meet · Zoom</div></div>
+          </button>
+          <button class="mtype-card" type="button" data-mtype="inperson">
+            <span class="icon-tile"><span class="ms">business</span></span>
+            <div><div class="title">In-Person</div><div class="sub">Office or external</div></div>
+          </button>
+          <button class="mtype-card" type="button" data-mtype="hybrid">
+            <span class="icon-tile"><span class="ms">groups</span></span>
+            <div><div class="title">Hybrid</div><div class="sub">Mixed mode</div></div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Attendees -->
+      <div class="mb-5">
+        <label class="field-label">Attendees <span class="req">*</span></label>
+        <div class="field"><input type="text" placeholder="Search team members..." /><span class="ms caret">person_search</span></div>
+        <div class="attendee-row">
+          <span class="attendee-chip"><span class="av c1">AR</span>Aravind R.<span class="x"><span class="ms">close</span></span></span>
+          <span class="attendee-chip"><span class="av c2">SD</span>Sneha D.<span class="x"><span class="ms">close</span></span></span>
+          <span class="attendee-chip"><span class="av c3">PK</span>Pranav K.<span class="x"><span class="ms">close</span></span></span>
+          <span class="attendee-chip"><span class="av c4">NM</span>Naveen M.<span class="x"><span class="ms">close</span></span></span>
+        </div>
+      </div>
+
+      <!-- Location / Link -->
+      <div class="mb-5">
+        <label class="field-label">Meeting Link or Location</label>
+        <div class="field"><input type="text" placeholder="Paste link or enter address (auto-generated if empty)" /><span class="ms caret">link</span></div>
+      </div>
+
+      <!-- Agenda -->
+      <div class="mb-5">
+        <label class="field-label">Agenda</label>
+        <textarea class="cta-textarea" placeholder="Outline what you'd like to cover…" style="min-height:90px;"></textarea>
+      </div>
+
+      <!-- Reminder -->
+      <div class="mb-6">
+        <div class="field-label" style="margin-bottom:8px;">Reminder</div>
+        <div class="flex items-center gap-2" id="reminderGroup">
+          <button class="prio-pill" type="button" data-rem="5"><span class="dot low"></span>5 min</button>
+          <button class="prio-pill active high" type="button" data-rem="15"><span class="dot high"></span>15 min</button>
+          <button class="prio-pill" type="button" data-rem="30"><span class="dot med"></span>30 min</button>
+          <button class="prio-pill" type="button" data-rem="60"><span class="dot low"></span>1 hour</button>
+        </div>
+      </div>
+
+      <!-- Action bar -->
+      <div class="flex items-center justify-end gap-3 pt-2">
+        <button class="btn-outline" data-action="cancel">Cancel</button>
+        <button class="btn-create-cta" data-action="schedule">
+          Schedule Meeting
+          <span class="ms">arrow_forward</span>
+        </button>
+      </div>
+
+    </div><!-- /view: meeting -->
+
+    <!-- ═══════════ View: Quick Collab (chat) ═══════════ -->
+    <div class="drawer-view" data-view="collab" hidden style="padding:0;">
+
+      <div class="qc-wrap">
+        <!-- Inner header -->
+        <div class="qc-header">
+          <div class="qc-header-l">
+            <div class="qc-header-icon"><span class="ms">forum</span></div>
+            <div>
+              <div class="qc-title">Quick Collab</div>
+              <div class="qc-id">3607</div>
+            </div>
+          </div>
+          <div class="qc-header-r">
+            <button class="icon-btn" aria-label="Help"><span class="ms ms-16">help_outline</span></button>
+            <button class="icon-btn" data-action="cancel" aria-label="Close"><span class="ms ms-16">close</span></button>
+          </div>
+        </div>
+
+        <!-- Chat scroll area -->
+        <div class="qc-chat" id="qcChat">
+          <div class="qc-doodle-bg"></div>
+          <svg style="display:none;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 600">
+            <defs>
+              <pattern id="qcDoodlePattern" x="0" y="0" width="240" height="240" patternUnits="userSpaceOnUse">
+                <g stroke="#E7401D" fill="none" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+                  <!-- Bar chart -->
+                  <g transform="translate(12,18)">
+                    <rect x="0" y="0" width="42" height="30" rx="2"/>
+                    <line x1="8" y1="22" x2="8" y2="26"/>
+                    <line x1="16" y1="14" x2="16" y2="26"/>
+                    <line x1="24" y1="18" x2="24" y2="26"/>
+                    <line x1="32" y1="10" x2="32" y2="26"/>
+                  </g>
+                  <!-- Lightbulb -->
+                  <g transform="translate(70,16)">
+                    <circle cx="9" cy="9" r="7"/>
+                    <line x1="6" y1="18" x2="12" y2="18"/>
+                    <line x1="7" y1="21" x2="11" y2="21"/>
+                    <line x1="9" y1="0" x2="9" y2="-2"/>
+                  </g>
+                  <!-- Star -->
+                  <g transform="translate(100,18)">
+                    <path d="M8 0 L10 5 L16 6 L11 10 L13 16 L8 13 L3 16 L5 10 L0 6 L6 5 Z"/>
+                  </g>
+                  <!-- Cog -->
+                  <g transform="translate(130,14)">
+                    <circle cx="10" cy="10" r="5"/>
+                    <line x1="10" y1="0" x2="10" y2="3"/>
+                    <line x1="10" y1="17" x2="10" y2="20"/>
+                    <line x1="0" y1="10" x2="3" y2="10"/>
+                    <line x1="17" y1="10" x2="20" y2="10"/>
+                    <line x1="3" y1="3" x2="5" y2="5"/>
+                    <line x1="15" y1="15" x2="17" y2="17"/>
+                    <line x1="17" y1="3" x2="15" y2="5"/>
+                    <line x1="5" y1="15" x2="3" y2="17"/>
+                  </g>
+                  <!-- Rocket -->
+                  <g transform="translate(160,10)">
+                    <path d="M6 0 C12 4 12 12 6 22 C0 12 0 4 6 0 Z"/>
+                    <circle cx="6" cy="8" r="2"/>
+                    <path d="M2 18 L0 24 L4 22 M10 18 L12 24 L8 22"/>
+                  </g>
+                  <!-- Briefcase -->
+                  <g transform="translate(184,16)">
+                    <rect x="0" y="6" width="24" height="16" rx="1"/>
+                    <path d="M8 6 L8 2 L16 2 L16 6"/>
+                    <line x1="0" y1="13" x2="24" y2="13"/>
+                  </g>
+                  <!-- Small circles (accent dots) -->
+                  <circle cx="218" cy="20" r="2"/>
+                  <circle cx="60" cy="6" r="1.5"/>
+                  <circle cx="92" cy="40" r="1.5"/>
+                  <circle cx="156" cy="42" r="1.8"/>
+
+                  <!-- Row 2 -->
+                  <!-- Magnifier -->
+                  <g transform="translate(14,68)">
+                    <circle cx="9" cy="9" r="7"/>
+                    <line x1="14" y1="14" x2="20" y2="20"/>
+                  </g>
+                  <!-- Document with lines -->
+                  <g transform="translate(48,62)">
+                    <path d="M0 0 L0 30 L24 30 L24 8 L16 0 Z"/>
+                    <path d="M16 0 L16 8 L24 8"/>
+                    <line x1="5" y1="14" x2="19" y2="14"/>
+                    <line x1="5" y1="19" x2="19" y2="19"/>
+                    <line x1="5" y1="24" x2="14" y2="24"/>
+                  </g>
+                  <!-- Speech bubble -->
+                  <g transform="translate(86,68)">
+                    <path d="M0 4 Q0 0 4 0 L20 0 Q24 0 24 4 L24 14 Q24 18 20 18 L8 18 L4 22 L4 18 Q0 18 0 14 Z"/>
+                    <circle cx="8" cy="9" r="1"/>
+                    <circle cx="12" cy="9" r="1"/>
+                    <circle cx="16" cy="9" r="1"/>
+                  </g>
+                  <!-- Globe -->
+                  <g transform="translate(124,66)">
+                    <circle cx="10" cy="10" r="10"/>
+                    <ellipse cx="10" cy="10" rx="4" ry="10"/>
+                    <line x1="0" y1="10" x2="20" y2="10"/>
+                  </g>
+                  <!-- Megaphone -->
+                  <g transform="translate(158,70)">
+                    <path d="M0 6 L14 0 L14 18 L0 12 Z"/>
+                    <path d="M14 4 L20 6 L20 12 L14 14"/>
+                    <line x1="2" y1="14" x2="4" y2="20"/>
+                  </g>
+                  <!-- Pie chart -->
+                  <g transform="translate(192,66)">
+                    <circle cx="10" cy="10" r="10"/>
+                    <line x1="10" y1="10" x2="10" y2="0"/>
+                    <line x1="10" y1="10" x2="20" y2="10"/>
+                  </g>
+                  <!-- Tiny circles -->
+                  <circle cx="40" cy="86" r="1.8"/>
+                  <circle cx="78" cy="98" r="1.5"/>
+                  <circle cx="218" cy="78" r="1.5"/>
+                  <circle cx="222" cy="90" r="1.2"/>
+                  <!-- Plus / star tiny accents -->
+                  <path d="M10 100 L14 100 M12 98 L12 102"/>
+                  <path d="M226 56 L230 56 M228 54 L228 58"/>
+
+                  <!-- Row 3 -->
+                  <!-- Calendar -->
+                  <g transform="translate(14,116)">
+                    <rect x="0" y="2" width="24" height="22" rx="1"/>
+                    <line x1="0" y1="8" x2="24" y2="8"/>
+                    <line x1="6" y1="0" x2="6" y2="4"/>
+                    <line x1="18" y1="0" x2="18" y2="4"/>
+                    <line x1="6" y1="13" x2="9" y2="13"/>
+                    <line x1="12" y1="13" x2="15" y2="13"/>
+                    <line x1="18" y1="13" x2="21" y2="13"/>
+                    <line x1="6" y1="18" x2="9" y2="18"/>
+                    <line x1="12" y1="18" x2="15" y2="18"/>
+                  </g>
+                  <!-- Padlock -->
+                  <g transform="translate(46,116)">
+                    <rect x="0" y="8" width="16" height="14" rx="2"/>
+                    <path d="M4 8 L4 5 Q4 0 8 0 Q12 0 12 5 L12 8"/>
+                    <circle cx="8" cy="14" r="1.5"/>
+                    <line x1="8" y1="15.5" x2="8" y2="18"/>
+                  </g>
+                  <!-- Laptop -->
+                  <g transform="translate(70,118)">
+                    <rect x="2" y="0" width="22" height="14" rx="1"/>
+                    <path d="M0 16 L26 16 L24 18 L2 18 Z"/>
+                  </g>
+                  <!-- Target -->
+                  <g transform="translate(106,114)">
+                    <circle cx="10" cy="10" r="10"/>
+                    <circle cx="10" cy="10" r="6"/>
+                    <circle cx="10" cy="10" r="2"/>
+                    <line x1="10" y1="10" x2="18" y2="2"/>
+                    <path d="M16 0 L18 2 L20 0 M18 2 L18 4"/>
+                  </g>
+                  <!-- Cloud -->
+                  <g transform="translate(140,124)">
+                    <path d="M5 14 Q0 14 0 9 Q0 4 5 4 Q6 0 12 0 Q18 0 20 5 Q26 5 26 10 Q26 14 22 14 Z"/>
+                  </g>
+                  <!-- Stack of papers -->
+                  <g transform="translate(174,114)">
+                    <rect x="4" y="4" width="16" height="20" rx="1"/>
+                    <rect x="2" y="2" width="16" height="20" rx="1"/>
+                    <rect x="0" y="0" width="16" height="20" rx="1"/>
+                    <line x1="3" y1="6" x2="13" y2="6"/>
+                    <line x1="3" y1="10" x2="13" y2="10"/>
+                  </g>
+                  <!-- Coffee cup -->
+                  <g transform="translate(202,118)">
+                    <path d="M0 0 L0 14 Q0 18 4 18 L14 18 Q18 18 18 14 L18 0 Z"/>
+                    <path d="M18 4 Q24 4 24 9 Q24 14 18 14"/>
+                  </g>
+                  <!-- Tiny stars -->
+                  <path d="M40 142 L42 144 L40 146 L38 144 Z M40 142 L40 138 M40 142 L36 142 M40 142 L40 146 M40 142 L44 142" stroke-width="0.8"/>
+                  <circle cx="100" cy="142" r="1.5"/>
+                  <circle cx="166" cy="142" r="1.8"/>
+
+                  <!-- Row 4 -->
+                  <!-- Phone -->
+                  <g transform="translate(14,166)">
+                    <rect x="0" y="0" width="14" height="22" rx="2"/>
+                    <line x1="6" y1="18" x2="8" y2="18"/>
+                    <line x1="3" y1="4" x2="11" y2="4"/>
+                  </g>
+                  <!-- Headphones -->
+                  <g transform="translate(34,168)">
+                    <path d="M0 12 Q0 0 12 0 Q24 0 24 12"/>
+                    <rect x="0" y="10" width="6" height="10" rx="1"/>
+                    <rect x="18" y="10" width="6" height="10" rx="1"/>
+                  </g>
+                  <!-- Mail -->
+                  <g transform="translate(64,170)">
+                    <rect x="0" y="0" width="24" height="16" rx="1"/>
+                    <path d="M0 0 L12 10 L24 0"/>
+                  </g>
+                  <!-- Paper plane -->
+                  <g transform="translate(94,166)">
+                    <path d="M0 10 L22 0 L18 22 L12 14 L0 10 Z"/>
+                    <line x1="12" y1="14" x2="22" y2="0"/>
+                  </g>
+                  <!-- Network nodes -->
+                  <g transform="translate(124,168)">
+                    <circle cx="4" cy="4" r="2.5"/>
+                    <circle cx="18" cy="6" r="2.5"/>
+                    <circle cx="10" cy="18" r="2.5"/>
+                    <line x1="4" y1="4" x2="18" y2="6"/>
+                    <line x1="4" y1="4" x2="10" y2="18"/>
+                    <line x1="18" y1="6" x2="10" y2="18"/>
+                  </g>
+                  <!-- Check shield -->
+                  <g transform="translate(154,166)">
+                    <path d="M10 0 L20 4 L20 13 Q20 22 10 24 Q0 22 0 13 L0 4 Z"/>
+                    <path d="M5 12 L8 15 L14 9"/>
+                  </g>
+                  <!-- Arrow up trending -->
+                  <g transform="translate(184,170)">
+                    <path d="M0 16 L8 8 L13 13 L22 4"/>
+                    <path d="M16 4 L22 4 L22 10"/>
+                  </g>
+                  <!-- Dots -->
+                  <circle cx="218" cy="178" r="1.5"/>
+                  <circle cx="222" cy="186" r="1.2"/>
+
+                  <!-- Extra scattered tiny items -->
+                  <circle cx="6" cy="58" r="1.2"/>
+                  <circle cx="234" cy="120" r="1.4"/>
+                  <circle cx="56" cy="232" r="1.5"/>
+                  <circle cx="118" cy="226" r="1.2"/>
+                  <circle cx="208" cy="226" r="1.5"/>
+                  <!-- Small open circles -->
+                  <circle cx="78" cy="218" r="3"/>
+                  <circle cx="180" cy="218" r="3.5"/>
+                  <!-- Small star -->
+                  <path d="M150 218 L152 222 L156 222 L153 225 L154 229 L150 226 L146 229 L147 225 L144 222 L148 222 Z"/>
+                </g>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#qcDoodlePattern)"/>
+          </svg>
+
+          <div class="qc-msg out">
+            <div class="qc-bubble">
+              <div>Hi</div>
+              <div class="qc-time">Just now <span class="ms">check</span></div>
+            </div>
+            <div class="qc-avatar purple">SR</div>
+          </div>
+        </div>
+
+        <!-- Composer -->
+        <div class="qc-composer">
+          <div class="qc-composer-top">
+            <span class="qc-send-label">Send -</span>
+            <button class="qc-visibility" type="button" id="qcVisBtn">
+              <span class="ms">public</span>
+              <span id="qcVisLabel">Public</span>
+              <span class="ms caret">expand_more</span>
+            </button>
+            <button class="qc-refresh" id="qcRefresh" type="button" aria-label="Refresh">
+              <span class="ms">refresh</span>
+            </button>
+          </div>
+          <div class="qc-input-row">
+            <button class="qc-add" type="button" aria-label="Attach"><span class="ms">add</span></button>
+            <input type="text" placeholder="Type a message... Use @ to mention" id="qcInput" />
+            <button class="qc-send-btn" id="qcSendBtn" type="button" aria-label="Send" disabled>
+              <span class="ms">arrow_forward</span>
+            </button>
+          </div>
+          <div class="qc-hint">Use @ to mention team members</div>
+        </div>
+      </div>
+
+    </div><!-- /view: collab -->
+
+    <!-- Footer actions -->
+    <div class="border-t border-border bg-canvas px-8 py-4 flex items-center justify-between" id="drawerFooter">
+      <div class="text-[12px] text-ink-60">Fields marked <span class="text-accent font-medium">*</span> are required</div>
+      <div class="flex items-center gap-3">
+        <button class="btn-outline" data-action="draft">Save as Draft</button>
+        <button class="btn-outline" data-action="submit" style="background:#0D0D0D;color:#FFFFFF;border-color:#0D0D0D;">Submit Request</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- Ask kais panel -->
+<aside class="askkais" id="askkaisPanel">
+  <div class="px-5 pt-5 pb-4 border-b border-border">
+    <div class="flex items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2.5">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M3 3 L21 12 L13 13 L11 21 Z" fill="#E7401D"/>
+          <circle cx="19" cy="5" r="1.2" fill="#F4D03F"/>
+        </svg>
+        <div>
+          <div class="text-[14px] font-semibold text-ink-100 leading-tight">Ask kais</div>
+          <div class="text-[11.5px] text-ink-60">AI Analytics Assistant</div>
+        </div>
+      </div>
+      <button class="icon-btn bordered" id="closeDrawer" aria-label="Close">
+        <span class="ms ms-16">close</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="px-5 pt-6 pb-4">
+    <div class="text-[15px] text-ink-100">
+      <span>Hi Aswini</span> <span>👋</span>
+    </div>
+    <div class="text-[17px] font-semibold text-ink-100 mt-1 leading-tight">
+      How can I help you today?
+    </div>
+  </div>
+
+  <div class="px-5 pt-2 pb-2 flex items-center justify-between">
+    <span class="text-[10.5px] font-medium text-ink-40" style="letter-spacing:0.12em;">TRY ASKING</span>
+    <button class="icon-btn" style="width:24px;height:24px;" aria-label="Refresh">
+      <span class="ms" style="font-size:14px;">refresh</span>
+    </button>
+  </div>
+
+  <div class="px-5 flex flex-col gap-2" style="flex:1;overflow-y:auto;">
+    <button class="try-card" data-target="rrc">
+      <span class="bulb">📝</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Resource Request Creation</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Submit a new request</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="direct">
+      <span class="bulb">👤</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Direct Allocation</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Assign a resource directly</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="approval">
+      <span class="bulb">✅</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Approve Pending Resource Request</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Review approval queue</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="meeting">
+      <span class="bulb">📅</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Scheduling Meetings</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Set up a sync</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="cta">
+      <span class="bulb">📋</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Creating CTA</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Customer Impact Assessment</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="risk">
+      <span class="bulb">⚠️</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Create a Risk Register</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Track project risks</div>
+      </div>
+    </button>
+    <button class="try-card" data-target="collab">
+      <span class="bulb">🤝</span>
+      <div class="text-left">
+        <div class="text-[13px] font-medium text-ink-100">Do a collaboration</div>
+        <div class="text-[11.5px] text-ink-60 mt-0.5">Start a workspace</div>
+      </div>
+    </button>
+  </div>
+
+  <div class="px-5 pb-5 pt-3">
+    <div class="kais-input">
+      <input type="text" placeholder="Ask about revenue, margins..." />
+      <div class="kais-send"><span class="ms" style="font-size:14px;">arrow_forward</span></div>
+    </div>
+    <div class="text-center text-[10.5px] text-ink-40 mt-2">kais · insights from this entity's data</div>
+  </div>
+</aside>
+
+<script>
+  // Trend toggle interaction
+  const t = document.getElementById('trendToggle');
+  if (t) t.addEventListener('click', () => t.classList.toggle('on'));
+
+  // Sidebar nav active state switching
+  document.querySelectorAll('aside .nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      document.querySelectorAll('aside .nav-item').forEach(i => i.classList.remove('active'));
+      item.classList.add('active');
+    });
+  });
+
+  // Drawer open / close
+  const backdrop = document.getElementById('drawerBackdrop');
+  const drawer = document.getElementById('raiDrawer');
+  const askkais = document.getElementById('askkaisPanel');
+  const raiCard = document.getElementById('raiCard');
+  const closeBtn = document.getElementById('closeDrawer');
+
+  function openDrawer() {
+    backdrop.classList.add('open');
+    drawer.classList.add('open');
+    askkais.classList.add('open');
+  }
+  function closeDrawer() {
+    backdrop.classList.remove('open');
+    drawer.classList.remove('open');
+    askkais.classList.remove('open');
+  }
+  if (raiCard) raiCard.addEventListener('click', openDrawer);
+  if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+  if (backdrop) backdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDrawer(); });
+
+  // Deep-dive tab switching
+  document.querySelectorAll('.dd-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      tab.parentElement.querySelectorAll('.dd-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Toggle pills (Hard/Soft, Onsite/Offshore, Yes/No)
+  document.querySelectorAll('.toggle-pills').forEach(group => {
+    group.querySelectorAll('.pill-opt').forEach(opt => {
+      opt.addEventListener('click', () => {
+        group.querySelectorAll('.pill-opt').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+      });
+    });
+  });
+
+  // Drawer view switching from Ask kais try-cards
+  const VIEW_META = {
+    rrc:      { title: 'Resource Request Creation', subtitle: 'Project Manager · Maveric NXT Limited · FY 2025–26' },
+    direct:   { title: 'Direct Allocation',         subtitle: 'Project Manager · Maveric NXT Limited · FY 2025–26' },
+    approval: { title: 'Approve Pending Resource Request', subtitle: '8 candidates · Awaiting your review' },
+    risk:     { title: 'Add Risk Entry',            subtitle: 'Project Manager · Maveric NXT Limited · FY 2025–26' },
+    cta:      { title: 'Creating CTA',              subtitle: 'Customer Impact Assessment · Project Manager · Maveric NXT Limited' },
+    meeting:  { title: 'Schedule Meeting',          subtitle: 'Project Manager · Maveric NXT Limited · FY 2025–26' },
+    collab:   { title: 'Quick Collab',               subtitle: '3607 · Shared workspace · Project Manager' }
+  };
+  const INLINE_FOOTER_VIEWS = new Set(['approval', 'risk', 'cta', 'meeting', 'collab']);
+  function switchView(name) {
+    if (!VIEW_META[name]) return;
+    document.querySelectorAll('.drawer-view').forEach(v => { v.hidden = (v.dataset.view !== name); });
+    document.getElementById('drawerTitle').textContent = VIEW_META[name].title;
+    document.getElementById('drawerSubtitle').textContent = VIEW_META[name].subtitle;
+    // Hide global footer for views that have inline action bars
+    const footer = document.getElementById('drawerFooter');
+    if (footer) footer.style.display = INLINE_FOOTER_VIEWS.has(name) ? 'none' : '';
+    // Collab view has its own internal header — hide the drawer's global title bar
+    const drawerHeader = document.getElementById('drawerTitle').parentElement;
+    if (drawerHeader) drawerHeader.style.display = (name === 'collab') ? 'none' : '';
+    // Collab view needs the scroll wrapper to flex (so chat scrolls internally, composer pins bottom)
+    const body = document.querySelector('#raiDrawer .overflow-y-auto');
+    if (body) {
+      if (name === 'collab') {
+        body.style.overflow = 'hidden';
+        body.style.display = 'flex';
+        body.style.flexDirection = 'column';
+      } else {
+        body.style.overflow = '';
+        body.style.display = '';
+        body.style.flexDirection = '';
+      }
+      body.scrollTo(0, 0);
+    }
+  }
+  document.querySelectorAll('.try-card[data-target]').forEach(card => {
+    card.addEventListener('click', () => {
+      const target = card.dataset.target;
+      switchView(target);
+      openDrawer();
+    });
+  });
+
+  // Risk view Cancel button → close drawer
+  const riskCancel = document.getElementById('riskCancel');
+  if (riskCancel) riskCancel.addEventListener('click', closeDrawer);
+
+  // Toast helper
+  const toastEl = document.getElementById('toast');
+  let toastTimer;
+  function showToast(message) {
+    if (!toastEl) return;
+    toastEl.querySelector('.toast-msg').textContent = message;
+    toastEl.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove('show'), 2600);
+  }
+
+  // Global submit handler — any [data-action] in drawer shows toast + closes
+  const ACTION_MESSAGES = {
+    submit:   'Resource request submitted',
+    draft:    'Draft saved',
+    save:     'Risk entry saved',
+    create:   'CTA created',
+    schedule: 'Meeting scheduled',
+    collab:   'Workspace created',
+    cancel:   null
+  };
+  document.querySelectorAll('#raiDrawer [data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (action === 'cancel') { closeDrawer(); return; }
+      const msg = ACTION_MESSAGES[action];
+      if (msg) showToast(msg);
+      closeDrawer();
+    });
+  });
+
+  // CTA view: Cancel + counter + priority pills
+  const ctaCancel = document.getElementById('ctaCancel');
+  if (ctaCancel) ctaCancel.addEventListener('click', closeDrawer);
+  const ctaDesc = document.getElementById('ctaDescription');
+  const ctaCount = document.getElementById('ctaCount');
+  if (ctaDesc && ctaCount) {
+    ctaDesc.addEventListener('input', () => { ctaCount.textContent = ctaDesc.value.length; });
+  }
+  const ctaPriority = document.getElementById('ctaPriority');
+  if (ctaPriority) {
+    ctaPriority.querySelectorAll('.prio-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        ctaPriority.querySelectorAll('.prio-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+  }
+
+  // Meeting type, Collab type, Reminder, Visibility — exclusive button groups
+  ['mtypeGroup', 'ctypeGroup', 'reminderGroup', 'visGroup'].forEach(id => {
+    const group = document.getElementById(id);
+    if (!group) return;
+    group.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+
+  // Attendee/member chip removal
+  document.querySelectorAll('.attendee-chip .x').forEach(x => {
+    x.addEventListener('click', (e) => {
+      e.stopPropagation();
+      x.closest('.attendee-chip').remove();
+    });
+  });
+
+  // ═══════════════ Functional dropdowns ═══════════════
+  const OPTION_SETS = {
+    'Select Position':         ['Engineer', 'Senior Engineer', 'Tech Lead', 'Project Manager', 'Solution Architect', 'QA Engineer', 'Business Analyst'],
+    'Select Work Experience':  ['0-2 years', '2-5 years', '5-8 years', '8-12 years', '12+ years'],
+    'Select Commercial':       ['Fixed Price', 'T&M', 'Retainer', 'Outcome-based'],
+    'Select Priority':         ['Low', 'Medium', 'High', 'Critical'],
+    'Select role':             ['Developer', 'Designer', 'Project Manager', 'QA', 'DevOps Engineer', 'Scrum Master'],
+    'Select Request Context':  ['New Project', 'Replacement', 'Augmentation', 'Critical Hire'],
+    'Select location':         ['Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Mumbai', 'Abu Dhabi', 'London', 'Remote'],
+    'Select Nationality':      ['Indian', 'American', 'British', 'German', 'Emirati', 'Other'],
+    'Select Employment Type':  ['Full-time', 'Contract', 'Part-time', 'Intern'],
+    'Select Region':           ['APAC', 'EMEA', 'AMER', 'India', 'Middle East'],
+    'Select Entity':           ['Maveric NXT Limited', 'Maveric NXT US', 'Maveric NXT UK', 'Maveric NXT AE'],
+    'Select Division':         ['Assurance (ASE)', 'Engineering (ENG)', 'Consulting (CON)', 'Operations (OPS)'],
+    'Select Sub Division':     ['Retail (RTIL)', 'Banking (BANK)', 'Insurance (INS)', 'Wealth (WLTH)'],
+    'Select Module':           ['Resource Management', 'Project Tracking', 'Finance', 'HR', 'Quality Assurance'],
+    'Select':                  ['Aravind R.', 'Sneha D.', 'Pranav K.', 'Naveen M.', 'Divya P.', 'Karthik S.'],
+    'Select One':              ['Option A', 'Option B', 'Option C', 'Option D']
+  };
+  // Map context-specific labels by reading the preceding label
+  const LABEL_OVERRIDES = {
+    'Allocation Type':        ['Project Allocation', 'Bench Allocation', 'Internal Allocation'],
+    'Work Mode':              ['Onsite', 'Offshore', 'Hybrid'],
+    'Project Role':           ['Developer', 'Designer', 'Project Manager', 'QA', 'DevOps Engineer'],
+    'Allocation Position':    ['Lead', 'Senior', 'Mid-level', 'Junior'],
+    'Work City':              ['Bangalore', 'Hyderabad', 'Chennai', 'Pune', 'Abu Dhabi'],
+    'Work Premise':           ['Client Site', 'Maveric Office', 'Remote Hybrid'],
+    'Reports To':             ['Aravind R.', 'Sneha D.', 'Pranav K.', 'Karthik S.'],
+    'Travel Type':            ['No Travel', 'Domestic Only', 'International'],
+    'Shift':                  ['Day (IST)', 'Day (EST)', 'Night (IST)', 'Flexible'],
+    'Risk Status':            ['Open', 'In Progress', 'Mitigated', 'Closed'],
+    'Priority':               ['Low', 'Medium', 'High', 'Critical'],
+    'Potential Impact':       ['Low', 'Medium', 'High'],
+    'Response':               ['Avoid', 'Mitigate', 'Transfer', 'Accept'],
+    'Likelihood':             ['Rare', 'Unlikely', 'Possible', 'Likely', 'Certain'],
+    'Module':                 ['Resource Management', 'Project Tracking', 'Finance', 'HR', 'Quality Assurance'],
+    'Assignee':               ['Aravind R.', 'Sneha D.', 'Pranav K.', 'Naveen M.', 'Divya P.'],
+    'Duration':               ['15 minutes', '30 minutes', '45 minutes', '1 hour', '90 minutes', '2 hours']
+  };
+
+  function optionsFor(field) {
+    // Try by preceding label
+    const wrapper = field.parentElement;
+    const labelEl = wrapper && wrapper.querySelector('.field-label');
+    if (labelEl) {
+      const label = labelEl.textContent.replace(/[*]/g,'').replace(/info/g,'').trim();
+      if (LABEL_OVERRIDES[label]) return LABEL_OVERRIDES[label];
+    }
+    // Fallback to placeholder/value text
+    const ph = field.querySelector('.ph');
+    const phText = ph ? ph.textContent.trim() : '';
+    return OPTION_SETS[phText] || ['Option 1', 'Option 2', 'Option 3'];
+  }
+
+  let openDD = null;
+  function closeDD() {
+    if (openDD) {
+      const menu = openDD.querySelector('.dd-menu');
+      if (menu) menu.remove();
+      openDD.classList.remove('dd-open');
+      openDD = null;
+    }
+  }
+  document.addEventListener('click', closeDD);
+
+  function setFieldValue(field, value) {
+    let label = field.querySelector('.ph, .dd-val');
+    if (!label) {
+      // first span child
+      label = field.querySelector('span:not(.ms)');
+    }
+    if (label) {
+      label.textContent = value;
+      label.classList.remove('ph');
+      label.classList.add('dd-val');
+      label.style.color = '#0D0D0D';
+      label.style.flex = '1';
+    }
+    field.classList.remove('required-empty');
+  }
+
+  // Activate every dropdown-style field
+  document.querySelectorAll('#raiDrawer .field').forEach(field => {
+    const caret = field.querySelector('.ms.caret');
+    if (!caret) return;
+    const caretIcon = caret.textContent.trim();
+    if (caretIcon !== 'expand_more') return;
+    if (field.classList.contains('locked')) return; // skip locked fields
+    field.classList.add('dd-trigger');
+
+    field.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (openDD === field) { closeDD(); return; }
+      closeDD();
+      const opts = optionsFor(field);
+      const menu = document.createElement('div');
+      menu.className = 'dd-menu';
+      const currentVal = (field.querySelector('.dd-val') || {}).textContent || '';
+      opts.forEach(opt => {
+        const item = document.createElement('div');
+        item.className = 'dd-option' + (opt === currentVal ? ' active' : '');
+        item.textContent = opt;
+        item.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          setFieldValue(field, opt);
+          closeDD();
+        });
+        menu.appendChild(item);
+      });
+      field.appendChild(menu);
+      field.classList.add('dd-open');
+      openDD = field;
+    });
+  });
+
+  // ═══════════════ Custom Date / Time pickers (Material-style) ═══════════════
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  let openPicker = null;
+  function closePicker() {
+    if (openPicker) {
+      const pop = openPicker.querySelector('.dp-pop, .tp-pop');
+      if (pop) pop.remove();
+      openPicker = null;
+    }
+  }
+  document.addEventListener('click', closePicker);
+
+  function fmtDate(d) {
+    const day = String(d.getDate()).padStart(2,'0');
+    const mon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
+    return day + '-' + mon + '-' + d.getFullYear();
+  }
+  function fmtTime12(h, m, period) {
+    return String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ' ' + period;
+  }
+
+  function renderDatePicker(field, displayEl, view, selectedDate, onPick) {
+    closePicker();
+    openPicker = field;
+    const pop = document.createElement('div');
+    pop.className = 'dp-pop';
+    pop.addEventListener('click', e => e.stopPropagation());
+
+    if (view.mode === 'months') {
+      // Year/month picker — show 12 years grid
+      const startY = Math.floor(view.year / 12) * 12;
+      pop.innerHTML = '<div class="dp-head">' +
+        '<button class="dp-nav" data-act="yprev"><span class="ms">chevron_left</span></button>' +
+        '<div class="dp-title">' + startY + ' – ' + (startY+11) + '</div>' +
+        '<button class="dp-nav" data-act="ynext"><span class="ms">chevron_right</span></button>' +
+        '</div>' +
+        '<div class="dp-years"></div>';
+      const yearsEl = pop.querySelector('.dp-years');
+      for (let y = startY; y < startY + 12; y++) {
+        const el = document.createElement('div');
+        el.className = 'dp-year' + (y === view.year ? ' selected' : '');
+        el.textContent = y;
+        el.addEventListener('click', () => { view.year = y; view.mode = 'days'; renderDatePicker(field, displayEl, view, selectedDate, onPick); });
+        yearsEl.appendChild(el);
+      }
+      pop.querySelector('[data-act="yprev"]').addEventListener('click', () => { view.year = startY - 12; renderDatePicker(field, displayEl, view, selectedDate, onPick); });
+      pop.querySelector('[data-act="ynext"]').addEventListener('click', () => { view.year = startY + 12; renderDatePicker(field, displayEl, view, selectedDate, onPick); });
+    } else {
+      pop.innerHTML = '<div class="dp-head">' +
+        '<button class="dp-nav" data-act="prev"><span class="ms">chevron_left</span></button>' +
+        '<div class="dp-title" data-act="title">' + MONTHS[view.month] + ' ' + view.year + ' <span class="ms">expand_more</span></div>' +
+        '<button class="dp-nav" data-act="next"><span class="ms">chevron_right</span></button>' +
+        '</div>' +
+        '<div class="dp-grid"></div>' +
+        '<div class="dp-footer">' +
+        '<button class="dp-link muted" data-act="clear">Clear</button>' +
+        '<button class="dp-link" data-act="today">Today</button>' +
+        '</div>';
+      const grid = pop.querySelector('.dp-grid');
+      DOW.forEach(d => {
+        const el = document.createElement('div');
+        el.className = 'dp-dow';
+        el.textContent = d;
+        grid.appendChild(el);
+      });
+      const first = new Date(view.year, view.month, 1);
+      const firstIdx = (first.getDay() + 6) % 7;  // Monday-first
+      const daysInMonth = new Date(view.year, view.month + 1, 0).getDate();
+      const prevMonthDays = new Date(view.year, view.month, 0).getDate();
+      const today = new Date();
+      const sel = selectedDate;
+      // 42 cells (6 weeks)
+      for (let i = 0; i < 42; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'dp-cell';
+        let cellDate;
+        if (i < firstIdx) {
+          const d = prevMonthDays - firstIdx + i + 1;
+          cell.textContent = d;
+          cell.classList.add('other');
+          cellDate = new Date(view.year, view.month - 1, d);
+        } else if (i >= firstIdx + daysInMonth) {
+          const d = i - firstIdx - daysInMonth + 1;
+          cell.textContent = d;
+          cell.classList.add('other');
+          cellDate = new Date(view.year, view.month + 1, d);
+        } else {
+          const d = i - firstIdx + 1;
+          cell.textContent = d;
+          cellDate = new Date(view.year, view.month, d);
+        }
+        if (cellDate.toDateString() === today.toDateString()) cell.classList.add('today');
+        if (sel && cellDate.toDateString() === sel.toDateString()) cell.classList.add('selected');
+        cell.addEventListener('click', () => {
+          onPick(cellDate);
+          closePicker();
+        });
+        grid.appendChild(cell);
+      }
+      pop.querySelector('[data-act="prev"]').addEventListener('click', () => {
+        view.month--; if (view.month < 0) { view.month = 11; view.year--; }
+        renderDatePicker(field, displayEl, view, selectedDate, onPick);
+      });
+      pop.querySelector('[data-act="next"]').addEventListener('click', () => {
+        view.month++; if (view.month > 11) { view.month = 0; view.year++; }
+        renderDatePicker(field, displayEl, view, selectedDate, onPick);
+      });
+      pop.querySelector('[data-act="title"]').addEventListener('click', () => {
+        view.mode = 'months'; renderDatePicker(field, displayEl, view, selectedDate, onPick);
+      });
+      pop.querySelector('[data-act="today"]').addEventListener('click', () => { onPick(new Date()); closePicker(); });
+      pop.querySelector('[data-act="clear"]').addEventListener('click', () => { onPick(null); closePicker(); });
+    }
+    field.appendChild(pop);
+  }
+
+  function renderTimePicker(field, displayEl, state, onPick) {
+    closePicker();
+    openPicker = field;
+    const pop = document.createElement('div');
+    pop.className = 'tp-pop';
+    pop.addEventListener('click', e => e.stopPropagation());
+
+    pop.innerHTML = '<div class="tp-display">' +
+      '<span class="tp-num" data-col="h">' + String(state.h).padStart(2,'0') + '</span>' +
+      '<span class="tp-colon">:</span>' +
+      '<span class="tp-num" data-col="m">' + String(state.m).padStart(2,'0') + '</span>' +
+      '<span class="tp-period"><button data-p="AM" class="' + (state.period === 'AM' ? 'active' : '') + '">AM</button><button data-p="PM" class="' + (state.period === 'PM' ? 'active' : '') + '">PM</button></span>' +
+      '</div>' +
+      '<div class="tp-scroll-row">' +
+      '<div><div class="tp-col-label">Hour</div><div class="tp-col" data-col="h"></div></div>' +
+      '<div><div class="tp-col-label">Minute</div><div class="tp-col" data-col="m"></div></div>' +
+      '</div>' +
+      '<div class="dp-footer">' +
+      '<button class="dp-link muted" data-act="clear">Clear</button>' +
+      '<button class="dp-link" data-act="now">Now</button>' +
+      '</div>';
+
+    const hourCol = pop.querySelector('.tp-col[data-col="h"]');
+    const minCol = pop.querySelector('.tp-col[data-col="m"]');
+    for (let h = 1; h <= 12; h++) {
+      const el = document.createElement('div');
+      el.className = 'tp-opt' + (h === state.h ? ' selected' : '');
+      el.textContent = String(h).padStart(2,'0');
+      el.addEventListener('click', () => { state.h = h; render(); });
+      hourCol.appendChild(el);
+    }
+    for (let m = 0; m < 60; m += 5) {
+      const el = document.createElement('div');
+      el.className = 'tp-opt' + (m === state.m ? ' selected' : '');
+      el.textContent = String(m).padStart(2,'0');
+      el.addEventListener('click', () => { state.m = m; render(); });
+      minCol.appendChild(el);
+    }
+    function render() {
+      pop.querySelectorAll('.tp-num').forEach(n => {
+        const col = n.dataset.col;
+        n.textContent = String(state[col]).padStart(2, '0');
+      });
+      pop.querySelectorAll('.tp-period button').forEach(b => {
+        b.classList.toggle('active', b.dataset.p === state.period);
+      });
+      hourCol.querySelectorAll('.tp-opt').forEach((el, i) => el.classList.toggle('selected', (i+1) === state.h));
+      minCol.querySelectorAll('.tp-opt').forEach((el, i) => el.classList.toggle('selected', (i*5) === state.m));
+      onPick({ h: state.h, m: state.m, period: state.period });
+    }
+    pop.querySelectorAll('.tp-period button').forEach(b => {
+      b.addEventListener('click', () => { state.period = b.dataset.p; render(); });
+    });
+    pop.querySelector('[data-act="now"]').addEventListener('click', () => {
+      const d = new Date();
+      const hr = d.getHours();
+      state.h = hr % 12 || 12;
+      state.m = Math.round(d.getMinutes() / 5) * 5;
+      state.period = hr >= 12 ? 'PM' : 'AM';
+      render();
+      closePicker();
+    });
+    pop.querySelector('[data-act="clear"]').addEventListener('click', () => { onPick(null); closePicker(); });
+    field.appendChild(pop);
+    // Auto-scroll selected items into view
+    setTimeout(() => {
+      const selH = hourCol.querySelector('.selected');
+      const selM = minCol.querySelector('.selected');
+      if (selH) hourCol.scrollTop = selH.offsetTop - 60;
+      if (selM) minCol.scrollTop = selM.offsetTop - 60;
+    }, 20);
+  }
+
+  // Wire date/time fields
+  document.querySelectorAll('#raiDrawer .field').forEach(field => {
+    const caret = field.querySelector('.ms.caret');
+    if (!caret) return;
+    const caretIcon = caret.textContent.trim();
+    if (caretIcon !== 'calendar_today' && caretIcon !== 'schedule') return;
+    const ph = field.querySelector('.ph');
+    if (!ph) return;
+
+    // Replace placeholder span with our display span
+    const display = document.createElement('span');
+    display.className = 'dt-val empty';
+    display.textContent = ph.textContent;
+    ph.replaceWith(display);
+
+    if (caretIcon === 'calendar_today') {
+      field.classList.add('date-field');
+      field._date = null;
+      field._view = { mode: 'days', year: new Date().getFullYear(), month: new Date().getMonth() };
+      field.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (openPicker === field) { closePicker(); return; }
+        renderDatePicker(field, display, field._view, field._date, (d) => {
+          field._date = d;
+          if (d) {
+            display.textContent = fmtDate(d);
+            display.classList.remove('empty');
+            field._view.year = d.getFullYear();
+            field._view.month = d.getMonth();
+          } else {
+            display.textContent = 'DD-MMM-YYYY';
+            display.classList.add('empty');
+          }
+        });
+      });
+    } else {
+      field.classList.add('time-field');
+      field._time = null;
+      field._state = { h: 12, m: 0, period: 'PM' };
+      field.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (openPicker === field) { closePicker(); return; }
+        renderTimePicker(field, display, field._state, (t) => {
+          if (t) {
+            field._time = t;
+            display.textContent = fmtTime12(t.h, t.m, t.period);
+            display.classList.remove('empty');
+          } else {
+            field._time = null;
+            display.textContent = '--:-- AM';
+            display.classList.add('empty');
+          }
+        });
+      });
+    }
+  });
+
+  // ═══════════════ Rich-text editor toolbar ═══════════════
+  const RTE_COMMANDS = {
+    'Bold': 'bold',
+    'Italic': 'italic',
+    'Underline': 'underline',
+    'Strikethrough': 'strikeThrough',
+    'Align left': 'justifyLeft',
+    'Align center': 'justifyCenter',
+    'Align right': 'justifyRight',
+    'Justify': 'justifyFull',
+    'Bulleted list': 'insertUnorderedList',
+    'Numbered list': 'insertOrderedList'
+  };
+  document.querySelectorAll('.rte-btn').forEach(btn => {
+    btn.addEventListener('mousedown', (e) => e.preventDefault()); // keep selection
+    btn.addEventListener('click', () => {
+      const cmd = RTE_COMMANDS[btn.title];
+      if (cmd) document.execCommand(cmd, false, null);
+      // focus the related editor
+      const editor = btn.closest('.mb-5, .form-section').querySelector('.rte-content');
+      if (editor) editor.focus();
+    });
+  });
+
+  // ═══════════════ Add Tags / Attachments ═══════════════
+  document.querySelectorAll('.add-chip').forEach(btn => {
+    const label = btn.textContent.trim();
+    btn.addEventListener('click', () => {
+      if (label.includes('Tag')) {
+        const tag = prompt('Enter tag name:');
+        if (!tag || !tag.trim()) return;
+        const trimmed = tag.trim();
+        const colors = ['c1','c2','c3','c4','c5'];
+        const c = colors[Math.floor(Math.random() * colors.length)];
+        const chip = document.createElement('span');
+        chip.className = 'attendee-chip';
+        chip.innerHTML = '<span class="av ' + c + '">' + trimmed.charAt(0).toUpperCase() + '</span>' + trimmed + '<span class="x"><span class="ms">close</span></span>';
+        btn.before(chip);
+        chip.querySelector('.x').addEventListener('click', (e) => {
+          e.stopPropagation();
+          chip.remove();
+        });
+      } else if (label.includes('attach')) {
+        const fi = document.createElement('input');
+        fi.type = 'file';
+        fi.addEventListener('change', (e) => {
+          const f = e.target.files && e.target.files[0];
+          if (f) showToast('Attached: ' + f.name);
+        });
+        fi.click();
+      }
+    });
+  });
+
+  // ═══════════════ Quick Collab chat ═══════════════
+  const qcInput   = document.getElementById('qcInput');
+  const qcSendBtn = document.getElementById('qcSendBtn');
+  const qcChat    = document.getElementById('qcChat');
+  const qcVisBtn  = document.getElementById('qcVisBtn');
+  const qcVisLabel = document.getElementById('qcVisLabel');
+  const qcRefresh = document.getElementById('qcRefresh');
+
+  function qcSend() {
+    if (!qcInput || !qcChat) return;
+    const v = qcInput.value.trim();
+    if (!v) return;
+    const msg = document.createElement('div');
+    msg.className = 'qc-msg out';
+    msg.innerHTML = '<div class="qc-bubble"><div></div><div class="qc-time">Just now <span class="ms">check</span></div></div><div class="qc-avatar purple">SR</div>';
+    msg.querySelector('.qc-bubble > div:first-child').textContent = v;
+    qcChat.appendChild(msg);
+    qcInput.value = '';
+    qcSendBtn.disabled = true;
+    qcChat.scrollTop = qcChat.scrollHeight;
+    // Simulated incoming reply after 900ms
+    setTimeout(() => {
+      const reply = document.createElement('div');
+      reply.className = 'qc-msg in';
+      reply.innerHTML = '<div class="qc-avatar teal">AR</div><div class="qc-bubble"><div>Got it — looping in the team.</div><div class="qc-time">Just now <span class="ms">check</span></div></div>';
+      qcChat.appendChild(reply);
+      qcChat.scrollTop = qcChat.scrollHeight;
+    }, 900);
+  }
+  if (qcInput) {
+    qcInput.addEventListener('input', () => {
+      qcSendBtn.disabled = qcInput.value.trim().length === 0;
+    });
+    qcInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') qcSend(); });
+  }
+  if (qcSendBtn) qcSendBtn.addEventListener('click', qcSend);
+
+  // Visibility dropdown
+  const QC_VIS = [
+    { val: 'Public',    ico: 'public',  desc: 'Anyone in workspace' },
+    { val: 'Team',      ico: 'group',   desc: 'Only your team' },
+    { val: 'Private',   ico: 'lock',    desc: 'Just you & mentioned' }
+  ];
+  let qcVisMenu = null;
+  if (qcVisBtn) {
+    qcVisBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (qcVisMenu) { qcVisMenu.remove(); qcVisMenu = null; return; }
+      qcVisMenu = document.createElement('div');
+      qcVisMenu.className = 'qc-vis-menu';
+      QC_VIS.forEach(o => {
+        const opt = document.createElement('div');
+        opt.className = 'dd-option' + (qcVisLabel.textContent.trim() === o.val ? ' active' : '');
+        opt.innerHTML = '<span class="ms">' + o.ico + '</span><span>' + o.val + '</span>';
+        opt.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          qcVisLabel.textContent = o.val;
+          qcVisBtn.querySelector('.ms:first-child').textContent = o.ico;
+          if (qcVisMenu) { qcVisMenu.remove(); qcVisMenu = null; }
+        });
+        qcVisMenu.appendChild(opt);
+      });
+      qcVisBtn.appendChild(qcVisMenu);
+    });
+    document.addEventListener('click', () => { if (qcVisMenu) { qcVisMenu.remove(); qcVisMenu = null; } });
+  }
+
+  if (qcRefresh) {
+    qcRefresh.addEventListener('click', () => {
+      qcRefresh.classList.add('spin');
+      setTimeout(() => qcRefresh.classList.remove('spin'), 500);
+    });
+  }
+
+  // Ask kais input → on Enter, clear + show toast
+  const kaisInput = document.querySelector('.kais-input input');
+  const kaisSend  = document.querySelector('.kais-send');
+  function submitKaisQuery() {
+    if (!kaisInput) return;
+    const v = kaisInput.value.trim();
+    if (!v) return;
+    kaisInput.value = '';
+    showToast('kais is thinking…');
+  }
+  if (kaisInput) kaisInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitKaisQuery(); });
+  if (kaisSend)  kaisSend.addEventListener('click', submitKaisQuery);
+
+  // Approval view: Table / Cards toggle
+  const apToggle = document.getElementById('apViewToggle');
+  if (apToggle) {
+    apToggle.querySelectorAll('button[data-mode]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        apToggle.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const mode = btn.dataset.mode;
+        document.getElementById('apTableView').hidden = (mode !== 'table');
+        document.getElementById('apCardView').hidden  = (mode !== 'card');
+      });
+    });
+  }
+
+  // Segmented control switching
+  document.querySelectorAll('.seg').forEach(seg => {
+    seg.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        seg.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
