@@ -6526,8 +6526,12 @@ function openProjectsOverviewIframe() {
   hideAllViews();
   var v = document.getElementById('projects-dashboard-view');
   var f = document.getElementById('projects-dashboard-frame');
-  // Cache-bust on every open so iframe-detect script fires fresh
-  if (f) f.setAttribute('src', 'projects.html?ts=' + Date.now());
+  // Cache-bust on every open so iframe-detect script fires fresh.
+  // embedded=1 tells projects.html to hide its inner chrome (since the outer
+  // executive-dashboard provides the sidebar + topbar). Any other iframe
+  // context (preview tools, screenshot services) won't carry this flag, so
+  // the standalone chrome stays visible there.
+  if (f) f.setAttribute('src', 'projects.html?embedded=1&ts=' + Date.now());
   if (v) v.classList.remove('hidden');
   if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Overview']);
 }
@@ -6538,7 +6542,7 @@ function showAllProjectsView() {
   hideAllViews();
   var v = document.getElementById('all-projects-view');
   var f = document.getElementById('all-projects-frame');
-  if (f && !f.getAttribute('src')) f.setAttribute('src', 'projects.html#portfolios');
+  if (f && !f.getAttribute('src')) f.setAttribute('src', 'projects.html?embedded=1#portfolios');
   if (v) v.classList.remove('hidden');
   _setHeaderCrumb(['Projects', 'All Projects']);
 }

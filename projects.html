@@ -6446,8 +6446,16 @@
   }
 </style>
 <script>
-  // Set early (in <head>) so CSS rule applies before first paint — no flash of duplicated chrome.
-  try { if (window.self !== window.top) document.documentElement.classList.add('in-iframe'); } catch (e) {}
+  // Hide the inner chrome only when projects.html is *explicitly* embedded
+  // by the executive-dashboard host (it passes ?embedded=1 in the iframe src).
+  // Any other iframe context (preview tools, devtools, screenshot services)
+  // will keep the chrome visible — the previous `window.self !== window.top`
+  // check was too broad and erased the page chrome in those previews.
+  // Set early (in <head>) so the CSS rule applies before first paint.
+  try {
+    var p = new URLSearchParams(window.location.search);
+    if (p.get('embedded') === '1') document.documentElement.classList.add('in-iframe');
+  } catch (e) {}
 </script>
 </head>
 <body>
