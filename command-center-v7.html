@@ -3266,18 +3266,34 @@ function COOGrid() {
                 </div>
               </div>
             </div>
-            {/* Right: Kai recommendation */}
+            {/* Right: Kai recommendation — styled to match the CEO view's
+                 'Where to Concentrate' card: DM-Sans eyebrow/title/body
+                 hierarchy on the same cream gradient, peach-gradient pill
+                 button with orange border, single CTA. */}
             <div style={{ padding: '18px 22px', background: `linear-gradient(135deg, ${CC.primaryGradFrom} 0%, ${CC.primaryGradTo} 100%)`, display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
               <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
                 <KaiMiniMark size={28} />
-                <div>
-                  <div style={{ fontSize: 10, fontWeight: 700, color: CC.textMute, textTransform: 'uppercase', letterSpacing: 0.7, marginBottom: 6 }}>Kai Recommendation</div>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: CC.ink, lineHeight: 1.5, letterSpacing: -0.1 }}>Stabilize delivery on 3 delayed projects and backfill skills to recover $5.6M of at-risk revenue.</div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, color: '#272A47', flex: 1 }}>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 11, lineHeight: '16px', color: '#7D838B', letterSpacing: 0.4 }}>
+                    KAI RECOMMENDATION
+                  </div>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 15, lineHeight: '20px', color: '#272A47', letterSpacing: -0.2 }}>
+                    Stabilize delivery on 3 delayed projects
+                  </div>
+                  <p style={{ margin: '2px 0 0', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 11.5, lineHeight: '15px', color: '#272A47' }}>
+                    Backfill skills to recover $5.6M of at-risk revenue.
+                  </p>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: 10 }}>
-                <button onClick={() => setKaisPanelOpen(true)} style={{ height: 32, padding: '0 18px', borderRadius: 60, border: `1px solid ${CC.primaryGradBtnBorder}`, background: CC.panelBg, color: CC.primary, fontFamily: 'inherit', fontWeight: 700, fontSize: 12.5, cursor: 'pointer' }}>Ask Kai</button>
-                <button style={{ height: 32, padding: '0 16px', borderRadius: 60, border: `1px solid ${CC.border}`, background: CC.panelBg, color: CC.ink, fontFamily: 'inherit', fontWeight: 600, fontSize: 12.5, cursor: 'pointer' }}>Workforce drill down</button>
+              <div style={{ display: 'flex', gap: 12, paddingLeft: 38 }}>
+                <button onClick={() => setKaisPanelOpen(true)} style={{
+                  height: 30, padding: '0 18px', borderRadius: 60,
+                  background: `linear-gradient(to right, ${CC.primaryGradFrom}, ${CC.primaryGradTo})`,
+                  border: `1px solid ${CC.primary}`,
+                  color: CC.primary,
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: 700, fontSize: 13, lineHeight: 1,
+                  cursor: 'pointer',
+                }}>Ask Kai</button>
               </div>
             </div>
           </div>
