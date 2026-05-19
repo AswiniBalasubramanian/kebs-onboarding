@@ -2312,22 +2312,6 @@ function CockpitGrid() {
               <span style={{ fontSize: 14, color: CC.textMute }}>Here's your revenue outlook today.</span>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <DropdownPill
-              display={selectedDate === 'Today' ? todayStr : selectedDate}
-              value={selectedDate}
-              options={DATE_PERIODS}
-              onChange={setSelectedDate}
-              align="right"
-            />
-            <span style={{ fontSize: 13, color: CC.textSoft, fontWeight: 500 }}>Compare to</span>
-            <DropdownPill
-              value={selectedCompare}
-              options={COMPARE_PERIODS}
-              onChange={setSelectedCompare}
-              align="right"
-            />
-          </div>
         </div>
 
         {/* Hero — Annual growth (split panel) */}
@@ -3057,11 +3041,6 @@ function COOGrid() {
             <div style={{ marginTop: 8 }}>
               <span style={{ fontSize: 14, color: CC.textMute }}>Here's your operations and execution overview.</span>
             </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <DropdownPill display={selectedDate === 'Today' ? todayStr : selectedDate} value={selectedDate} options={DATE_PERIODS} onChange={setSelectedDate} align="right" />
-            <span style={{ fontSize: 13, color: CC.textSoft, fontWeight: 500 }}>Compare to</span>
-            <DropdownPill value={selectedCompare} options={COMPARE_PERIODS} onChange={setSelectedCompare} align="right" />
           </div>
         </div>
 
