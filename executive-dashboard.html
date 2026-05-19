@@ -6399,22 +6399,17 @@ function _setHeaderCrumb(parts) {
 }
 
 // Show the Projects > Project Dashboard view.
-// Routes to the v31 Portfolio overview (KPIs + Revenue Pipeline + Project
-// Health table), which is the canonical screen mirroring the reference at
-// command-center-dashboard-six.vercel.app/Projects.html. Kept the existing
-// function name + window export so all callers (flyout sub-nav, console,
-// future deep-links) land in the same place.
+// Loads the external reference dashboard directly into the workspace
+// iframe (#projects-dashboard-frame). Container #projects-dashboard-view
+// is pre-positioned at inset: 48px 0 0 64px so the embedded page renders
+// in the exact area between the outer top bar and the outer sidebar.
+var PROJECT_DASHBOARD_URL = 'https://command-center-dashboard-six.vercel.app/Projects.html';
 function showProjectsDashboardView() {
-  if (typeof showPortfolio === 'function') {
-    showPortfolio();
-    if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
-    return;
-  }
-  // Fallback (only if v31 portfolio wiring was rolled back)
   hideAllViews();
   var v = document.getElementById('projects-dashboard-view');
   var f = document.getElementById('projects-dashboard-frame');
-  if (f && !f.getAttribute('src')) f.setAttribute('src', 'projects.html#dashboard');
+  // Reload the external URL each time to avoid stale state across opens.
+  if (f) f.setAttribute('src', PROJECT_DASHBOARD_URL);
   if (v) v.classList.remove('hidden');
   if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
 }
