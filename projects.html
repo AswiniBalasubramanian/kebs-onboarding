@@ -6160,17 +6160,35 @@
 
   /* ─── In-iframe mode (when projects.html is embedded in the
          executive-dashboard workspace) ───────────────────────────
-     The outer chrome already provides the sidebar + top bar, so the
-     inner copies (.logo, .side, .topbar) get hidden and the grid
-     collapses to a single cell so .main fills the iframe. Removes
-     the fixed 1360x768 design canvas + zoom so the page is fluid. */
-  html.in-iframe body { background: var(--bg, #F5F4F1) !important; }
+     Standalone, body uses display:flex to centre a fixed 1360x768
+     .app canvas — that breaks inside the iframe (renders centred with
+     a 16px gutter and grey backdrop). When iframed:
+     - neutralise the body's flex centring + padding + grey backdrop
+     - turn .app from a fixed canvas into a fluid 100% x 100vh shell
+     - drop zoom, border-radius, box-shadow (frame chrome) since the
+       outer dashboard already provides that visual frame
+     - hide the inner logo / side / topbar duplicates
+     - collapse the 2x2 grid into a single 'main' cell so .main fills */
+  html.in-iframe, html.in-iframe body {
+    height: 100% !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    background: var(--bg, #F5F4F1) !important;
+  }
+  html.in-iframe body {
+    display: block !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    justify-content: initial !important;
+    align-items: initial !important;
+  }
   html.in-iframe .app {
     width: 100% !important;
-    height: 100vh !important;
+    height: 100% !important;
     zoom: 1 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    flex-shrink: 1 !important;
     grid-template-columns: 1fr !important;
     grid-template-rows: 1fr !important;
     grid-template-areas: "main" !important;
@@ -6181,8 +6199,9 @@
   html.in-iframe .main {
     grid-area: main !important;
     width: 100% !important;
-    height: 100vh !important;
+    height: 100% !important;
     overflow-y: auto !important;
+    overflow-x: hidden !important;
   }
 </style>
 <script>
