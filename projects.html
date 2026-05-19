@@ -6203,6 +6203,10 @@
     overflow-y: auto !important;
     overflow-x: hidden !important;
   }
+  /* DIAGNOSTIC: if you see a 3px lime outline around the content area
+     when iframed, the in-iframe CSS is applying correctly. Remove this
+     rule once verified. */
+  html.in-iframe .app { outline: 3px solid lime; outline-offset: -3px; }
 </style>
 <script>
   // Set early (in <head>) so CSS rule applies before first paint — no flash of duplicated chrome.

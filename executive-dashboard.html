@@ -6412,16 +6412,12 @@ function _setHeaderCrumb(parts) {
 // renders natively, fills the workspace cleanly, and integrates with
 // every other navigation path.
 function showProjectsDashboardView() {
-  if (typeof showPortfolio === 'function') {
-    showPortfolio();
-    if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
-    return;
-  }
-  // Hard fallback if showPortfolio wiring ever rolls back
   hideAllViews();
   var v = document.getElementById('projects-dashboard-view');
   var f = document.getElementById('projects-dashboard-frame');
-  if (f && !f.getAttribute('src')) f.setAttribute('src', 'projects.html');
+  // Reload each open so the iframe-detect script always fires fresh and any
+  // edits to projects.html show up without needing a parent hard-refresh.
+  if (f) f.setAttribute('src', 'projects.html?ts=' + Date.now());
   if (v) v.classList.remove('hidden');
   if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
 }
