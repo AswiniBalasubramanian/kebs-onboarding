@@ -116,15 +116,88 @@
   }
   .side-spacer { flex: 1; }
 
-  /* ===== Topbar (matches executive-dashboard: white bg, 48px tall) ===== */
+  /* ===== Topbar — pixel-parity with executive-dashboard chrome.
+       Sticks to the top of the viewport: the .app grid keeps .topbar
+       in its grid row while only .main scrolls, so the topbar is
+       always visible. ===== */
   .topbar {
     grid-area: topbar;
     background: #ffffff;
-    display: flex; align-items: center;
-    padding: 0 20px;
-    border-bottom: 1px solid #E6E3DC;
-    gap: 14px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    font-size: 14px;
+    position: sticky; top: 0;
+    z-index: 40;
   }
+  .topbar-left  { display: flex; align-items: center; flex: 1; min-width: 0; }
+  .topbar-title { font-size: 14px; font-weight: 500; color: #161616; margin: 0; letter-spacing: -.005em; }
+  .topbar-right { display: flex; align-items: center; gap: 16px; }
+  .topbar-cluster { display: flex; align-items: center; gap: 8px; }
+  .request-demo-link {
+    font-size: 13px; font-weight: 500; color: #161616;
+    text-decoration: none;
+    margin-right: 4px;
+    transition: color .12s ease;
+  }
+  .request-demo-link:hover { text-decoration: underline; }
+  .upgrade-btn {
+    height: 32px;
+    padding: 0 12px;
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 1px solid #FA5D2B;
+    color: #FA5D2B;
+    background: #fff;
+    border-radius: 6px;
+    font-size: 13px; font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background .12s ease;
+  }
+  .upgrade-btn:hover { background: #FFF2EC; }
+  .upgrade-btn svg { width: 15px; height: 15px; }
+  /* Compact topbar icon buttons (gift, plus, feedback, bell, forum) */
+  .top-iconbtn {
+    width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: transparent;
+    border: 0;
+    border-radius: 6px;
+    color: #525252;
+    cursor: pointer;
+    position: relative;
+    transition: background .12s ease, color .12s ease;
+    font-family: inherit;
+  }
+  .top-iconbtn:hover { background: #f4f4f4; color: #161616; }
+  .top-iconbtn .material-symbols-outlined { font-size: 20px; }
+  /* Red dot on gift icon (what's new indicator) */
+  .top-iconbtn .top-dot {
+    position: absolute; top: 6px; right: 6px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #FA5D2B;
+  }
+  /* Bell-style "4" badge */
+  .top-iconbtn .top-count {
+    position: absolute; top: -2px; right: -2px;
+    min-width: 16px; height: 16px;
+    padding: 0 4px;
+    background: #FA5D2B;
+    color: #fff;
+    font-size: 9px; font-weight: 700;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    line-height: 1;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .top-divider {
+    width: 1px; height: 24px;
+    background: #e0e0e0;
+    margin: 0 4px;
+  }
+  /* Legacy classes kept for body content that still uses them ----- */
   .crumb {
     display: flex; align-items: center; gap: 8px;
     font-size: 13px; color: var(--fg-3);
@@ -156,6 +229,19 @@
     color: var(--fg-2);
     font-size: 12px;
   }
+  .topbar-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600;
+    background: linear-gradient(135deg, #FCD5B5 0%, #FA9E5B 100%);
+    color: #7a3a10;
+    border: 0; cursor: pointer;
+    margin-left: 8px;
+    transition: box-shadow .12s ease;
+    font-family: inherit;
+  }
+  .topbar-avatar:hover { box-shadow: 0 0 0 2px rgba(250,158,91,0.35); }
 
   /* ===== Main scrollable ===== */
   .main {
@@ -6447,33 +6533,42 @@
     </div>
   </aside>
 
-  <!-- TOPBAR — mirrors executive-dashboard outer chrome: breadcrumb on
-       left, then Upgrade pill + bell with badge + PR avatar on the right. -->
+  <!-- TOPBAR — pixel-parity with executive-dashboard outer chrome.
+       Layout: title on the left; Request a demo + Upgrade pill + gift +
+       quick-actions (+) + feedback + bell w/ 4 badge + forum + divider +
+       PR avatar on the right. Sticks to the top of the viewport. -->
   <header class="topbar">
-    <nav class="crumb">
-      <a href="executive-dashboard.html">Home</a>
-      <span class="sep">/</span>
-      <a href="#">Projects</a>
-      <span class="sep">/</span>
-      <span class="cur">Project Dashboard</span>
-    </nav>
-    <div class="top-spacer"></div>
-    <a href="executive-dashboard.html" class="top-link" style="margin-right:8px;">Back to Command Center</a>
-    <button aria-label="Upgrade" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:8px;border:1px solid #FA5D2B;background:#fff;color:#FA5D2B;font:600 12.5px 'DM Sans',sans-serif;cursor:pointer;margin-right:8px;">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>
-      Upgrade
-    </button>
-    <button class="icon-btn" aria-label="Search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-    </button>
-    <button class="icon-btn" aria-label="Notifications" style="position:relative;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-      <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 4px;background:#FA5D2B;color:#fff;font:700 9px/16px 'DM Sans',sans-serif;border-radius:999px;display:flex;align-items:center;justify-content:center;">4</span>
-    </button>
-    <button class="icon-btn" aria-label="Messages">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-    </button>
-    <div class="avatar" style="background:linear-gradient(135deg,#FCD5B5 0%,#FA9E5B 100%);color:#7a3a10;">PR</div>
+    <div class="topbar-left">
+      <h2 class="topbar-title">Command Center</h2>
+    </div>
+    <div class="topbar-right">
+      <div class="topbar-cluster">
+        <a href="#" class="request-demo-link" onclick="event.preventDefault();">Request a demo</a>
+        <button type="button" class="upgrade-btn" title="Upgrade">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>
+          <span>Upgrade</span>
+        </button>
+        <button type="button" class="top-iconbtn" title="What's new" aria-label="What's new">
+          <span class="material-symbols-outlined">redeem</span>
+          <span class="top-dot"></span>
+        </button>
+        <button type="button" class="top-iconbtn" title="Quick actions" aria-label="Quick actions">
+          <span class="material-symbols-outlined">add_box</span>
+        </button>
+        <button type="button" class="top-iconbtn" title="Share feedback" aria-label="Share feedback">
+          <span class="material-symbols-outlined">feedback</span>
+        </button>
+        <button type="button" class="top-iconbtn" title="Notifications" aria-label="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="top-count">4</span>
+        </button>
+        <button type="button" class="top-iconbtn" title="Messages" aria-label="Messages">
+          <span class="material-symbols-outlined">forum</span>
+        </button>
+      </div>
+      <div class="top-divider"></div>
+      <button type="button" class="topbar-avatar" title="Account">PR</button>
+    </div>
   </header>
 
   <!-- MAIN -->
