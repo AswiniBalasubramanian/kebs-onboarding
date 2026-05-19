@@ -6383,9 +6383,13 @@
   .wf-head-wrap > .wf-ctrls { margin-left: auto; }
   /* When embedded as an iframe inside the executive dashboard, the host page
      provides its own sidebar + header chrome. Hide local sidebar (.side + .logo)
-     and the topbar (.topbar), and collapse the grid so .main fills the iframe. */
-  .side, .topbar, .logo { display: none !important; }
-  .app {
+     and the topbar (.topbar), and collapse the grid so .main fills the iframe.
+     IMPORTANT: scoped to html.in-iframe so the standalone projects.html page
+     (opened via the "Overview" button in a new tab) still shows its own chrome. */
+  html.in-iframe .side,
+  html.in-iframe .topbar,
+  html.in-iframe .logo { display: none !important; }
+  html.in-iframe .app {
     grid-template-columns: 1fr !important;
     grid-template-rows: 1fr !important;
     grid-template-areas: "main" !important;
@@ -6393,7 +6397,7 @@
   }
   /* Align content to the parent dashboard's edges: flush at top + left,
      comfortable horizontal breathing room, generous bottom for scroll */
-  .main { padding: 16px 24px 32px !important; }
+  html.in-iframe .main { padding: 16px 24px 32px !important; }
 
   /* ─── In-iframe mode (when projects.html is embedded in the
          executive-dashboard workspace) ───────────────────────────
