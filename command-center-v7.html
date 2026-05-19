@@ -480,9 +480,13 @@
   }
   .notif-badge.is-pop { animation: notif-badge-pop 280ms ease-out; }
 
-  /* ─── Toast stack (collapsed deck → click to expand) ─── */
+  /* ─── Toast stack (collapsed deck → click to expand) ───
+     Anchored flush below the outer top bar (executive-dashboard chrome
+     provides the 48px header; iframe content starts directly below it).
+     12px breathing space from the top edge so the 'Close all' pill
+     visually attaches to the top bar without touching it. */
   .toast-stack {
-    position: fixed; top: 60px; right: 16px; z-index: 80;
+    position: fixed; top: 12px; right: 16px; z-index: 80;
     pointer-events: none;
     width: 320px;
     /* Reserve space for top toggle (26px) + collapsed deck + breathing room */
