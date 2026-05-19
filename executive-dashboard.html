@@ -3545,6 +3545,50 @@ PR
   </div>
 </div>
 
+<!-- ════════════════════════════ All Opportunities List ════════════════════════════ -->
+<div id="all-opportunities-view" class="hidden">
+  <div class="px-8 py-6 max-w-[1480px] mx-auto" style="font-family:'IBM Plex Sans',sans-serif;">
+
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-[12px] text-secondary mb-4">
+      <a href="#" onclick="event.preventDefault();" class="hover:text-primary cursor-pointer">CRM</a>
+      <span class="text-[#bdbdbd]">/</span>
+      <a href="#" onclick="event.preventDefault();" class="hover:text-primary cursor-pointer">Opportunities</a>
+      <span class="text-[#bdbdbd]">/</span>
+      <span class="text-on-surface font-semibold">All</span>
+    </nav>
+
+    <!-- Header row -->
+    <section class="flex items-center justify-between mb-5 gap-3 flex-wrap">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:rgba(250,93,43,0.10);">
+          <span class="material-symbols-outlined" style="font-size:22px;color:#FA5D2B;">track_changes</span>
+        </div>
+        <div>
+          <p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Opportunities</p>
+          <h1 class="text-[20px] font-semibold text-on-surface tracking-tight leading-none">Total Opportunities (24)</h1>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container flex items-center justify-center" title="Search"><span class="material-symbols-outlined text-secondary" style="font-size:18px;">search</span></button>
+        <button class="h-9 px-3 rounded-lg border border-outline-variant text-sm text-on-surface flex items-center gap-2 hover:bg-surface-container">All Stages <span class="material-symbols-outlined text-secondary" style="font-size:16px;">expand_more</span></button>
+        <div class="flex items-center gap-0.5 border border-outline-variant rounded-lg p-0.5">
+          <button class="w-7 h-7 rounded flex items-center justify-center text-secondary hover:bg-surface-container" title="Grid"><span class="material-symbols-outlined" style="font-size:16px;">grid_view</span></button>
+          <button class="w-7 h-7 rounded flex items-center justify-center text-secondary hover:bg-surface-container" title="Columns"><span class="material-symbols-outlined" style="font-size:16px;">view_column</span></button>
+          <button class="w-7 h-7 rounded flex items-center justify-center text-primary" style="background:rgba(250,93,43,0.10);" title="List"><span class="material-symbols-outlined" style="font-size:16px;">view_agenda</span></button>
+        </div>
+        <button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container flex items-center justify-center" title="Filters"><span class="material-symbols-outlined text-secondary" style="font-size:18px;">tune</span></button>
+        <button class="w-9 h-9 rounded-lg border border-outline-variant hover:bg-surface-container flex items-center justify-center" title="Sort"><span class="material-symbols-outlined text-secondary" style="font-size:18px;">filter_list</span></button>
+        <button class="h-9 px-4 rounded-lg bg-primary text-white font-semibold text-sm flex items-center gap-2 hover:opacity-90"><span class="material-symbols-outlined" style="font-size:18px;">add</span>New Opportunity</button>
+      </div>
+    </section>
+
+    <!-- Opportunity rows (rendered by renderOpportunitiesList) -->
+    <div id="opportunities-list-rows" class="space-y-3"></div>
+
+  </div>
+</div>
+
 <div id="settings-view" class="hidden">
   <div class="flex h-[calc(100vh-48px)]">
     <!-- Settings Sidebar -->
@@ -5797,6 +5841,10 @@ function toggleAppsFlyout() {
                 } else if (subItem === 'All Projects' && typeof showAllProjectsView === 'function') {
                   showAllProjectsView(); routed = true;
                 }
+              } else if (app.name === 'opportunity') {
+                if (subItem === 'All Opportunities' && typeof showAllOpportunitiesView === 'function') {
+                  showAllOpportunitiesView(); routed = true;
+                }
               }
               if (!routed) app.el.click();
               toggleAppsFlyout();
@@ -6388,6 +6436,8 @@ function hideAllViews() {
   if (pfv) pfv.classList.add('hidden');
   var pdv = document.getElementById('project-detail-view');
   if (pdv) pdv.classList.add('hidden');
+  var aov = document.getElementById('all-opportunities-view');
+  if (aov) aov.classList.add('hidden');
 }
 
 // Show the Opportunities view (iframe to opportunity-dashboard.html)
@@ -6596,6 +6646,63 @@ function populateProjectDetail(key) {
 
 function backToPortfolio() {
   showPortfolio();
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   All Opportunities list view — opened from the Opportunity sidebar
+   flyout sub-nav 'All Opportunities'. Mirrors a CRM-style opp list with
+   breadcrumb (CRM / Opportunities / All), header toolbar, and 5 rows
+   showing #ID, account name, stage badge, value, contact, service type,
+   project, parent, and tag pills.
+   ───────────────────────────────────────────────────────────────────────── */
+var OPPORTUNITIES_LIST = [
+  { id: 'OPP-01-123', name: 'Innovatech Solutions', stage: 'Qualification', stageClass: 'bg-[#E3F4E8] text-[#168A3A]', value: '1,859,000', daysToGo: '23 days to go', contact: 'Aswini Balasubra…', contactInitial: 'A', contactBg: '#FA5D2B', serviceType: 'T&M', serviceIcon: 'schedule', project: 'Project Phoenix', parent: 'Nova Health Solutions', parentLabel: 'Parent Account', tags: [{label:'Development',cls:'bg-[#EDE9FE] text-[#5B21B6]'},{label:'Partial',cls:'bg-[#FFF4E0] text-[#B26A00]'}], moreTags: '+1' },
+  { id: 'OPP-01-123', name: 'Synergy Dynamics',     stage: 'Discovery',     stageClass: 'bg-[#E0F2FE] text-[#075985]', value: '1,859,000', daysToGo: '23 days to go', contact: 'Aswini Balasubra…', contactInitial: 'A', contactBg: '#FA5D2B', serviceType: 'Monthly Fixed', serviceIcon: 'event', project: 'Project Phoenix', parent: 'Nova Health Solutions', parentLabel: 'Parent Account', tags: [{label:'Design',cls:'bg-[#E3F4E8] text-[#168A3A]'},{label:'Full',cls:'bg-[#FFF4E0] text-[#B26A00]'}], moreTags: '+2' },
+  { id: 'OPP-01-123', name: 'Visionary Enterprises',stage: 'Negotiation',   stageClass: 'bg-[#FFF4E0] text-[#B26A00]', value: '1,859,000', daysToGo: '23 days to go', contact: 'Aswini Balasubra…', contactInitial: 'A', contactBg: '#FA5D2B', serviceType: 'T&M', serviceIcon: 'schedule', project: 'Project Phoenix', parent: 'Nova Health Solutions', parentLabel: 'Child Account', tags: [{label:'Discovery',cls:'bg-[#CCFBF1] text-[#0F766E]'},{label:'Full',cls:'bg-[#FFF4E0] text-[#B26A00]'}], moreTags: '+1' },
+  { id: 'OPP-02-456', name: 'NexGen Innovations',  stage: 'Closed Won',    stageClass: 'bg-[#E3F4E8] text-[#168A3A]', value: '3,208,000', daysToGo: '23 days to go', contact: 'John Doe', contactInitial: 'J', contactBg: '#7C3AED', serviceType: 'Fixed Price', serviceIcon: 'sell', project: 'Project Titan', parent: 'Gamma Technologies', parentLabel: 'Parent Account', tags: [{label:'Testing',cls:'bg-[#EDE9FE] text-[#5B21B6]'},{label:'Complete',cls:'bg-[#FFF4E0] text-[#B26A00]'}], moreTags: '+3' },
+  { id: 'OPP-03-789', name: 'Pinnacle Strategies', stage: 'Closed Lost',   stageClass: 'bg-[#FDE3DE] text-[#D33A24]', value: '2,000,000', daysToGo: '23 days to go', contact: 'Emma Watson', contactInitial: 'E', contactBg: '#2563EB', serviceType: 'Retainer', serviceIcon: 'autorenew', project: 'Project Athena', parent: 'Epsilon Enterprises', parentLabel: 'Parent Account', tags: [{label:'Deployment',cls:'bg-[#EDE9FE] text-[#5B21B6]'},{label:'Staging',cls:'bg-[#FFF4E0] text-[#B26A00]'}], moreTags: '+5' }
+];
+
+function showAllOpportunitiesView() {
+  hideAllViews();
+  var v = document.getElementById('all-opportunities-view');
+  if (v) v.classList.remove('hidden');
+  if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['CRM', 'Opportunities', 'All']);
+  renderOpportunitiesList();
+}
+window.showAllOpportunitiesView = showAllOpportunitiesView;
+
+function renderOpportunitiesList() {
+  var listEl = document.getElementById('opportunities-list-rows');
+  if (!listEl) return;
+  listEl.innerHTML = OPPORTUNITIES_LIST.map(function (o) {
+    var tagsHtml = o.tags.map(function (t) {
+      return '<span class="text-[10.5px] font-semibold px-2 py-0.5 rounded-md ' + t.cls + '">' + t.label + '</span>';
+    }).join('');
+    return ''
+      + '<div class="bg-white border border-[#E6E3DC] rounded-xl p-5 hover:shadow-sm transition-shadow cursor-pointer">'
+      +   '<div class="flex items-center justify-between mb-4 flex-wrap gap-2">'
+      +     '<div class="flex items-center gap-3">'
+      +       '<span class="text-[11px] text-secondary font-mono">#' + o.id + '</span>'
+      +       '<span class="w-1 h-1 rounded-full bg-[#bdbdbd]"></span>'
+      +       '<h3 class="text-[16px] font-semibold text-on-surface">' + o.name + '</h3>'
+      +     '</div>'
+      +     '<div class="flex items-center gap-3">'
+      +       '<span class="text-[11.5px] text-secondary">' + o.daysToGo + '</span>'
+      +       '<button class="material-symbols-outlined text-secondary hover:text-primary cursor-pointer" style="font-size:18px;background:none;border:none;padding:0;" title="Favorite">star_outline</button>'
+      +       '<span class="text-[11px] font-bold px-2.5 py-1 rounded-full ' + o.stageClass + '">' + o.stage + '</span>'
+      +     '</div>'
+      +   '</div>'
+      +   '<div class="grid grid-cols-6 gap-4">'
+      +     '<div><p class="text-[18px] font-bold text-on-surface leading-none">' + o.value + '</p><p class="text-[11px] text-secondary mt-1">Opportunity Value</p></div>'
+      +     '<div class="flex items-center gap-2 min-w-0"><div class="w-7 h-7 rounded-full text-white flex items-center justify-center text-[11px] font-bold shrink-0" style="background:' + o.contactBg + ';">' + o.contactInitial + '</div><div class="min-w-0"><p class="text-[12.5px] font-semibold text-on-surface leading-tight truncate">' + o.contact + '</p><p class="text-[10.5px] text-secondary">Account Contact</p></div></div>'
+      +     '<div><span class="text-[11.5px] font-semibold text-on-surface px-2 py-0.5 rounded-md bg-[#FFEEE5] inline-flex items-center gap-1.5"><span class="material-symbols-outlined" style="font-size:13px;color:#FA5D2B;">' + o.serviceIcon + '</span>' + o.serviceType + '</span><p class="text-[10.5px] text-secondary mt-1">Service Type</p></div>'
+      +     '<div><p class="text-[12.5px] font-semibold text-on-surface">' + o.project + '</p><p class="text-[10.5px] text-secondary mt-1">Project Name</p></div>'
+      +     '<div><p class="text-[12.5px] font-semibold text-on-surface">' + o.parent + '</p><p class="text-[10.5px] text-secondary mt-1">' + o.parentLabel + '</p></div>'
+      +     '<div><div class="flex items-center gap-1.5 flex-wrap">' + tagsHtml + '<span class="text-[10.5px] text-secondary">' + o.moreTags + '</span></div><p class="text-[10.5px] text-secondary mt-1">Tags</p></div>'
+      +   '</div>'
+      + '</div>';
+  }).join('');
 }
 
 function switchProjTab(tab, btn) {
