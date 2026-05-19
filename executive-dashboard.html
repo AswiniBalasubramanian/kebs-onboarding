@@ -6412,14 +6412,12 @@ function _setHeaderCrumb(parts) {
 // renders natively, fills the workspace cleanly, and integrates with
 // every other navigation path.
 function showProjectsDashboardView() {
-  hideAllViews();
-  var v = document.getElementById('projects-dashboard-view');
-  var f = document.getElementById('projects-dashboard-frame');
-  // Reload each open so the iframe-detect script always fires fresh and any
-  // edits to projects.html show up without needing a parent hard-refresh.
-  if (f) f.setAttribute('src', 'projects.html?ts=' + Date.now());
-  if (v) v.classList.remove('hidden');
-  if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
+  // After three rounds of iframe-sizing fights with projects.html's
+  // fixed 1360x768 canvas + body flex-centring, the most reliable way
+  // to actually show the full projects.html mockup is to just open it.
+  // Opens in the same tab (no _blank) so it replaces the current view —
+  // gives the user the complete projects.html screen exactly as built.
+  window.location.href = 'projects.html';
 }
 window.showProjectsDashboardView = showProjectsDashboardView;
 
