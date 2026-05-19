@@ -2460,6 +2460,17 @@ function CockpitGrid() {
   const [activeMetricId, setActiveMetricId] = React.useState(null);
   const [cardDecisions, setCardDecisions] = React.useState({});
   const [priorityFilter, setPriorityFilter] = React.useState('changed');
+  // 'Where to look closer' widget (ported from COO view) — Projects/Resources/SOWs/Milestones tabs
+  // with status filter pills (All / Critical / At risk / On track) and a top-5 project table.
+  const [projTab, setProjTab] = React.useState('Projects');
+  const [projFilter, setProjFilter] = React.useState('All');
+  const WTLC_PROJ_ROWS = [
+    { initials: 'RS', bg: '#f2a356', name: 'Northwind Transformation', sub: 'Rohit S. · Services · 12 streams', health: 'Critical', healthColor: '#C4341E', healthBg: '#FDE3DE', day: 22, total: 30, pct: 73, note: 'Slipping · 2 milestones missed', urgency: '8d to act', urgColor: '#2A2D35', impact: '$1.4M', impactSub: 'Margin ▼ 12%', cta: 'Plan recovery', ctaBorder: '#FFB28A' },
+    { initials: 'NV', bg: '#7a9f8c', name: 'Vertex Cloud Migration',   sub: 'Neha V. · Migration · Phase 3',       health: 'Critical', healthColor: '#C4341E', healthBg: '#FDE3DE', day: 18, total: 25, pct: 72, note: 'Stalled · scope creep',         urgency: '7d to act', urgColor: '#2A2D35', impact: '$1.1M', impactSub: 'Hold on 3 SOWs',    cta: 'Reset scope',   ctaBorder: '#FFB28A' },
+    { initials: 'AK', bg: '#c99262', name: 'Lumen Data Platform',      sub: 'Arjun K. · Implementation · Wave 2',   health: 'At risk',  healthColor: '#B26A00', healthBg: '#FFF4E0', day:  9, total: 20, pct: 45, note: 'Resourcing · skill gap',       urgency: '11d to act',urgColor: '#2A2D35', impact: '$0.8M', impactSub: '2 leads unstaffed',  cta: 'Reallocate',    ctaBorder: '#FFB28A' },
+    { initials: 'PR', bg: '#a07ab5', name: 'Acme ERP Rollout',         sub: 'Pooja R. · Rollout · NA region',        health: 'At risk',  healthColor: '#B26A00', healthBg: '#FFF4E0', day: 10, total: 22, pct: 45, note: 'Schedule · UAT delayed',      urgency: '12d to act',urgColor: '#2A2D35', impact: '$0.6M', impactSub: 'Go-live shifted 2w', cta: 'Rebaseline',    ctaBorder: '#FFB28A' },
+    { initials: 'VM', bg: '#5c8fb0', name: 'Globex Analytics',         sub: 'Vivek M. · Advisory · MVP',             health: 'On track', healthColor: '#188433', healthBg: '#E3F4E8', day: 14, total: 30, pct: 47, note: 'Healthy · within tolerance',   urgency: '16d buffer',urgColor: '#188433', impact: '$0.3M', impactSub: 'Variance under 5%',  cta: 'Send digest',   ctaBorder: '#E6E3DC' },
+  ];
   const decide = (rank, decision) => setCardDecisions(prev => ({ ...prev, [rank]: decision }));
   const activeMetric = METRICS.find((m) => m.id === activeMetricId) || null;
 
@@ -2981,85 +2992,122 @@ function CockpitGrid() {
             </div>
           </div>
 
-        {/* Trend to Plan + Action Plan (side by side) — equal heights via
+        {/* Where to look closer + Action Plan (side by side) — equal heights via
             stretched grid items + flex:1 inner cards. */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, alignItems: 'stretch', marginTop: 4 }}>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {/* Header row (matches CEO's other widget headers) */}
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: CC.ink, letterSpacing: -0.2 }}>Trend to Plan</h3>
-              <span style={{ fontSize: 11.5, color: CC.textMute }}>Cumulative Revenue ($M)</span>
+              <h3 style={{ margin: 0, fontSize: 16, fontWeight: 600, color: CC.ink, letterSpacing: -0.2 }}>Where to look closer</h3>
+              <div style={{ fontSize: 11.5, color: CC.textMute }}>5 projects · <span style={{ fontWeight: 700, color: '#C4341E' }}>$4.2M</span> at risk</div>
             </div>
-            <div style={{ background: CC.panelBg, border: `1px solid ${CC.border}`, borderRadius: 16, padding: 18.889, display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
-              {/* Legend */}
-              <div style={{ display: 'flex', gap: 14, fontSize: 11, color: '#5c5e66', alignItems: 'center' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 14, height: 2, background: '#1a1a1a' }} />Plan</span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 14, height: 2, background: '#fa5d2b' }} />Actual</span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><span style={{ width: 14, height: 0, borderTop: '1.778px dashed #fa5d2b' }} />Forecast</span>
+
+            {/* Card */}
+            <div style={{ background: CC.panelBg, border: `1px solid ${CC.border}`, borderRadius: 16, overflow: 'hidden', flex: 1, display: 'flex', flexDirection: 'column' }}>
+
+              {/* Tab row */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 14px 0', borderBottom: `0.9px solid ${CC.hairline}` }}>
+                <div style={{ display: 'flex' }}>
+                  {[['Projects','12'],['Resources','8'],['SOWs','18'],['Milestones','6']].map(([label, count]) => {
+                    const active = projTab === label;
+                    return (
+                      <button key={label} onClick={() => setProjTab(label)} style={{
+                        display: 'flex', alignItems: 'center', gap: 5,
+                        padding: '11px 10px 13px', background: 'transparent',
+                        border: 'none', borderBottom: active ? `1.8px solid ${CC.primary}` : '1.8px solid transparent',
+                        cursor: 'pointer', fontFamily: 'inherit',
+                      }}>
+                        <span style={{ fontSize: 11.5, fontWeight: 600, color: active ? CC.primary : CC.textMute }}>{label}</span>
+                        <span style={{ fontSize: 9.5, fontWeight: 700, padding: '1px 6px', borderRadius: 999, background: active ? CC.primarySoft : CC.hairline, color: active ? CC.primary : CC.textMute }}>{count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <button style={{ display: 'flex', alignItems: 'center', gap: 3, padding: '5px 9px', borderRadius: 6, border: `1px solid ${CC.border}`, background: CC.panelBg, fontSize: 11, fontWeight: 600, color: CC.ink, cursor: 'pointer', fontFamily: 'inherit' }}>
+                  Rev at risk <span className="material-symbols-outlined" style={{ fontSize: 13, color: CC.textMute }}>keyboard_arrow_down</span>
+                </button>
               </div>
 
-              {/* Chart */}
-              <svg viewBox="0 0 660 200" width="100%" height="200" style={{ display: 'block' }} preserveAspectRatio="xMidYMid meet">
-                <defs>
-                  <linearGradient id="tpFill" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="#fa5d2b" stopOpacity="0.18" />
-                    <stop offset="100%" stopColor="#fa5d2b" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {/* Gridlines + Y-axis labels */}
-                {[0, 1, 2, 3, 4].map((i) => {
-                  const y = 20 + i * 36;
+              {/* Filter pills */}
+              <div style={{ display: 'flex', gap: 5, padding: '10px 14px 11px', borderBottom: `0.9px solid ${CC.hairline}` }}>
+                {[
+                  { label: 'All', count: '12', dot: null },
+                  { label: 'Critical', count: '2', dot: '#C4341E' },
+                  { label: 'At risk',  count: '2', dot: '#B26A00' },
+                  { label: 'On track', count: '1', dot: '#188433' },
+                ].map(f => {
+                  const active = projFilter === f.label;
                   return (
-                    <g key={i}>
-                      <line x1="40" x2="640" y1={y} y2={y} stroke="#EFEDE7" strokeWidth="1" />
-                      <text x="34" y={y + 4} fontSize="10" fill="#8a8579" textAnchor="end">{40 - i * 10}M</text>
-                    </g>
+                    <button key={f.label} onClick={() => setProjFilter(f.label)} style={{
+                      display: 'flex', alignItems: 'center', gap: 5,
+                      padding: '5px 10px', borderRadius: 999, cursor: 'pointer', fontFamily: 'inherit',
+                      border: active ? `1px solid ${CC.primary}` : `1px solid ${CC.border}`,
+                      background: active ? CC.primarySoft : '#fff',
+                    }}>
+                      {f.dot && <div style={{ width: 6, height: 6, borderRadius: '50%', background: f.dot, flexShrink: 0 }} />}
+                      <span style={{ fontSize: 11, fontWeight: 600, color: active ? CC.primary : CC.ink }}>{f.label}</span>
+                      <span style={{ fontSize: 11, fontWeight: 700, color: active ? CC.primary : CC.textMute }}>{f.count}</span>
+                    </button>
                   );
                 })}
-                {/* X-axis labels */}
-                {['Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar'].map((m, i) => (
-                  <text key={m} x={56 + i * 50} y="186" fontSize="10" fill="#8a8579" textAnchor="middle">{m}</text>
-                ))}
-                {/* Plan line - linear */}
-                <polyline fill="none" stroke="#1a1a1a" strokeWidth="1.6"
-                  points="56,151 106,141 156,131 206,121 256,111 306,101 356,91 406,81 456,71 506,61 556,50 606,40" />
-                {/* Actual filled gradient + line */}
-                <path d="M56,153 L106,144 L156,135 L206,127 L256,121 L306,116 L356,113 L356,164 L56,164 Z" fill="url(#tpFill)" />
-                <path d="M56,153 L106,144 L156,135 L206,127 L256,121 L306,116 L356,113" fill="none" stroke="#fa5d2b" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-                {/* Forecast dashed */}
-                <path d="M356,113 L406,103 L456,93 L506,82 L556,71 L606,58" fill="none" stroke="#fa5d2b" strokeWidth="2.2" strokeDasharray="5 4" strokeLinecap="round" />
-                {/* Current run rate label */}
-                <circle cx="356" cy="113" r="5" fill="#fa5d2b" stroke="#fff" strokeWidth="2" />
-                <g>
-                  <rect x="370" y="94" width="138" height="40" rx="6" fill="#fff" stroke="#E6E3DC" />
-                  <text x="380" y="110" fontSize="10" fontWeight="700" fill="#1a1a1a">Current Run Rate</text>
-                  <text x="380" y="125" fontSize="10.5" fontWeight="600" fill="#fa5d2b">$5.1M / mo</text>
-                </g>
-                {/* End-of-year plan target marker */}
-                <text x="640" y="22" fontSize="10.5" fontWeight="700" fill="#1a1a1a" textAnchor="end">$18.4M</text>
-                <text x="640" y="64" fontSize="9.5" fill="#8a8579" textAnchor="end">Time left: 7 months</text>
-              </svg>
-
-              {/* Hairline divider */}
-              <div style={{ height: 1, background: '#EFEDE7', width: '100%' }} />
-
-              {/* TO HIT PLAN summary block */}
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6, padding: '8px 0 6px' }}>
-                <div style={{ fontSize: 10.5, fontWeight: 600, color: '#5c5e66', textTransform: 'uppercase', letterSpacing: 0.4 }}>
-                  To hit plan
-                </div>
-                <div style={{ fontSize: 11.5, color: CC.ink, lineHeight: 1.5 }}>
-                  We need <strong style={{ fontWeight: 700 }}>$4.1M/month</strong> for the rest of the year
-                </div>
-                <div style={{ fontSize: 16, fontWeight: 700, color: CC.ink, marginTop: 2 }}>$18.4M</div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 11, color: '#5c5e66' }}>
-                  <span>Times Left</span>
-                  <span style={{ fontWeight: 600, color: CC.ink }}>7 months</span>
-                </div>
               </div>
 
-              {/* CTA right-aligned */}
-              <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                <button style={{ padding: '7.335px 14.889px 7.695px', borderRadius: 999, border: `1px solid ${CC.border}`, background: CC.panelBg, color: CC.ink, fontSize: 11.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>View scenario analysis</button>
+              {/* Column headers */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1.4fr 108px', gap: 12, padding: '10px 14px 11px', background: CC.panelAlt, borderBottom: `0.9px solid ${CC.hairline}` }}>
+                <div style={{ fontSize: 10, fontWeight: 700, color: CC.textMute, textTransform: 'uppercase', letterSpacing: 0.4 }}>Project</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: CC.textMute, textTransform: 'uppercase', letterSpacing: 0.4 }}>Health · Window</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: CC.textMute, textTransform: 'uppercase', letterSpacing: 0.4, textAlign: 'right' }}>Impact · Next</div>
+              </div>
+
+              {/* Project rows */}
+              {WTLC_PROJ_ROWS.filter(r => projFilter === 'All' || r.health === projFilter).map((r, i, arr) => (
+                <div key={r.name} style={{ display: 'grid', gridTemplateColumns: '1.5fr 1.4fr 108px', gap: 12, padding: '14px', borderBottom: i < arr.length - 1 ? `0.9px solid ${CC.hairline}` : 'none', alignItems: 'start' }}>
+                  {/* Col 1: avatar + name */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <div style={{ width: 28, height: 28, borderRadius: 14, background: r.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: '#fff' }}>{r.initials}</span>
+                    </div>
+                    <div>
+                      <div style={{ fontSize: 12.5, fontWeight: 700, color: CC.ink, lineHeight: '17px' }}>{r.name}</div>
+                      <div style={{ fontSize: 10.5, color: CC.textMute, lineHeight: '16px', marginTop: 2 }}>{r.sub}</div>
+                    </div>
+                  </div>
+                  {/* Col 2: health + progress */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 7px', borderRadius: 999, background: r.healthBg, fontSize: 10, fontWeight: 700, color: r.healthColor }}>
+                        <span style={{ width: 5, height: 5, borderRadius: '50%', background: r.healthColor, flexShrink: 0 }} />
+                        {r.health}
+                      </span>
+                      <span style={{ fontSize: 10.5, color: CC.textMute }}>Day <strong style={{ color: CC.ink }}>{r.day}</strong>/{r.total}</span>
+                    </div>
+                    <div style={{ height: 3, background: CC.hairline, borderRadius: 2, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', width: `${r.pct}%`, background: r.healthColor, borderRadius: 2 }} />
+                    </div>
+                    <div style={{ fontSize: 10.5, color: CC.textMute, lineHeight: '14px' }}>
+                      {r.note} · <strong style={{ color: r.urgColor }}>{r.urgency}</strong>
+                    </div>
+                  </div>
+                  {/* Col 3: impact + button */}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: CC.ink, textAlign: 'right' }}>{r.impact}</div>
+                      <div style={{ fontSize: 10, color: CC.textMute, textAlign: 'right', marginTop: 1 }}>{r.impactSub}</div>
+                    </div>
+                    <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 999, border: `1px solid ${r.ctaBorder}`, background: CC.panelBg, fontSize: 10.5, fontWeight: 700, color: r.ctaBorder === CC.border ? CC.ink : CC.primary, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                      {r.ctaBorder !== CC.border && <span className="material-symbols-outlined" style={{ fontSize: 10, color: CC.primary }}>redo</span>}
+                      {r.cta}
+                    </button>
+                  </div>
+                </div>
+              ))}
+
+              {/* Footer */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', background: CC.panelAlt, borderTop: `0.9px solid ${CC.hairline}` }}>
+                <span style={{ fontSize: 11.5, color: CC.textMute }}>Showing top 5 of 12 · Last sync <strong style={{ color: '#2A2D35' }}>2h ago</strong></span>
+                <button style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'none', border: 'none', color: CC.primary, fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+                  Open portfolio <span className="material-symbols-outlined" style={{ fontSize: 14 }}>arrow_forward</span>
+                </button>
               </div>
             </div>
           </div>
