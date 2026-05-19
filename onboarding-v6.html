@@ -2248,9 +2248,11 @@ function refreshContinue() {
   if (!btn) return;
   var ok = isStepValid(currentStep);
   btn.disabled = !ok;
-  // Button label: "Finish" on last step, else "Continue"
+  // Button label: forward-looking CTA on the last step, plain Continue elsewhere.
+  // Last-step copy intentionally references the product by name ("KEBS") so the
+  // moment of activation feels like entering the product, not finishing a form.
   if (currentStep === totalSteps) {
-    btn.innerHTML = 'Finish <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
+    btn.innerHTML = 'Get started with KEBS <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>';
   } else {
     btn.innerHTML = 'Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
   }
