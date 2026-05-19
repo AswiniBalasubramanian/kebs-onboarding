@@ -6399,17 +6399,28 @@ function _setHeaderCrumb(parts) {
 }
 
 // Show the Projects > Project Dashboard view.
-// Loads the local projects.html sibling into the #projects-dashboard-frame
-// iframe. The container is pre-positioned at inset: 48px 0 0 64px so the
-// embedded page renders in the workspace area (below the outer top bar +
-// right of the outer sidebar). projects.html has an iframe-detect script
-// that hides its own chrome when window.self !== window.top, so only the
-// outer dashboard chrome remains visible.
+// Routes to the v31 local Portfolio overview built natively inside
+// executive-dashboard.html (showPortfolio). Same content shape as the
+// reference at command-center-dashboard-six.vercel.app/Projects.html —
+// FY26 KPIs, Revenue Pipeline waterfall, Leakage breakdown, Project
+// Health table + click-through Project Detail.
+//
+// Tried iframing the external URL (v52) — blocked by X-Frame-Options.
+// Tried iframing the local projects.html sibling (v55–v56) — fights
+// the page's fixed 1360x768 canvas + body flex-centring even with
+// aggressive overrides. The local Portfolio view inside this file
+// renders natively, fills the workspace cleanly, and integrates with
+// every other navigation path.
 function showProjectsDashboardView() {
+  if (typeof showPortfolio === 'function') {
+    showPortfolio();
+    if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
+    return;
+  }
+  // Hard fallback if showPortfolio wiring ever rolls back
   hideAllViews();
   var v = document.getElementById('projects-dashboard-view');
   var f = document.getElementById('projects-dashboard-frame');
-  // Lazy-load on first open; subsequent opens reuse the rendered page
   if (f && !f.getAttribute('src')) f.setAttribute('src', 'projects.html');
   if (v) v.classList.remove('hidden');
   if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
