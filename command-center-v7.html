@@ -1433,6 +1433,19 @@ const PRIORITIES = [
     why: 'Variance driven by Services line. Three deals re-categorized as commit, model says probability < 0.5.',
     magnitude: '−7.4%', magnitudeLabel: 'vs plan', countdown: '5 days',
     owner: 'You · Aarav M.', status: 'watch', since: 'May 4' },
+  // ── Follow-up queue: surfaced when one of the top-3 above is deferred ──
+  { rank: 4, kind: 'pipeline', title: 'Q3 pipeline coverage slipped to 2.1×',
+    why: 'Down from 2.6× last week. Three Enterprise deals pushed out of Q3 — Velocity, Northwind, Acme. Net-new logos still on plan.',
+    magnitude: '−0.5×', magnitudeLabel: 'vs target', countdown: '7 days',
+    owner: 'CRO · You', status: 'watch', since: 'May 3' },
+  { rank: 5, kind: 'utilization', title: 'Services utilization dipped to 71%',
+    why: 'Bench grew by 6 consultants this week. Two engagements ended early. Forecasted Q3 services revenue at risk of $620K.',
+    magnitude: '−5pp', magnitudeLabel: 'vs target', countdown: '10 days',
+    owner: 'Delivery · You', status: 'attention', since: 'May 2' },
+  { rank: 6, kind: 'renewal', title: 'Vertex renewal stalled — 23 days to expiry',
+    why: 'Buyer requested 12% discount. Legal review pending. Renewal value $1.4M ARR. Last touch 6 days ago.',
+    magnitude: '$1.4M', magnitudeLabel: 'at risk', countdown: '23 days',
+    owner: 'AE · Aarav S.', status: 'urgent', since: 'Apr 28' },
 ];
 
 const ACTION_PLAN = [
@@ -2677,7 +2690,10 @@ function CockpitGrid() {
           <div />
         )}
         <div style={{ display: priorityFilter !== 'changed' ? 'none' : 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12, marginBottom: 12 }}>
-          {PRIORITIES.filter(p => cardDecisions[p.rank] !== 'resolved').map((p, idx) => {
+          {/* Show the top 3 priorities that are neither resolved nor deferred.
+              When a card is deferred (decide(rank,'escalated')), it drops out
+              of this slice and the next-in-queue priority takes its slot. */}
+          {PRIORITIES.filter(p => !['resolved', 'escalated'].includes(cardDecisions[p.rank])).slice(0, 3).map((p, idx) => {
             const s = statusColor(p.status);
             const decision = cardDecisions[p.rank] || null; // null | 'actioned' | 'escalated'
 
@@ -2722,7 +2738,7 @@ function CockpitGrid() {
                       background: isActioned ? CC.success : isEscalated ? CC.warn : isResolved ? CC.textSoft : CC.panelAlt,
                       color: isDone ? '#fff' : CC.ink, flexShrink: 0,
                     }}>
-                      {isResolved ? <span className="material-symbols-outlined" style={{ fontSize: 13 }}>check</span> : p.rank}
+                      {isResolved ? <span className="material-symbols-outlined" style={{ fontSize: 13 }}>check</span> : (idx + 1)}
                     </div>
                     <span style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 0.6, color: CC.textMute, textTransform: 'uppercase' }}>{p.kind}</span>
                     <span style={{ flex: 1 }} />
