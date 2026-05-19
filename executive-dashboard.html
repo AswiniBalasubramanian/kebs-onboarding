@@ -3353,6 +3353,7 @@ PR
         <p class="text-sm text-secondary mt-2">Apr 19 – May 19, 2026 · 42 active projects · 3 portfolios</p>
       </div>
       <div class="flex items-center gap-2">
+        <button onclick="window.location.href='projects.html'" class="h-9 px-4 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2" title="Open full project overview"><span class="material-symbols-outlined" style="font-size:16px;">dashboard</span>Overview</button>
         <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">tune</span>Customize widgets</button>
         <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">file_download</span>Export</button>
       </div>
@@ -6412,12 +6413,15 @@ function _setHeaderCrumb(parts) {
 // renders natively, fills the workspace cleanly, and integrates with
 // every other navigation path.
 function showProjectsDashboardView() {
-  // After three rounds of iframe-sizing fights with projects.html's
-  // fixed 1360x768 canvas + body flex-centring, the most reliable way
-  // to actually show the full projects.html mockup is to just open it.
-  // Opens in the same tab (no _blank) so it replaces the current view —
-  // gives the user the complete projects.html screen exactly as built.
-  window.location.href = 'projects.html';
+  // Lands on the in-workspace Portfolio view (v31 recreation). From there,
+  // the user can click the 'Overview' button in the header to top-level
+  // navigate to the full projects.html mockup. Two-step pattern: Portfolio
+  // metrics first (KPIs + Pipeline + Health table), Overview drill-out
+  // second (the detailed Figma-style mockup).
+  if (typeof showPortfolio === 'function') {
+    showPortfolio();
+    if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
+  }
 }
 window.showProjectsDashboardView = showProjectsDashboardView;
 
