@@ -1397,7 +1397,7 @@
       </div>
 
       <!-- Screen 2 — About You & Your Company -->
-      <div class="ob4-screen" data-step="2" data-required="1">
+      <div class="ob4-screen" data-step="2" data-required="1" data-skippable="1">
         <h1 class="ob4-h">Tell Us About You &amp; Your Company</h1>
         <p class="ob4-sub">Pick the role, industry, and team size so we can tune the dashboards, reports, and benchmarks for you.</p>
         <div class="ob4-field">
@@ -1437,7 +1437,7 @@
       </div>
 
       <!-- Screen 3 — Hoping To Achieve -->
-      <div class="ob4-screen" data-step="3" data-required="1">
+      <div class="ob4-screen" data-step="3" data-required="1" data-skippable="1">
         <h1 class="ob4-h">What Are You Hoping To Achieve</h1>
         <p class="ob4-sub">Your primary objective shapes which KEBS insights land on your home dashboard first.</p>
         <div class="ob4-field">
@@ -2256,7 +2256,7 @@ function refreshContinue() {
   } else {
     btn.innerHTML = 'Continue <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
   }
-  // Skip visibility: steps 4 and 5 are skippable
+  // Skip visibility: read data-skippable off the current screen (steps 2–5)
   var screen = document.querySelector('.ob4-screen[data-step="' + currentStep + '"]');
   if (skip) {
     if (screen && screen.dataset.skippable === '1') skip.removeAttribute('hidden');
