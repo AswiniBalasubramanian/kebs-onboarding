@@ -7,6 +7,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<!-- Material Symbols + IBM Plex Sans loaded so the chrome can match executive-dashboard exactly -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
 <style>
   :root {
     --bg: #f7f7f5;
@@ -46,7 +49,7 @@
     min-height: 100vh;
     overflow: auto;
   }
-  /* ─── Frame: full-viewport, matches opportunity-dashboard ─── */
+  /* ─── Frame: full-viewport, matches executive-dashboard chrome ─── */
   .app {
     width: 100vw;
     height: 100vh;        /* fixed viewport — .main becomes the scroll context */
@@ -54,8 +57,8 @@
     background: var(--bg);
     overflow: hidden;
     display: grid;
-    grid-template-columns: 80px 1fr;
-    grid-template-rows: 64px 1fr;
+    grid-template-columns: 64px 1fr;   /* sidebar 64px to match exec-dash w-16 */
+    grid-template-rows: 48px 1fr;      /* topbar 48px to match exec-dash h-12 */
     grid-template-areas:
       "logo  topbar"
       "side  main";
@@ -79,10 +82,10 @@
     gap: 6px;
   }
   .nav-item {
-    width: 56px;
-    padding: 10px 0 8px;
-    border-radius: 12px;
-    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    width: 48px;                         /* tighter to fit the 64px column with breathing room */
+    padding: 8px 0 6px;
+    border-radius: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
     color: rgba(255,255,255,.62);
     cursor: pointer;
     position: relative;
@@ -113,14 +116,14 @@
   }
   .side-spacer { flex: 1; }
 
-  /* ===== Topbar ===== */
+  /* ===== Topbar (matches executive-dashboard: white bg, 48px tall) ===== */
   .topbar {
     grid-area: topbar;
-    background: var(--bg);
+    background: #ffffff;
     display: flex; align-items: center;
-    padding: 0 28px;
-    border-bottom: 1px solid var(--card-border);
-    gap: 18px;
+    padding: 0 20px;
+    border-bottom: 1px solid #E6E3DC;
+    gap: 14px;
   }
   .crumb {
     display: flex; align-items: center; gap: 8px;
