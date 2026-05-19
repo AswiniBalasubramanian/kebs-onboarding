@@ -3353,7 +3353,7 @@ PR
         <p class="text-sm text-secondary mt-2">Apr 19 – May 19, 2026 · 42 active projects · 3 portfolios</p>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="window.location.href='projects.html'" class="h-9 px-4 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2" title="Open full project overview"><span class="material-symbols-outlined" style="font-size:16px;">dashboard</span>Overview</button>
+        <button onclick="openProjectsOverviewIframe()" class="h-9 px-4 bg-primary text-white text-sm font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2" title="Open full project overview"><span class="material-symbols-outlined" style="font-size:16px;">dashboard</span>Overview</button>
         <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">tune</span>Customize widgets</button>
         <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">file_download</span>Export</button>
       </div>
@@ -6414,16 +6414,31 @@ function _setHeaderCrumb(parts) {
 // every other navigation path.
 function showProjectsDashboardView() {
   // Lands on the in-workspace Portfolio view (v31 recreation). From there,
-  // the user can click the 'Overview' button in the header to top-level
-  // navigate to the full projects.html mockup. Two-step pattern: Portfolio
-  // metrics first (KPIs + Pipeline + Health table), Overview drill-out
-  // second (the detailed Figma-style mockup).
+  // the user can click the 'Overview' button in the header to load the
+  // full projects.html mockup inside the workspace iframe (chrome hidden
+  // via projects.html's in-iframe CSS — same pattern as opportunity).
   if (typeof showPortfolio === 'function') {
     showPortfolio();
     if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Dashboard']);
   }
 }
 window.showProjectsDashboardView = showProjectsDashboardView;
+
+// Opens the full projects.html mockup inside the workspace iframe.
+// Same pattern as showOpportunitiesView — uses the pre-positioned
+// #projects-dashboard-view container (inset: 48px 0 0 64px). The inner
+// projects.html chrome (logo/side/topbar) is hidden by its own
+// in-iframe CSS so only the outer dashboard chrome stays visible.
+function openProjectsOverviewIframe() {
+  hideAllViews();
+  var v = document.getElementById('projects-dashboard-view');
+  var f = document.getElementById('projects-dashboard-frame');
+  // Cache-bust on every open so iframe-detect script fires fresh
+  if (f) f.setAttribute('src', 'projects.html?ts=' + Date.now());
+  if (v) v.classList.remove('hidden');
+  if (typeof _setHeaderCrumb === 'function') _setHeaderCrumb(['Projects', 'Overview']);
+}
+window.openProjectsOverviewIframe = openProjectsOverviewIframe;
 
 // Show the Projects > All Projects (Portfolios) view (iframe to projects.html)
 function showAllProjectsView() {
