@@ -3097,8 +3097,14 @@ function CockpitGrid() {
                   {/* Buttons — morph on decision */}
                   {!isDone ? (
                     <div style={{ display: 'flex', gap: 6, paddingTop: 3.3 }}>
-                      {/* Primary: "View in control tower" — Figma 425:2782 */}
-                      <button onClick={() => decide(p.rank, 'actioned')} className="open-pill" style={{ flex: 1, padding: '8.889px 14.889px', fontSize: 13, fontWeight: 700 }}>View in control tower</button>
+                      {/* Primary: "View in control tower" — Figma 425:2782
+                          Routes to control-tower.html in a new tab so the user
+                          keeps their command-center context. Also marks the
+                          priority as actioned so the card state advances. */}
+                      <button onClick={() => {
+                        decide(p.rank, 'actioned');
+                        window.open('control-tower.html', '_blank', 'noopener');
+                      }} className="open-pill" style={{ flex: 1, padding: '8.889px 14.889px', fontSize: 13, fontWeight: 700 }}>View in control tower</button>
                       {/* Secondary: "Defer" — Figma 425:2784 */}
                       <button onClick={() => {
                         decide(p.rank, 'escalated');
