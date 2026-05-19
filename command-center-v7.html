@@ -1672,7 +1672,7 @@ function SideOverlay({ open, onClose }) {
   return <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(17,24,39,0.4)', zIndex: 70 }} />;
 }
 
-function ActionPlanPanel({ open, onClose }) {
+function ActionPlanPanel({ open, onClose, onTakeAction }) {
   return (
     <aside style={{
       position: 'fixed', top: 0, right: 0, width: 560, maxWidth: '92vw',
@@ -1806,7 +1806,7 @@ function ActionPlanPanel({ open, onClose }) {
                       color: CC.textMute, fontSize: 11.5, fontWeight: 600,
                       cursor: 'pointer', fontFamily: 'inherit',
                     }}>Defer</button>
-                    <button style={{
+                    <button onClick={() => onTakeAction && onTakeAction(s)} style={{
                       display: 'inline-flex', alignItems: 'center', gap: 6,
                       padding: '6px 14px', borderRadius: 999,
                       border: `1px solid ${CC.primaryGradBtnBorder}`, background: CC.panelBg, color: CC.primary,
@@ -1837,10 +1837,11 @@ function ActionPlanPanel({ open, onClose }) {
   );
 }
 
-function KaisPanel({ open, onClose, metric, topic }) {
+function KaisPanel({ open, onClose, metric, topic, action }) {
   if (!open) return null;
   const isConcentrate = topic === 'concentrate';
   const isCreate      = topic === 'create';
+  const isAction      = topic === 'action' && action;
 
   // Sample cross-tab data for the "Where to Concentrate" drill-in: Service
   // Lines + Renewals by region and sales lead. Cells are open / at-risk
@@ -1874,7 +1875,7 @@ function KaisPanel({ open, onClose, metric, topic }) {
           </svg>
           <div>
             <div style={{ fontSize: 15, fontWeight: 700, color: CC.ink }}>Kai's AI</div>
-            <div style={{ fontSize: 11.5, color: CC.textMute }}>{isConcentrate ? 'Where to concentrate · Q4 plan' : isCreate ? 'Create a new task' : 'Right-side assistant pane'}</div>
+            <div style={{ fontSize: 11.5, color: CC.textMute }}>{isConcentrate ? 'Where to concentrate · Q4 plan' : isCreate ? 'Create a new task' : isAction ? (action.kind === 'project' ? 'Project action · ' + (action.urgency || 'review') : 'Action plan step') : 'Right-side assistant pane'}</div>
           </div>
         </div>
         <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', background: '#F7F4EE', color: CC.textMute, cursor: 'pointer' }}>
@@ -1886,21 +1887,66 @@ function KaisPanel({ open, onClose, metric, topic }) {
         {/* Context card — varies by topic */}
         <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, background: 'linear-gradient(135deg,#FFF7F1,#FFE8D7)', border: '1px solid #FFD7C3' }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: CC.primaryDeep, textTransform: 'uppercase', letterSpacing: 0.7, marginBottom: 8 }}>
-            {isConcentrate ? 'Concentrate here' : isCreate ? 'New task' : 'Current focus'}
+            {isConcentrate ? 'Concentrate here' : isCreate ? 'New task' : isAction ? (action.kind === 'project' ? 'Take action · project' : 'Take action · step') : 'Current focus'}
           </div>
           <div style={{ fontSize: 18, fontWeight: 700, color: CC.ink, lineHeight: 1.3 }}>
-            {isConcentrate ? 'Service Lines + Renewals' : isCreate ? 'Create a follow-up task' : (metric?.label || 'Executive summary')}
+            {isConcentrate ? 'Service Lines + Renewals' : isCreate ? 'Create a follow-up task' : isAction ? action.title : (metric?.label || 'Executive summary')}
           </div>
           <p style={{ margin: '8px 0 0', fontSize: 12.5, color: CC.textMute, lineHeight: 1.6 }}>
             {isConcentrate
               ? 'Closing the Top-3 renewals plus recovering Services leakage clears 68% of the Q4 gap. Below: open pipeline by region × sales lead, and the recommended next moves.'
               : isCreate
               ? "Set a title, assign an owner, and pick a due window. The task lands in your team's queue with a notification."
+              : isAction
+              ? (action.subtitle || '')
               : (metric?.ai || 'I can break down the top drivers, recovery actions, and next best moves from this command center.')}
           </p>
         </div>
 
-        {isCreate ? (
+        {isAction ? (
+          /* ── Action context view — opens from a Take-action / project-row CTA.
+                Shows a quick-fact block + 3 suggested prompts + Confirm CTA. ── */
+          <>
+            <div style={{ flexShrink: 0, padding: 14, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
+                {action.health && (
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 5, padding: '2px 8px', borderRadius: 999, background: '#FFF4E0', color: action.healthColor || CC.primary, fontSize: 10.5, fontWeight: 700 }}>
+                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: action.healthColor || CC.primary }} />
+                    {action.health}
+                  </span>
+                )}
+                {action.urgency && (
+                  <span style={{ fontSize: 11, color: CC.textMute }}>{action.urgency}</span>
+                )}
+              </div>
+              {action.impact && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '10px 12px', background: '#F4FBF6', border: '1px solid #C6E8D2', borderRadius: 10 }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#168A3A' }}>trending_up</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#168A3A' }}>Expected impact: {action.impact}</span>
+                </div>
+              )}
+            </div>
+
+            <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
+              <div style={{ fontSize: 12.5, fontWeight: 700, color: CC.ink, marginBottom: 10 }}>What do you want to do?</div>
+              {[
+                'Draft the kickoff message to the owner',
+                'Show me who needs to be looped in',
+                'Summarise risk + expected outcome'
+              ].map((q) => (
+                <button key={q} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 10, border: `1px solid ${CC.border}`, background: CC.panelBg, marginBottom: 8, fontFamily: 'inherit', cursor: 'pointer' }}>
+                  <span className="material-symbols-outlined" style={{ fontSize: 16, color: CC.primary, flexShrink: 0, marginTop: 1 }}>auto_awesome</span>
+                  <span style={{ flex: 1, fontSize: 12.5, color: CC.ink, lineHeight: 1.35 }}>{q}</span>
+                </button>
+              ))}
+            </div>
+
+            <div style={{ flexShrink: 0, display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+              <button onClick={onClose} style={{ height: 36, padding: '0 16px', borderRadius: 8, border: `1px solid ${CC.border}`, background: CC.panelBg, color: CC.ink, fontSize: 12.5, fontWeight: 600, cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
+              <button onClick={onClose} style={{ height: 36, padding: '0 18px', borderRadius: 8, border: 'none', background: CC.primary, color: '#fff', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>{action.cta || 'Confirm'}</button>
+            </div>
+          </>
+        ) : isCreate ? (
           /* ── Create-task form (opened from the Task icon on a signal insight strip) ── */
           <>
             <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
@@ -2509,7 +2555,8 @@ function CockpitGrid() {
   const pct = Math.round((FY.achieved / FY.target) * 100);
   const firstName = PERSONA.name.split(' ')[0];
   const [kaisPanelOpen, setKaisPanelOpen] = React.useState(false);
-  const [kaisTopic, setKaisTopic] = React.useState(null); // 'concentrate' when opened from Where-to-Concentrate
+  const [kaisTopic, setKaisTopic] = React.useState(null); // 'concentrate' | 'create' | 'action' | null
+  const [kaisAction, setKaisAction] = React.useState(null); // payload for topic='action' (project row / action plan step)
   const [widgetPanelOpen, setWidgetPanelOpen] = React.useState(false);
   const [historyPanelOpen, setHistoryPanelOpen] = React.useState(false);
   const [activityPanelOpen, setActivityPanelOpen] = React.useState(false);
@@ -2618,7 +2665,7 @@ function CockpitGrid() {
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: 11, fontWeight: 500, color: '#979797', lineHeight: '16px', marginBottom: 2, letterSpacing: 0.4 }}>GAP TO PLAN</div>
                 <div style={{ fontSize: 22, fontWeight: 700, color: '#FF3A46', lineHeight: '26px', letterSpacing: -0.4 }}>−${Math.abs(FY.gapToPlan)}{FY.currency}</div>
-                <div style={{ marginTop: 4, fontSize: 11.5, fontWeight: 600, color: '#111434' }}>{FY.pctAchieved}% Achieved</div>
+                <div style={{ marginTop: 4, fontSize: 11.5, fontWeight: 600, color: '#111434' }}>{FY.pctAchieved}% Achieved · {100 - FY.pctAchieved}% to go</div>
               </div>
             </div>
 
@@ -2642,7 +2689,7 @@ function CockpitGrid() {
             {/* Footer row */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <span style={{ fontSize: 11.5, fontWeight: 500, color: '#272A47', textTransform: 'capitalize' }}>
-                {FY.pctAchieved}% achieved
+                {FY.pctAchieved}% achieved · {100 - FY.pctAchieved}% to go
               </span>
 
               <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -3150,7 +3197,11 @@ function CockpitGrid() {
                       <div style={{ fontSize: 13, fontWeight: 700, color: CC.ink, textAlign: 'right' }}>{r.impact}</div>
                       <div style={{ fontSize: 10, color: CC.textMute, textAlign: 'right', marginTop: 1 }}>{r.impactSub}</div>
                     </div>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 999, border: `1px solid ${r.ctaBorder}`, background: CC.panelBg, fontSize: 10.5, fontWeight: 700, color: r.ctaBorder === CC.border ? CC.ink : CC.primary, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => {
+                      setKaisAction({ kind: 'project', title: r.name, subtitle: r.sub, impact: r.impact + ' · ' + r.impactSub, cta: r.cta, urgency: r.urgency, health: r.health, healthColor: r.healthColor });
+                      setKaisTopic('action');
+                      setKaisPanelOpen(true);
+                    }} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 999, border: `1px solid ${r.ctaBorder}`, background: CC.panelBg, fontSize: 10.5, fontWeight: 700, color: r.ctaBorder === CC.border ? CC.ink : CC.primary, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
                       {r.ctaBorder !== CC.border && <span className="material-symbols-outlined" style={{ fontSize: 10, color: CC.primary }}>redo</span>}
                       {r.cta}
                     </button>
@@ -3196,7 +3247,11 @@ function CockpitGrid() {
                           <span style={{ width: 2, height: 2, borderRadius: 1, background: CC.textSoft }} />
                           <span style={{ color: '#168A3A', fontWeight: 700 }}>{s.impact}</span>
                         </div>
-                        <button style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, border: `1px solid ${CC.primaryGradBtnBorder}`, background: CC.panelBg, color: CC.primary, fontSize: 11.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                        <button onClick={() => {
+                          setKaisAction({ kind: 'step', title: s.action, subtitle: s.module + ' · ' + s.tag + (s.auto ? ' · Auto-validated' : ''), impact: s.impact, cta: 'Confirm & run', urgency: s.eta, health: s.tag, healthColor: s.tagTone === 'risk' ? '#D33A24' : CC.primary });
+                          setKaisTopic('action');
+                          setKaisPanelOpen(true);
+                        }} style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 999, border: `1px solid ${CC.primaryGradBtnBorder}`, background: CC.panelBg, color: CC.primary, fontSize: 11.5, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
                           <KaiMiniMark size={12} /><span>Take action</span>
                         </button>
                       </div>
@@ -3213,9 +3268,14 @@ function CockpitGrid() {
       </div>
     </div>
     <SideOverlay open={kaisPanelOpen || widgetPanelOpen || actionPlanOpen || historyPanelOpen || activityPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); setWidgetPanelOpen(false); setActionPlanOpen(false); setHistoryPanelOpen(false); setActivityPanelOpen(false); }} />
-    <KaisPanel open={kaisPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); }} metric={activeMetric || METRICS.find((m) => m.id === 'leak')} topic={kaisTopic} />
+    <KaisPanel open={kaisPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); setKaisAction(null); }} metric={activeMetric || METRICS.find((m) => m.id === 'leak')} topic={kaisTopic} action={kaisAction} />
     <WidgetPanel open={widgetPanelOpen} onClose={() => setWidgetPanelOpen(false)} />
-    <ActionPlanPanel open={actionPlanOpen} onClose={() => setActionPlanOpen(false)} />
+    <ActionPlanPanel open={actionPlanOpen} onClose={() => setActionPlanOpen(false)} onTakeAction={(s) => {
+      setActionPlanOpen(false);
+      setKaisAction({ kind: 'step', title: s.action, subtitle: s.module + ' · ' + s.tag + (s.auto ? ' · Auto-validated' : ''), impact: s.impact, cta: 'Confirm & run', urgency: s.eta, health: s.tag, healthColor: s.tagTone === 'risk' ? '#D33A24' : CC.primary });
+      setKaisTopic('action');
+      setKaisPanelOpen(true);
+    }} />
     <HistoryPanel open={historyPanelOpen} onClose={() => setHistoryPanelOpen(false)} />
     <ActivityPanel open={activityPanelOpen} onClose={() => setActivityPanelOpen(false)} />
     </>
@@ -3273,7 +3333,8 @@ const COO_PROJECTS = [
 function COOGrid() {
   const todayStr = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
   const [kaisPanelOpen, setKaisPanelOpen] = React.useState(false);
-  const [kaisTopic, setKaisTopic] = React.useState(null); // 'create' from task icon, null for escalate/default
+  const [kaisTopic, setKaisTopic] = React.useState(null); // 'create' | 'action' | null
+  const [kaisAction, setKaisAction] = React.useState(null); // payload for topic='action' (project row)
   const [selectedDate, setSelectedDate] = React.useState('Today');
   const [selectedCompare, setSelectedCompare] = React.useState('Yesterday');
   const [activeTab, setActiveTab] = React.useState('Projects');
@@ -3291,7 +3352,7 @@ function COOGrid() {
   return (
     <>
     <SideOverlay open={kaisPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); }} />
-    <KaisPanel open={kaisPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); }} metric={null} topic={kaisTopic} />
+    <KaisPanel open={kaisPanelOpen} onClose={() => { setKaisPanelOpen(false); setKaisTopic(null); setKaisAction(null); }} metric={null} topic={kaisTopic} action={kaisAction} />
     <div className="home-hero" style={{ padding: '20px 24px 36px', fontFamily: CC.fontSans, color: CC.text, background: CC.pageBg, minHeight: 'calc(100vh - 48px)' }}>
       <div style={{ maxWidth: 1480, margin: '0 auto' }}>
 
@@ -3584,7 +3645,11 @@ function COOGrid() {
                       <div style={{ fontSize: 13, fontWeight: 700, color: CC.ink, textAlign: 'right' }}>{r.impact}</div>
                       <div style={{ fontSize: 10, color: CC.textMute, textAlign: 'right', marginTop: 1 }}>{r.impactSub}</div>
                     </div>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 999, border: `1px solid ${r.ctaBorder}`, background: CC.panelBg, fontSize: 10.5, fontWeight: 700, color: r.ctaBorder === CC.border ? CC.ink : CC.primary, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
+                    <button onClick={() => {
+                      setKaisAction({ kind: 'project', title: r.name, subtitle: r.sub, impact: r.impact + ' · ' + r.impactSub, cta: r.cta, urgency: r.urgency, health: r.health, healthColor: r.healthColor });
+                      setKaisTopic('action');
+                      setKaisPanelOpen(true);
+                    }} style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '6px 11px', borderRadius: 999, border: `1px solid ${r.ctaBorder}`, background: CC.panelBg, fontSize: 10.5, fontWeight: 700, color: r.ctaBorder === CC.border ? CC.ink : CC.primary, cursor: 'pointer', fontFamily: 'inherit', whiteSpace: 'nowrap' }}>
                       {r.ctaBorder !== CC.border && <span className="material-symbols-outlined" style={{ fontSize: 10, color: CC.primary }}>redo</span>}
                       {r.cta}
                     </button>
