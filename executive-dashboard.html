@@ -1744,9 +1744,12 @@
   </div>
 </div>
 </div>
+<button id="nps-trigger" onclick="triggerNPSFromButton()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary" title="Share Feedback">
+  <span class="material-symbols-outlined " style="font-size:20px;">feedback</span>
+</button>
 <button id="notif-bell" onclick="toggleNotifications()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary relative">
   <span class="material-symbols-outlined " style="font-size:20px;">notifications</span>
-  <span class="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full"></span>
+  <span class="absolute -top-0.5 -right-0.5 min-w-[16px] h-[16px] px-1 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">4</span>
 </button>
 <button id="collab-btn" onclick="toggleCollab()" class="w-8 h-8 flex items-center justify-center hover:bg-surface-container rounded-[6px] transition-colors text-secondary">
   <span class="material-symbols-outlined " style="font-size:20px;">forum</span>
@@ -10478,10 +10481,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Floating NPS Feedback Button -->
-<button id="nps-fab" onclick="triggerNPSFromButton()" class="fixed z-[60] w-10 h-10 flex items-center justify-center rounded-full shadow-lg hover:shadow-xl transition-all cursor-pointer" style="bottom:24px;right:160px;background:#ffffff;border:none;box-shadow:0 4px 16px rgba(0,0,0,0.12);" title="Share Feedback">
-  <span class="material-symbols-outlined text-primary" style="font-size:22px;">chat</span>
-</button>
+<!-- NPS Feedback trigger lives in the top bar now (id="nps-trigger") — floating FAB removed. -->
 
 <!-- ═══════════════════════ NPS FEEDBACK MODAL ═══════════════════════ -->
 <div id="nps-overlay" class="fixed inset-0 bg-black/30 z-[200] hidden flex items-center justify-center p-6" onclick="closeNPS()">
