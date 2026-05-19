@@ -774,7 +774,12 @@
     color: var(--kebs-text-soft); font-size: 13px;
   }
 
-  /* ─── Hero pattern (home top-band watermark) ─── */
+  /* ─── Hero pattern (home top-band watermark) ───
+     Tiled KEBS logo wallpaper behind the greeting band. Was relying on
+     an external 'pattern of the home.svg' asset that wasn't shipped —
+     now using an inline data-URL SVG of the logo so it always renders.
+     The bottom-fade mask keeps the pattern subtle and from competing
+     with the cards below. */
   .home-hero {
     position: relative;
     isolation: isolate; /* keep pattern behind contents */
@@ -782,20 +787,19 @@
   .home-hero::before {
     content: '';
     position: absolute; inset: -20px -24px auto -24px; /* bleed into page padding */
-    height: 360px;
-    background-image: url('assets/pattern%20of%20the%20home.svg');
-    background-repeat: no-repeat;
-    background-position: right top;
-    background-size: 720px auto;
-    opacity: 0.55;
+    height: 420px;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 130' width='120' height='130'><g transform='translate(36 38)' fill='%23FCE5D4'><path d='M15.83 6.77V15.99C15.83 17.6 14.39 18.82 12.83 18.51L5.67 17.07L0 22.85L12.5 25.34C15.28 25.9 18.14 25 20.11 22.94C21.64 21.33 22.5 19.18 22.5 16.96V0L15.83 6.77Z'/><path d='M32.16 6.77V15.86C32.16 17.55 33.68 18.82 35.29 18.48L42.31 17.07L48 22.85L35.52 25.34C32.74 25.9 29.88 25 27.91 22.94C26.36 21.36 25.5 19.21 25.5 16.98V0L32.16 6.77Z'/><path d='M15.83 47.24V37.8C15.83 36.3 14.5 35.17 13.03 35.46L5.67 36.92L0 31.14L12.5 28.66C15.28 28.1 18.14 29 20.11 31.06C21.64 32.67 22.5 34.81 22.5 37.03V54L15.83 47.24Z'/><path d='M32.17 47.23V37.64C32.17 36.2 33.44 35.13 34.83 35.41L42.33 36.9L48 31.15L35.5 28.67C32.72 28.1 29.86 29 27.89 31.06C26.36 32.67 25.5 34.82 25.5 37.04V54L32.17 47.23Z'/></g></svg>");
+    background-repeat: repeat;
+    background-size: 120px 130px;
+    opacity: 0.9;
     pointer-events: none;
     z-index: -1;
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 100%);
-            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 60%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
+            mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0) 100%);
   }
   [data-theme="dark"] .home-hero::before {
-    opacity: 0.20;
-    filter: brightness(1.4) saturate(0.6);
+    opacity: 0.18;
+    filter: brightness(1.6) saturate(0.5);
   }
 </style>
 </head>
@@ -3235,7 +3239,7 @@ function COOGrid() {
     <>
     <SideOverlay open={kaisPanelOpen} onClose={() => setKaisPanelOpen(false)} />
     <KaisPanel open={kaisPanelOpen} onClose={() => setKaisPanelOpen(false)} metric={null} />
-    <div style={{ padding: '20px 24px 36px', fontFamily: CC.fontSans, color: CC.text, background: CC.pageBg, minHeight: 'calc(100vh - 48px)' }}>
+    <div className="home-hero" style={{ padding: '20px 24px 36px', fontFamily: CC.fontSans, color: CC.text, background: CC.pageBg, minHeight: 'calc(100vh - 48px)' }}>
       <div style={{ maxWidth: 1480, margin: '0 auto' }}>
 
         {/* COO role badge */}
