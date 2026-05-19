@@ -4005,6 +4005,163 @@
     letter-spacing: .04em; text-transform: uppercase;
     margin-bottom: 12px;
   }
+  /* Chart-type segmented switcher — sits above the chart so the user
+     can swap visualizations (pipeline, vertical bars, donut, stacked, funnel). */
+  .wdm-chart-types {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 3px;
+    background: #fff;
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    margin-bottom: 14px;
+    box-shadow: 0 1px 2px rgba(17,20,52,0.04);
+  }
+  .wdm-ct-btn {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 5px 9px;
+    font-size: 11.5px; font-weight: 500;
+    color: var(--fg-3);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background .12s ease, color .12s ease, border-color .12s ease;
+    white-space: nowrap;
+  }
+  .wdm-ct-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+  .wdm-ct-btn:hover { background: #f6f6f1; color: var(--fg); }
+  .wdm-ct-btn.active {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-color: var(--primary-border);
+    font-weight: 600;
+  }
+  /* Vertical bar chart */
+  .wdm-vbars {
+    display: flex; align-items: flex-end; justify-content: space-around;
+    gap: 14px;
+    height: 220px;
+    padding: 12px 8px 0;
+    margin: 8px 0 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .wdm-vcol {
+    display: flex; flex-direction: column;
+    align-items: center;
+    flex: 1 1 0;
+    height: 100%;
+    cursor: pointer;
+    transition: opacity .15s ease;
+    min-width: 0;
+  }
+  .wdm-vcol.dim { opacity: .35; }
+  .wdm-vcol-stack {
+    flex: 1 1 0;
+    display: flex; align-items: flex-end;
+    width: 100%;
+    min-height: 0;
+  }
+  .wdm-vbar {
+    width: 100%;
+    border-radius: 6px 6px 0 0;
+    position: relative;
+    transition: filter .15s ease, transform .15s ease;
+    min-height: 4px;
+  }
+  .wdm-vcol:hover .wdm-vbar { filter: brightness(1.06); transform: translateY(-2px); }
+  .wdm-vcol.active .wdm-vbar { box-shadow: 0 0 0 2px var(--primary), 0 0 0 4px var(--primary-soft); }
+  .wdm-vbar-amt {
+    position: absolute; top: -20px; left: 0; right: 0;
+    text-align: center;
+    font-size: 11.5px; font-weight: 700; color: var(--fg);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  .wdm-vcol-lbl {
+    margin-top: 8px;
+    font-size: 11.5px; font-weight: 500; color: var(--fg-2);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden; text-overflow: ellipsis;
+    max-width: 100%;
+  }
+  /* Stacked horizontal bar — one single bar split into segments */
+  .wdm-stacked {
+    margin: 12px 0 18px;
+  }
+  .wdm-stacked-track {
+    display: flex;
+    height: 36px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #f1f1ee;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.05);
+  }
+  .wdm-stacked-seg {
+    height: 100%;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 11.5px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    cursor: pointer;
+    transition: filter .15s ease, transform .15s ease;
+    border-right: 2px solid #fff;
+    min-width: 28px;
+  }
+  .wdm-stacked-seg:last-child { border-right: 0; }
+  .wdm-stacked-seg:hover { filter: brightness(1.08); }
+  .wdm-stacked-seg.dim { opacity: .35; }
+  .wdm-stacked-seg.active { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,.12); }
+  .wdm-stacked-legend {
+    display: flex; flex-wrap: wrap; gap: 8px 14px;
+    margin-top: 14px;
+  }
+  .wdm-stacked-leg {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px; color: var(--fg-2);
+    transition: background .12s ease;
+  }
+  .wdm-stacked-leg:hover { background: #fafaf6; }
+  .wdm-stacked-leg.active { background: var(--primary-soft); color: var(--primary); font-weight: 600; }
+  .wdm-stacked-leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .wdm-stacked-leg-amt { font-weight: 700; color: var(--fg); font-variant-numeric: tabular-nums; }
+  /* Funnel — trapezoid shapes that narrow downward */
+  .wdm-funnel {
+    display: flex; flex-direction: column;
+    gap: 3px;
+    margin: 8px 0 16px;
+    align-items: center;
+  }
+  .wdm-funnel-row {
+    width: 100%;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .15s ease, transform .15s ease;
+  }
+  .wdm-funnel-row.dim { opacity: .35; }
+  .wdm-funnel-row.active .wdm-funnel-shape { box-shadow: 0 0 0 2px var(--primary); }
+  .wdm-funnel-row:hover .wdm-funnel-shape { filter: brightness(1.06); }
+  .wdm-funnel-shape {
+    height: 38px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 16px;
+    color: #fff;
+    font-size: 12.5px; font-weight: 600;
+    border-radius: 4px;
+    transition: filter .15s ease;
+    box-shadow: 0 1px 2px rgba(0,0,0,.08);
+  }
+  .wdm-funnel-shape .wdm-funnel-name { letter-spacing: -.005em; }
+  .wdm-funnel-shape .wdm-funnel-amt {
+    font-weight: 700; font-variant-numeric: tabular-nums;
+    margin-left: 16px;
+  }
   .wdm-chart-body {
     display: flex; flex-direction: column;
     align-items: center; gap: 18px;
@@ -12841,6 +12998,145 @@
     }};
   }
 
+  // Render vertical column chart -------------------------------
+  function renderVerticalBars(cfg, onSegmentClick, activeKey) {
+    const max = Math.max(...cfg.segments.map(s => s.value));
+    const cols = cfg.segments.map(seg => {
+      const hPct = max > 0 ? (seg.value / max) * 100 : 0;
+      const cls = activeKey === seg.key ? 'active' : (activeKey ? 'dim' : '');
+      const amt = `${cfg.currency || ''}${seg.value}${cfg.unit || ''}`;
+      return `<div class="wdm-vcol ${cls}" data-key="${seg.key.replace(/"/g, '&quot;')}">
+        <div class="wdm-vcol-stack">
+          <div class="wdm-vbar" style="height:${hPct}%; background:${seg.color}">
+            <span class="wdm-vbar-amt">${amt}</span>
+          </div>
+        </div>
+        <div class="wdm-vcol-lbl">${seg.key}</div>
+      </div>`;
+    }).join('');
+    const summaryHTML = (cfg.summary && cfg.summary.length)
+      ? `<div class="wdm-summary">${cfg.summary.map(s => `
+          <div class="wdm-summary-item">
+            <div class="wdm-summary-lbl">${s.label}</div>
+            <div class="wdm-summary-val ${s.tone || ''}">${s.value}</div>
+          </div>`).join('')}</div>`
+      : '';
+    const html = `
+      <div class="wdm-chart-title">Columns — click a bar to filter</div>
+      <div class="wdm-vbars">${cols}</div>
+      ${summaryHTML}`;
+    return { html, bind(root) {
+      root.querySelectorAll('[data-key]').forEach(el => {
+        el.addEventListener('click', () => onSegmentClick(el.dataset.key));
+      });
+    }};
+  }
+
+  // Render stacked single-bar chart ----------------------------
+  function renderStacked(cfg, onSegmentClick, activeKey) {
+    const total = cfg.segments.reduce((s, x) => s + x.value, 0);
+    const segs = cfg.segments.map(seg => {
+      const pct = total > 0 ? (seg.value / total) * 100 : 0;
+      const cls = activeKey === seg.key ? 'active' : (activeKey ? 'dim' : '');
+      const amt = `${cfg.currency || ''}${seg.value}${cfg.unit || ''}`;
+      return `<div class="wdm-stacked-seg ${cls}" data-key="${seg.key.replace(/"/g, '&quot;')}"
+        style="flex: 0 0 ${pct}%; background:${seg.color}"
+        title="${seg.key}: ${amt} (${pct.toFixed(1)}%)">${pct >= 8 ? amt : ''}</div>`;
+    }).join('');
+    const legend = cfg.segments.map(seg => {
+      const pct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0;
+      const cls = activeKey === seg.key ? 'active' : '';
+      const amt = `${cfg.currency || ''}${seg.value}${cfg.unit || ''}`;
+      return `<div class="wdm-stacked-leg ${cls}" data-key="${seg.key.replace(/"/g, '&quot;')}">
+        <span class="wdm-stacked-leg-dot" style="background:${seg.color}"></span>
+        <span>${seg.key}</span>
+        <span class="wdm-stacked-leg-amt">${amt}</span>
+        <span style="color:var(--fg-3);">${pct}%</span>
+      </div>`;
+    }).join('');
+    const summaryHTML = (cfg.summary && cfg.summary.length)
+      ? `<div class="wdm-summary">${cfg.summary.map(s => `
+          <div class="wdm-summary-item">
+            <div class="wdm-summary-lbl">${s.label}</div>
+            <div class="wdm-summary-val ${s.tone || ''}">${s.value}</div>
+          </div>`).join('')}</div>`
+      : '';
+    const html = `
+      <div class="wdm-chart-title">Composition — click a segment to filter</div>
+      <div class="wdm-stacked">
+        <div class="wdm-stacked-track">${segs}</div>
+        <div class="wdm-stacked-legend">${legend}</div>
+      </div>
+      ${summaryHTML}`;
+    return { html, bind(root) {
+      root.querySelectorAll('[data-key]').forEach(el => {
+        el.addEventListener('click', () => onSegmentClick(el.dataset.key));
+      });
+    }};
+  }
+
+  // Render funnel chart (trapezoidal shapes narrowing downward) -
+  function renderFunnel(cfg, onSegmentClick, activeKey) {
+    const max = Math.max(...cfg.segments.map(s => s.value));
+    const total = cfg.segments.reduce((s, x) => s + x.value, 0);
+    const rows = cfg.segments.map((seg, i) => {
+      const widthPct = max > 0 ? Math.max(28, (seg.value / max) * 100) : 28;
+      const cls = activeKey === seg.key ? 'active' : (activeKey ? 'dim' : '');
+      const amt = `${cfg.currency || ''}${seg.value}${cfg.unit || ''}`;
+      const sharePct = total > 0 ? ((seg.value / total) * 100).toFixed(0) : 0;
+      return `<div class="wdm-funnel-row ${cls}" data-key="${seg.key.replace(/"/g, '&quot;')}">
+        <div class="wdm-funnel-shape" style="width:${widthPct}%; background:${seg.color};">
+          <span class="wdm-funnel-name">${seg.key}</span>
+          <span class="wdm-funnel-amt">${amt} · ${sharePct}%</span>
+        </div>
+      </div>`;
+    }).join('');
+    const summaryHTML = (cfg.summary && cfg.summary.length)
+      ? `<div class="wdm-summary">${cfg.summary.map(s => `
+          <div class="wdm-summary-item">
+            <div class="wdm-summary-lbl">${s.label}</div>
+            <div class="wdm-summary-val ${s.tone || ''}">${s.value}</div>
+          </div>`).join('')}</div>`
+      : '';
+    const html = `
+      <div class="wdm-chart-title">Funnel — click a stage to filter</div>
+      <div class="wdm-funnel">${rows}</div>
+      ${summaryHTML}`;
+    return { html, bind(root) {
+      root.querySelectorAll('[data-key]').forEach(el => {
+        el.addEventListener('click', () => onSegmentClick(el.dataset.key));
+      });
+    }};
+  }
+
+  // Chart type registry — used by the switcher in the modal head
+  const CHART_TYPES = [
+    { id: 'pipeline', label: 'Pipeline',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="14" y2="12"/><line x1="4" y1="18" x2="10" y2="18"/></svg>' },
+    { id: 'bars', label: 'Bars',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="10"/><line x1="10" y1="20" x2="10" y2="4"/><line x1="15" y1="20" x2="15" y2="12"/><line x1="20" y1="20" x2="20" y2="8"/></svg>' },
+    { id: 'donut', label: 'Donut',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/></svg>' },
+    { id: 'stacked', label: 'Stacked',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="9" width="6" height="6"/><rect x="9" y="9" width="6" height="6"/><rect x="15" y="9" width="6" height="6"/></svg>' },
+    { id: 'funnel', label: 'Funnel',
+      icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18l-7 9v6l-4-2v-4z"/></svg>' }
+  ];
+
+  function renderChartTypeBar(activeType) {
+    return `<div class="wdm-chart-types" role="tablist" aria-label="Chart type">
+      ${CHART_TYPES.map(t => `
+        <button type="button"
+                class="wdm-ct-btn ${t.id === activeType ? 'active' : ''}"
+                data-chart-type="${t.id}"
+                role="tab"
+                aria-selected="${t.id === activeType ? 'true' : 'false'}"
+                title="${t.label} view">
+          ${t.icon}<span>${t.label}</span>
+        </button>`).join('')}
+    </div>`;
+  }
+
   // Render table head + body ----------------------------------
   function renderTable(cfg, rows, sortState) {
     const thead = cfg.columns.map(col => {
@@ -12903,11 +13199,15 @@
 
   // Mount fully-loaded modal content --------------------------
   function mount(o, title, cfg) {
+    // Initial chart type — donut by default; widgets that declared
+    // type:'bars' (e.g. Revenue pipeline) start in the pipeline view.
+    const initialChartType = cfg.chart.type === 'bars' ? 'pipeline' : 'donut';
     const state = {
       filterKey: null,           // chart segment selected
       search: '',
       sort: { key: null, dir: 'asc' },
-      colFilters: {}             // { columnKey: Set<value> } — multi-metric column filters
+      colFilters: {},            // { columnKey: Set<value> } — multi-metric column filters
+      chartType: initialChartType
     };
 
     function compute() {
@@ -12941,11 +13241,27 @@
     function renderAll() {
       // Chart
       const chartEl = o.querySelector('.wdm-chart');
-      const chart = cfg.chart.type === 'bars'
-        ? renderBars(cfg.chart, onSegment, state.filterKey)
-        : renderDonut(cfg.chart, onSegment, state.filterKey);
-      chartEl.innerHTML = chart.html;
+      const renderer = {
+        pipeline: renderBars,        // horizontal bar list (current Revenue pipeline default)
+        bars: renderVerticalBars,    // vertical columns
+        donut: renderDonut,
+        stacked: renderStacked,
+        funnel: renderFunnel
+      }[state.chartType] || renderDonut;
+      const chart = renderer(cfg.chart, onSegment, state.filterKey);
+      // Prepend the chart-type switcher above the chart contents so the user
+      // can swap visualizations without leaving the modal.
+      chartEl.innerHTML = renderChartTypeBar(state.chartType) + chart.html;
       chart.bind(chartEl);
+      // Wire the chart-type switcher
+      chartEl.querySelectorAll('.wdm-ct-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.chartType;
+          if (t === state.chartType) return;
+          state.chartType = t;
+          renderAll();
+        });
+      });
 
       // Active filter pill
       const af = o.querySelector('.wdm-active-filter');
