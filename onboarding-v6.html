@@ -1414,16 +1414,6 @@
           </select>
         </div>
         <div class="ob4-field">
-          <label class="ob4-label">Team size</label>
-          <div class="ob4-tile-grid" data-cols="5" data-field="teamSize">
-            <button type="button" class="ob4-tile" data-value="solo" onclick="pickTile(this)">Just me</button>
-            <button type="button" class="ob4-tile" data-value="2-10" onclick="pickTile(this)">2 – 10</button>
-            <button type="button" class="ob4-tile" data-value="11-50" onclick="pickTile(this)">11 – 50</button>
-            <button type="button" class="ob4-tile" data-value="51-200" onclick="pickTile(this)">51 – 200</button>
-            <button type="button" class="ob4-tile" data-value="200+" onclick="pickTile(this)">200+</button>
-          </div>
-        </div>
-        <div class="ob4-field">
           <label class="ob4-label" for="ob-industry">Industry</label>
           <select class="ob4-select" id="ob-industry" onchange="onStep2Change()">
             <option value="" disabled selected>Select your industry</option>
@@ -1433,6 +1423,16 @@
             <option value="marketing">Marketing &amp; Creative</option>
             <option value="other">Other</option>
           </select>
+        </div>
+        <div class="ob4-field">
+          <label class="ob4-label">Team size</label>
+          <div class="ob4-tile-grid" data-cols="5" data-field="teamSize">
+            <button type="button" class="ob4-tile" data-value="solo" onclick="pickTile(this)">Just me</button>
+            <button type="button" class="ob4-tile" data-value="2-10" onclick="pickTile(this)">2 – 10</button>
+            <button type="button" class="ob4-tile" data-value="11-50" onclick="pickTile(this)">11 – 50</button>
+            <button type="button" class="ob4-tile" data-value="51-200" onclick="pickTile(this)">51 – 200</button>
+            <button type="button" class="ob4-tile" data-value="200+" onclick="pickTile(this)">200+</button>
+          </div>
         </div>
       </div>
 
