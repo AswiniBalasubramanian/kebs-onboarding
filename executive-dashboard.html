@@ -283,18 +283,47 @@
         .sidebar-nav-item.nav-active .nav-label-small { color: #0f62fe; font-weight: 600; }
         .sidebar-nav-item.nav-active .nav-label-full { color: #0f62fe !important; font-weight: 600 !important; }
 
-        /* ─── Outer sidebar accent — retints the active nav item when
-           `data-accent` is set on <html> (via the Appearance swatches in
-           the user menu). Keeps #0f62fe as the bare default when no
-           accent has been chosen. ─── */
-        html[data-accent="orange"] { --exec-accent: #FA5D2B; }
-        html[data-accent="blue"]   { --exec-accent: #2563EB; }
-        html[data-accent="green"]  { --exec-accent: #16A34A; }
-        html[data-accent="purple"] { --exec-accent: #7C3AED; }
+        /* ─── Outer-chrome accent system ────────────────────────────────
+           Token triplet (--exec-accent / --exec-accent-soft / --exec-accent-
+           deep) per accent. setAccent() in the profile menu writes
+           data-accent on <html>; every selector below cascades from there
+           so the WHOLE outer chrome retints when the user swaps swatches.
+           Inner iframe content retints through its own --kebs-primary
+           system, already wired in command-center-v7.html. */
+        html[data-accent="orange"] { --exec-accent: #FA5D2B; --exec-accent-soft: #FFEEE5; --exec-accent-deep: #C8421A; }
+        html[data-accent="blue"]   { --exec-accent: #2563EB; --exec-accent-soft: #DBEAFE; --exec-accent-deep: #1D4ED8; }
+        html[data-accent="green"]  { --exec-accent: #16A34A; --exec-accent-soft: #DCFCE7; --exec-accent-deep: #15803D; }
+        html[data-accent="purple"] { --exec-accent: #7C3AED; --exec-accent-soft: #EDE9FE; --exec-accent-deep: #6D28D9; }
+
+        /* Sidebar active nav item */
         html[data-accent] .sidebar-nav-item.nav-active { border-left-color: var(--exec-accent) !important; }
         html[data-accent] .sidebar-nav-item.nav-active .nav-icon-wrap .material-symbols-outlined { color: var(--exec-accent) !important; fill: none !important; }
         html[data-accent] .sidebar-nav-item.nav-active .nav-label-small,
         html[data-accent] .sidebar-nav-item.nav-active .nav-label-full  { color: var(--exec-accent) !important; }
+
+        /* Top-bar Upgrade button: outline + diamond icon retint */
+        html[data-accent] .topbar-upgrade { border-color: var(--exec-accent) !important; color: var(--exec-accent) !important; }
+        html[data-accent] .topbar-upgrade .material-symbols-outlined { color: var(--exec-accent) !important; }
+
+        /* Notification bell badge ('4' pill) */
+        html[data-accent] #notif-bell .bg-primary { background: var(--exec-accent) !important; }
+
+        /* What's-new red dot on the gift icon */
+        html[data-accent] #whatsnew-btn span[style*="background: var(--kebs-primary)"],
+        html[data-accent] #whatsnew-btn .bg-primary { background: var(--exec-accent) !important; }
+
+        /* Floating 'Get started · 5' FAB — retints the inline gradient
+           that originally hardcodes IBM Carbon blue. Uses the accent +
+           deeper variant for the same diagonal gradient feel. */
+        html[data-accent] #gs-fab-btn {
+          background: linear-gradient(135deg, var(--exec-accent) 0%, var(--exec-accent-deep) 100%) !important;
+          box-shadow: 0 4px 16px color-mix(in srgb, var(--exec-accent) 40%, transparent) !important;
+        }
+        html[data-accent] #gs-fab-btn #gs-badge { color: var(--exec-accent) !important; }
+
+        /* Profile avatar (PR) — gradient already cream-based; nudge the
+           ring-on-hover to the active accent so it ties to the system. */
+        html[data-accent] #user-menu-btn:hover { box-shadow: 0 0 0 3px color-mix(in srgb, var(--exec-accent) 25%, transparent) !important; }
 
         /* Inactive nav icon wrap — transparent bg */
         .sidebar-nav-item:not(.nav-active) .nav-icon-wrap {
