@@ -6225,7 +6225,10 @@
 
   <!-- SIDEBAR -->
   <aside class="side">
-    <a href="executive-dashboard.html" class="nav-item">
+    <!-- Sidebar items mirror the executive-dashboard outer chrome so the
+         user feels they're in the same product. Home / Kais AI / Inbox /
+         Project (active) / Opportunity / Reports / Settings. -->
+    <a href="executive-dashboard.html" class="nav-item" title="Home">
       <span class="ic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/>
@@ -6233,25 +6236,26 @@
       </span>
       <span class="lbl">Home</span>
     </a>
-    <div class="nav-item">
+    <div class="nav-item" title="Kais AI">
       <span class="ic">
+        <!-- Kai sparkle/flame -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+          <path d="M12 3l1.8 4.5L18 9l-4.2 1.5L12 15l-1.8-4.5L6 9l4.2-1.5z"/>
+          <path d="M5 15l.8 2L7.6 18l-1.8.5L5 21l-.8-2.5L2.4 18 4.2 17z"/>
         </svg>
       </span>
-      <span class="lbl">Alerts</span>
-      <span class="badge">5</span>
+      <span class="lbl">Kais AI</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" title="Inbox">
       <span class="ic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
-          <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
+          <path d="M22 12h-6l-2 3h-4l-2-3H2"/>
+          <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>
         </svg>
       </span>
-      <span class="lbl">Portfolios</span>
+      <span class="lbl">Inbox</span>
     </div>
-    <div class="nav-item active">
+    <div class="nav-item active" title="Project">
       <span class="ic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <rect x="4" y="5" width="16" height="15" rx="2"/>
@@ -6259,55 +6263,41 @@
           <path d="M8 5V3M16 5V3"/>
         </svg>
       </span>
-      <span class="lbl">Projects</span>
+      <span class="lbl">Project</span>
     </div>
-    <div class="nav-item">
+    <div class="nav-item" title="Opportunity">
       <span class="ic">
+        <!-- target / track_changes for Opportunity, matching executive-dashboard -->
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M20 21v-2a4 4 0 0 0-3-3.87"/><path d="M4 21v-2a4 4 0 0 1 3-3.87"/>
-          <circle cx="12" cy="7" r="4"/>
+          <circle cx="12" cy="12" r="9"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="12" cy="12" r="1.5" fill="currentColor"/>
         </svg>
       </span>
-      <span class="lbl">Accounts</span>
+      <span class="lbl">Opportunity</span>
     </div>
-    <div class="nav-item">
-      <span class="ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20"/><path d="M6 14h4"/>
-        </svg>
-      </span>
-      <span class="lbl">Billing</span>
-    </div>
-    <div class="nav-item">
-      <span class="ic">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>
-          <path d="M9 13h6M9 17h4"/>
-        </svg>
-      </span>
-      <span class="lbl">Reports</span>
-    </div>
-    <div class="nav-item">
+    <div class="nav-item" title="Reports">
       <span class="ic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 3v18h18"/><path d="M7 14l3-3 4 4 6-7"/>
         </svg>
       </span>
-      <span class="lbl">Analytics</span>
+      <span class="lbl">Reports</span>
     </div>
     <div class="side-spacer"></div>
-    <div class="nav-item">
+    <div class="nav-item" title="More">
       <span class="ic">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9c.13.32.21.66.21 1H21a2 2 0 0 1 0 4h-.09c-.34 0-.68.08-1 .21z"/>
+          <rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/>
+          <rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>
         </svg>
       </span>
-      <span class="lbl">Settings</span>
+      <span class="lbl">More</span>
     </div>
   </aside>
 
-  <!-- TOPBAR -->
+  <!-- TOPBAR — mirrors executive-dashboard outer chrome: breadcrumb on
+       left, then Upgrade pill + bell with badge + PR avatar on the right. -->
   <header class="topbar">
     <nav class="crumb">
       <a href="executive-dashboard.html">Home</a>
@@ -6317,14 +6307,22 @@
       <span class="cur">Project Dashboard</span>
     </nav>
     <div class="top-spacer"></div>
-    <a href="#" class="top-link">Help center</a>
+    <a href="executive-dashboard.html" class="top-link" style="margin-right:8px;">Back to Command Center</a>
+    <button aria-label="Upgrade" style="display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 14px;border-radius:8px;border:1px solid #FA5D2B;background:#fff;color:#FA5D2B;font:600 12.5px 'DM Sans',sans-serif;cursor:pointer;margin-right:8px;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12l4 6-10 13L2 9z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></svg>
+      Upgrade
+    </button>
     <button class="icon-btn" aria-label="Search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
     </button>
-    <button class="icon-btn" aria-label="Notifications">
+    <button class="icon-btn" aria-label="Notifications" style="position:relative;">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 8-3 8h18s-3-1-3-8"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <span style="position:absolute;top:-2px;right:-2px;min-width:16px;height:16px;padding:0 4px;background:#FA5D2B;color:#fff;font:700 9px/16px 'DM Sans',sans-serif;border-radius:999px;display:flex;align-items:center;justify-content:center;">4</span>
     </button>
-    <div class="avatar">PM</div>
+    <button class="icon-btn" aria-label="Messages">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </button>
+    <div class="avatar" style="background:linear-gradient(135deg,#FCD5B5 0%,#FA9E5B 100%);color:#7a3a10;">PR</div>
   </header>
 
   <!-- MAIN -->
