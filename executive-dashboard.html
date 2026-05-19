@@ -1782,6 +1782,19 @@ PR
   #user-menu .swatch[data-swatch="blue"]   { background:#2563EB; }
   #user-menu .swatch[data-swatch="green"]  { background:#16A34A; }
   #user-menu .swatch[data-swatch="purple"] { background:#7C3AED; }
+
+  /* ─── Get-started FAB visibility ──────────────────────────────────
+     When any right-side panel slides in (notifications, collab, what's
+     new, CTA list/detail, widgets, AI assistant), the FAB should step
+     out of the way so it doesn't overlap the panel content. The panels
+     close themselves by ADDING the .translate-x-full class, so the
+     open state is .fixed.right-0 WITHOUT .translate-x-full.
+     :has() lets us detect any such open panel and fade the FAB. */
+  body:has(aside.fixed.right-0:not(.translate-x-full):not(#sidebar)) #gs-fab-btn {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+  }
 </style>
 <div id="user-menu" class="hidden absolute right-0 top-full mt-2 w-64 bg-white border border-outline-variant rounded-lg shadow-xl z-[90]">
   <!-- Switch View (CEO / COO) -->
@@ -9080,7 +9093,7 @@ function toggleAIAssistant() {
 </aside>
 
 <!-- Get Started FAB -->
-<button onclick="toggleGSPanel()" style="position:fixed;bottom:24px;right:24px;z-index:60;display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;background:linear-gradient(135deg,#0f62fe 0%,#0043ce 100%);color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;border:none;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,115,234,0.4);transition:background 0.15s;">
+<button id="gs-fab-btn" onclick="toggleGSPanel()" style="position:fixed;bottom:24px;right:24px;z-index:60;display:flex;align-items:center;gap:8px;height:40px;padding:0 18px;background:linear-gradient(135deg,#0f62fe 0%,#0043ce 100%);color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;border:none;border-radius:20px;cursor:pointer;box-shadow:0 4px 16px rgba(0,115,234,0.4);transition:opacity 0.18s, transform 0.18s, background 0.15s;">
   Get started
   <span id="gs-badge" style="display:flex;align-items:center;justify-content:center;width:18px;height:18px;background:#fff;color:#0f62fe;font-size:10px;font-weight:700;border-radius:50%;">5</span>
 </button>
