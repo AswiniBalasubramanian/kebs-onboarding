@@ -1876,10 +1876,10 @@ function KaisPanel({ open, onClose, metric, topic }) {
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>close</span>
         </button>
       </div>
-      <div style={{ padding: 20, overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ padding: 20, overflowY: 'auto', overflowX: 'hidden', flex: '1 1 0', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 14 }}>
 
         {/* Context card — varies by topic */}
-        <div style={{ padding: 16, borderRadius: 12, background: 'linear-gradient(135deg,#FFF7F1,#FFE8D7)', border: '1px solid #FFD7C3' }}>
+        <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, background: 'linear-gradient(135deg,#FFF7F1,#FFE8D7)', border: '1px solid #FFD7C3' }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: CC.primaryDeep, textTransform: 'uppercase', letterSpacing: 0.7, marginBottom: 8 }}>
             {isConcentrate ? 'Concentrate here' : 'Current focus'}
           </div>
@@ -1896,7 +1896,7 @@ function KaisPanel({ open, onClose, metric, topic }) {
         {isConcentrate ? (
           <>
             {/* Region × Sales Lead cross-tab */}
-            <div style={{ borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg, overflow: 'hidden' }}>
+            <div style={{ flexShrink: 0, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg, overflow: 'hidden' }}>
               <div style={{ padding: '12px 14px', borderBottom: `1px solid ${CC.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <div style={{ fontSize: 12.5, fontWeight: 700, color: CC.ink }}>Open pipeline · region × sales lead</div>
                 <span style={{ fontSize: 10.5, fontWeight: 700, color: CC.textMute, textTransform: 'uppercase', letterSpacing: 0.6 }}>USD</span>
@@ -1933,7 +1933,7 @@ function KaisPanel({ open, onClose, metric, topic }) {
             </div>
 
             {/* Follow-up actions */}
-            <div style={{ padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
+            <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
               <div style={{ fontSize: 12.5, fontWeight: 700, color: CC.ink, marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 16, color: CC.primary }}>bolt</span>
                 Follow-up actions
@@ -1957,7 +1957,7 @@ function KaisPanel({ open, onClose, metric, topic }) {
           </>
         ) : (
           /* Generic suggested-prompts view (used by every other Ask Kai entry point) */
-          <div style={{ padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
+          <div style={{ flexShrink: 0, padding: 16, borderRadius: 12, border: `1px solid ${CC.border}`, background: CC.panelBg }}>
             <div style={{ fontSize: 12.5, fontWeight: 700, color: CC.ink, marginBottom: 10 }}>Suggested prompts</div>
             {['Show the top accounts behind this signal', 'Draft the next recommended CTA', 'Summarize risk and recovery in plain language'].map((item) => (
               <button key={item} style={{ width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 10, border: `1px solid ${CC.border}`, background: CC.panelBg, marginBottom: 8, fontSize: 12.5, color: CC.ink, cursor: 'pointer' }}>{item}</button>
