@@ -1829,9 +1829,10 @@ PR
   <!-- Switch View (CEO / COO) -->
   <div class="switch-view-section">
     <p class="menu-label">Switch View</p>
-    <div style="display:flex;gap:8px;">
-      <button id="role-ceo-btn" type="button" onclick="switchRole('ceo')" class="role-btn role-btn-on">CEO</button>
-      <button id="role-coo-btn" type="button" onclick="switchRole('coo')" class="role-btn role-btn-off">COO</button>
+    <div style="display:flex;gap:6px;">
+      <button id="role-ceo-btn"   type="button" onclick="switchRole('ceo')"   class="role-btn role-btn-on">CEO</button>
+      <button id="role-coo-btn"   type="button" onclick="switchRole('coo')"   class="role-btn role-btn-off">COO</button>
+      <button id="role-sales-btn" type="button" onclick="switchRole('sales')" class="role-btn role-btn-off">Sales</button>
     </div>
   </div>
   <div class="px-4 py-4 border-b border-outline-variant flex items-center gap-3">
@@ -7672,7 +7673,7 @@ document.addEventListener('click', (e) => {
 
 // ─── Role switcher (CEO / COO) — parity with command-center-v7 ───
 function switchRole(role) {
-  if (role !== 'ceo' && role !== 'coo') role = 'ceo';
+  if (role !== 'ceo' && role !== 'coo' && role !== 'sales') role = 'ceo';
   var m = document.getElementById('user-menu');
   var b = document.getElementById('user-menu-btn');
   if (m) m.classList.add('hidden');
@@ -7687,11 +7688,13 @@ function switchRole(role) {
   updateRoleButtons(role);
 }
 function updateRoleButtons(role) {
-  var ceo = document.getElementById('role-ceo-btn');
-  var coo = document.getElementById('role-coo-btn');
+  var ceo   = document.getElementById('role-ceo-btn');
+  var coo   = document.getElementById('role-coo-btn');
+  var sales = document.getElementById('role-sales-btn');
   if (!ceo || !coo) return;
-  ceo.className = 'role-btn ' + (role === 'ceo' ? 'role-btn-on' : 'role-btn-off');
-  coo.className = 'role-btn ' + (role === 'coo' ? 'role-btn-on' : 'role-btn-off');
+  ceo.className   = 'role-btn ' + (role === 'ceo'   ? 'role-btn-on' : 'role-btn-off');
+  coo.className   = 'role-btn ' + (role === 'coo'   ? 'role-btn-on' : 'role-btn-off');
+  if (sales) sales.className = 'role-btn ' + (role === 'sales' ? 'role-btn-on' : 'role-btn-off');
 }
 
 // ─── Appearance (Theme + Accent) — parity with command-center-v7 ───
