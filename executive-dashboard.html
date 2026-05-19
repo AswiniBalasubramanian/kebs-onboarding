@@ -1578,7 +1578,7 @@
 <span class="pin-icon hidden ml-auto mr-1 cursor-pointer text-secondary hover:text-primary" onclick="event.stopPropagation();togglePin(this.closest('.sidebar-nav-item'))"><span class="material-symbols-outlined " style="font-size:16px;">push_pin</span></span>
 </div>
 
-<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#525252] hover:bg-[#e5e5e5] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="apps" data-pinned="true" data-subs="Projects Dashboard,All Projects,Milestones,Invoice,Expense,Reports" onclick="setActiveNav(this);showProjects()">
+<div class="nav-item sidebar-nav-item group relative flex flex-col items-center justify-center w-full py-2.5 text-[#525252] hover:bg-[#e5e5e5] cursor-pointer transition-colors duration-75" data-name="projects" data-cat="apps" data-pinned="true" data-subs="Portfolio,Project Detail,Milestones,Invoice,Expense,Reports" onclick="setActiveNav(this);showPortfolio()">
 <div class="nav-icon-wrap"><span class="material-symbols-outlined " style="font-size:20px;">assignment</span></div>
 <span class="nav-label-small text-[10px] mt-0.5">Project</span>
 <span class="nav-label-full hidden text-sm font-medium flex-1">Project</span>
@@ -3335,6 +3335,196 @@ PR
         <p class="text-sm text-secondary mt-2">No requests match your filters</p>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════ Portfolio Overview ════════════════════════════ -->
+<div id="portfolio-view" class="hidden">
+  <div class="px-8 py-6 max-w-[1480px] mx-auto" style="font-family:'IBM Plex Sans',sans-serif;">
+
+    <!-- Header -->
+    <section class="flex items-end justify-between mb-6 gap-4 flex-wrap">
+      <div>
+        <p class="text-[11px] font-bold tracking-[0.1em] text-secondary uppercase mb-1">FY26 · Last 30 days</p>
+        <h1 class="text-[28px] font-semibold text-on-surface tracking-tight leading-none">Portfolio metrics</h1>
+        <p class="text-sm text-secondary mt-2">Apr 19 – May 19, 2026 · 42 active projects · 3 portfolios</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">tune</span>Customize widgets</button>
+        <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">file_download</span>Export</button>
+      </div>
+    </section>
+
+    <!-- KPI grid (6 cards) -->
+    <section class="grid grid-cols-6 gap-3 mb-6">
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Total Order Value</p><p class="text-[22px] font-bold text-on-surface leading-none">$5.0M</p><p class="text-[11px] text-secondary mt-2"><span class="text-[#168A3A] font-semibold">↑ 12%</span> vs FY25</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Revenue Actual</p><p class="text-[22px] font-bold text-on-surface leading-none">$3.5M</p><p class="text-[11px] text-secondary mt-2"><span class="text-[#B26A00] font-semibold">70%</span> of plan</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Forecast</p><p class="text-[22px] font-bold text-on-surface leading-none">$5.0M</p><p class="text-[11px] text-secondary mt-2"><span class="text-[#168A3A] font-semibold">100%</span> of plan</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Billed</p><p class="text-[22px] font-bold text-on-surface leading-none">$3.2M</p><p class="text-[11px] text-secondary mt-2"><span class="text-[#168A3A] font-semibold">91%</span> realization</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Gross Margin</p><p class="text-[22px] font-bold text-on-surface leading-none">$24M</p><p class="text-[11px] text-secondary mt-2"><span class="text-[#D33A24] font-semibold">−$6M</span> vs plan</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Billable Util.</p><p class="text-[22px] font-bold text-on-surface leading-none">81%</p><p class="text-[11px] text-secondary mt-2">Target: <span class="font-semibold text-on-surface">85%</span></p></div>
+    </section>
+
+    <!-- Revenue Pipeline Waterfall + Leakage Breakdown -->
+    <section class="grid grid-cols-3 gap-4 mb-6">
+      <div class="col-span-2 bg-white border border-[#E6E3DC] rounded-xl p-5">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h2 class="text-[15px] font-semibold text-on-surface">Revenue pipeline</h2>
+            <p class="text-[11px] text-secondary mt-0.5">Forecasted → Allocated → Actual → Billed → Collected</p>
+          </div>
+          <a href="#" class="text-[12px] font-semibold text-primary hover:underline">Open in revenue &amp; billing →</a>
+        </div>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3"><span class="text-[11px] text-secondary w-20 shrink-0">Forecasted</span><div class="flex-1 h-7 bg-[#F4F0E8] rounded-md relative overflow-hidden"><div class="h-full bg-gradient-to-r from-[#FA5D2B] to-[#FFB28A] rounded-md" style="width:100%;"></div><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-white">$5.0M</span></div></div>
+          <div class="flex items-center gap-3"><span class="text-[11px] text-secondary w-20 shrink-0">Allocated</span><div class="flex-1 h-7 bg-[#F4F0E8] rounded-md relative overflow-hidden"><div class="h-full bg-[#FFB28A] rounded-md" style="width:90%;"></div><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#7A3A10]">$4.5M</span></div></div>
+          <div class="flex items-center gap-3"><span class="text-[11px] text-secondary w-20 shrink-0">Actual</span><div class="flex-1 h-7 bg-[#F4F0E8] rounded-md relative overflow-hidden"><div class="h-full bg-[#FFCBA5] rounded-md" style="width:70%;"></div><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#7A3A10]">$3.5M</span></div></div>
+          <div class="flex items-center gap-3"><span class="text-[11px] text-secondary w-20 shrink-0">Billed</span><div class="flex-1 h-7 bg-[#F4F0E8] rounded-md relative overflow-hidden"><div class="h-full bg-[#FCD5B5] rounded-md" style="width:64%;"></div><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#7A3A10]">$3.2M</span></div></div>
+          <div class="flex items-center gap-3"><span class="text-[11px] text-secondary w-20 shrink-0">Collected</span><div class="flex-1 h-7 bg-[#F4F0E8] rounded-md relative overflow-hidden"><div class="h-full bg-[#FFE0CC] rounded-md" style="width:52%;"></div><span class="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] font-bold text-[#7A3A10]">$2.6M</span></div></div>
+        </div>
+      </div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-5">
+        <div class="flex items-center justify-between mb-4"><h2 class="text-[15px] font-semibold text-on-surface">Leakage</h2><a href="#" class="text-[12px] font-semibold text-primary hover:underline">Investigate →</a></div>
+        <p class="text-[24px] font-bold text-on-surface leading-none">$840K</p>
+        <p class="text-[11px] text-secondary mt-1 mb-4">Total across 5 categories</p>
+        <div class="space-y-2.5">
+          <div class="flex items-center justify-between text-[12px]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#FA5D2B]"></span><span class="text-on-surface">Under-billing</span></div><span class="font-semibold text-on-surface">$324K</span></div>
+          <div class="flex items-center justify-between text-[12px]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#FFB28A]"></span><span class="text-on-surface">Missed milestones</span></div><span class="font-semibold text-on-surface">$198K</span></div>
+          <div class="flex items-center justify-between text-[12px]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#FCD5B5]"></span><span class="text-on-surface">Scope creep</span></div><span class="font-semibold text-on-surface">$156K</span></div>
+          <div class="flex items-center justify-between text-[12px]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#F4D9CB]"></span><span class="text-on-surface">Rate gaps</span></div><span class="font-semibold text-on-surface">$96K</span></div>
+          <div class="flex items-center justify-between text-[12px]"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#EFE8DD]"></span><span class="text-on-surface">Other</span></div><span class="font-semibold text-on-surface">$66K</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Project Health Table -->
+    <section class="bg-white border border-[#E6E3DC] rounded-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-[#E6E3DC] flex items-center justify-between">
+        <div>
+          <h2 class="text-[15px] font-semibold text-on-surface">Project health</h2>
+          <p class="text-[11px] text-secondary mt-0.5">Top 6 by contract value · Click any row to drill in</p>
+        </div>
+        <a href="#" class="text-[12px] font-semibold text-primary hover:underline">View all 42 →</a>
+      </div>
+      <table class="w-full">
+        <thead>
+          <tr class="bg-[#FAF7F0] text-left">
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Project</th>
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Owner</th>
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Status</th>
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Progress</th>
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase text-right">Margin</th>
+            <th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase text-right">Burn</th>
+            <th class="px-5 py-3"></th>
+          </tr>
+        </thead>
+        <tbody id="portfolio-projects-tbody" class="text-[13px]"></tbody>
+      </table>
+    </section>
+
+  </div>
+</div>
+
+<!-- ════════════════════════════ Project Detail Drill-in ════════════════════════════ -->
+<div id="project-detail-view" class="hidden">
+  <div class="px-8 py-6 max-w-[1480px] mx-auto" style="font-family:'IBM Plex Sans',sans-serif;">
+
+    <button onclick="backToPortfolio()" class="flex items-center gap-1.5 text-[12px] font-semibold text-secondary hover:text-primary mb-3 transition-colors">
+      <span class="material-symbols-outlined" style="font-size:16px;">arrow_back</span>Back to Portfolio
+    </button>
+
+    <!-- Header -->
+    <div class="flex items-start justify-between mb-6 gap-4 flex-wrap">
+      <div>
+        <div class="flex items-center gap-3 flex-wrap">
+          <h1 id="pd-title" class="text-[28px] font-semibold text-on-surface tracking-tight">Apex — TechCorp</h1>
+          <span id="pd-id" class="text-[11.5px] font-mono text-secondary px-2 py-0.5 bg-[#F4F0E8] rounded">PRJ-1042</span>
+          <span id="pd-status" class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-[#FFF4E0] text-[#B26A00]">At Risk</span>
+        </div>
+        <p class="text-[13px] text-secondary mt-2">Health <strong id="pd-health" class="text-on-surface">62%</strong> · Started <span id="pd-started">Mar 18, 2026</span> · Owner <span id="pd-owner" class="text-on-surface font-semibold">Aarav S.</span></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="h-9 px-4 border border-outline-variant text-sm font-medium text-on-surface rounded-lg hover:bg-surface-container transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">forum</span>Send update</button>
+        <button class="h-9 px-4 bg-primary text-white text-sm font-medium rounded-lg hover:opacity-90 transition-colors flex items-center gap-2"><span class="material-symbols-outlined" style="font-size:16px;">receipt</span>Raise invoice</button>
+      </div>
+    </div>
+
+    <!-- Metrics row -->
+    <section class="grid grid-cols-6 gap-3 mb-6">
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Contract value</p><p id="pd-contract" class="text-[20px] font-bold text-on-surface leading-none">$1.4M</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Recognized</p><p id="pd-recognized" class="text-[20px] font-bold text-on-surface leading-none">$880K</p><p id="pd-recognized-pct" class="text-[11px] text-secondary mt-2">63% of contract</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Billed</p><p id="pd-billed" class="text-[20px] font-bold text-on-surface leading-none">$760K</p><p id="pd-billed-pct" class="text-[11px] text-secondary mt-2">54% of contract</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Collected</p><p id="pd-collected" class="text-[20px] font-bold text-on-surface leading-none">$640K</p><p id="pd-collected-pct" class="text-[11px] text-secondary mt-2">84% of billed</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Margin</p><p id="pd-margin" class="text-[20px] font-bold text-on-surface leading-none">24%</p><p class="text-[11px] text-secondary mt-2">Planned: 32%</p></div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-4"><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Forecast acc.</p><p id="pd-forecast" class="text-[20px] font-bold text-on-surface leading-none">113%</p><p class="text-[11px] text-secondary mt-2">Slight over-pace</p></div>
+    </section>
+
+    <!-- P&L + Budget vs Work -->
+    <section class="grid grid-cols-2 gap-4 mb-6">
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-5">
+        <h2 class="text-[15px] font-semibold text-on-surface mb-4">P&amp;L Snapshot</h2>
+        <div class="space-y-3">
+          <div><div class="flex items-center justify-between text-[12px] mb-1.5"><span class="text-secondary">Contract (100%)</span><span class="font-semibold text-on-surface">$1.4M</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FA5D2B]" style="width:100%;"></div></div></div>
+          <div><div class="flex items-center justify-between text-[12px] mb-1.5"><span class="text-secondary">Recognized (63%)</span><span class="font-semibold text-on-surface">$880K</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FFB28A]" style="width:63%;"></div></div></div>
+          <div><div class="flex items-center justify-between text-[12px] mb-1.5"><span class="text-secondary">Cost (48%)</span><span class="font-semibold text-on-surface">$670K</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#D33A24]" style="width:48%;"></div></div></div>
+          <div><div class="flex items-center justify-between text-[12px] mb-1.5"><span class="text-secondary">Billed (54%)</span><span class="font-semibold text-on-surface">$760K</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FCD5B5]" style="width:54%;"></div></div></div>
+          <div><div class="flex items-center justify-between text-[12px] mb-1.5"><span class="text-secondary">Collected (46%)</span><span class="font-semibold text-on-surface">$640K</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FFE0CC]" style="width:46%;"></div></div></div>
+        </div>
+      </div>
+      <div class="bg-white border border-[#E6E3DC] rounded-xl p-5">
+        <h2 class="text-[15px] font-semibold text-on-surface mb-4">Budget vs Work Delivered</h2>
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Budget consumed</p><p class="text-[28px] font-bold text-[#D33A24] leading-none">73%</p><p class="text-[11px] text-secondary mt-2">$1.02M of $1.40M</p></div>
+          <div><p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-2">Work completed</p><p class="text-[28px] font-bold text-[#B26A00] leading-none">33%</p><p class="text-[11px] text-secondary mt-2">Behind plan</p></div>
+        </div>
+        <div class="pt-4 border-t border-[#EFEDE7]">
+          <p class="text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase mb-3">Effort hours</p>
+          <div class="space-y-2">
+            <div><div class="flex items-center justify-between text-[11.5px] mb-1"><span class="text-secondary">Planned</span><span class="font-semibold text-on-surface">600 h</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FCD5B5]" style="width:60%;"></div></div></div>
+            <div><div class="flex items-center justify-between text-[11.5px] mb-1"><span class="text-secondary">Actual</span><span class="font-semibold text-on-surface">680 h</span></div><div class="h-2 bg-[#F4F0E8] rounded-full overflow-hidden"><div class="h-full bg-[#FA5D2B]" style="width:68%;"></div></div></div>
+          </div>
+          <p class="text-[11px] text-[#D33A24] font-semibold mt-3">Over by 80 h · Margin at risk</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Milestone Tracker -->
+    <section class="bg-white border border-[#E6E3DC] rounded-xl overflow-hidden mb-6">
+      <div class="px-5 py-4 border-b border-[#E6E3DC] flex items-center justify-between">
+        <div><h2 class="text-[15px] font-semibold text-on-surface">Milestone tracker</h2><p class="text-[11px] text-secondary mt-0.5">2 / 6 done · Next due May 22</p></div>
+        <button class="h-8 px-3 border border-outline-variant text-[12px] font-semibold text-on-surface rounded-lg hover:bg-surface-container transition-colors">Replan</button>
+      </div>
+      <table class="w-full">
+        <thead><tr class="bg-[#FAF7F0] text-left"><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Milestone</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Status</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase text-right">Value</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Due</th></tr></thead>
+        <tbody class="text-[13px]">
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Kickoff &amp; SoW signed</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F4E8] text-[#168A3A]">Done</span></td><td class="px-5 py-3 text-right">$140K</td><td class="px-5 py-3 text-secondary">Mar 22</td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Discovery complete</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F4E8] text-[#168A3A]">Done</span></td><td class="px-5 py-3 text-right">$210K</td><td class="px-5 py-3 text-secondary">Apr 14</td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Phase 1 build</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FFF4E0] text-[#B26A00]">At risk</span></td><td class="px-5 py-3 text-right">$350K</td><td class="px-5 py-3 text-secondary">May 22</td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">UAT sign-off</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EFEDE7] text-secondary">Planned</span></td><td class="px-5 py-3 text-right">$280K</td><td class="px-5 py-3 text-secondary">Jun 18</td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Go-live</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EFEDE7] text-secondary">Planned</span></td><td class="px-5 py-3 text-right">$280K</td><td class="px-5 py-3 text-secondary">Jul 02</td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Hypercare close</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#EFEDE7] text-secondary">Planned</span></td><td class="px-5 py-3 text-right">$140K</td><td class="px-5 py-3 text-secondary">Jul 30</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- My Team -->
+    <section class="bg-white border border-[#E6E3DC] rounded-xl overflow-hidden">
+      <div class="px-5 py-4 border-b border-[#E6E3DC] flex items-center justify-between">
+        <div><h2 class="text-[15px] font-semibold text-on-surface">My team</h2><p class="text-[11px] text-secondary mt-0.5">8 members · Timesheet compliance 74%</p></div>
+        <button class="h-8 px-3 border border-outline-variant text-[12px] font-semibold text-on-surface rounded-lg hover:bg-surface-container transition-colors">Re-allocate</button>
+      </div>
+      <table class="w-full">
+        <thead><tr class="bg-[#FAF7F0] text-left"><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Member</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Role</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Allocation</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Utilization</th><th class="px-5 py-3 text-[10.5px] font-bold tracking-[0.06em] text-secondary uppercase">Timesheet</th><th class="px-5 py-3"></th></tr></thead>
+        <tbody class="text-[13px]">
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Aarav S.</td><td class="px-5 py-3 text-secondary">Project Lead</td><td class="px-5 py-3">100%</td><td class="px-5 py-3">94%</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F4E8] text-[#168A3A]">Up to date</span></td><td class="px-5 py-3 text-right"></td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">John Doe</td><td class="px-5 py-3 text-secondary">Sr. Engineer</td><td class="px-5 py-3">100%</td><td class="px-5 py-3">88%</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FFE0DC] text-[#D33A24]">Overdue</span></td><td class="px-5 py-3 text-right"><button class="h-7 px-3 text-[11px] font-semibold border border-outline-variant rounded-md hover:bg-surface-container">Remind</button></td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Emily Smith</td><td class="px-5 py-3 text-secondary">Designer</td><td class="px-5 py-3">75%</td><td class="px-5 py-3">81%</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FFE0DC] text-[#D33A24]">Overdue</span></td><td class="px-5 py-3 text-right"><button class="h-7 px-3 text-[11px] font-semibold border border-outline-variant rounded-md hover:bg-surface-container">Remind</button></td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Marco D.</td><td class="px-5 py-3 text-secondary">QA Lead</td><td class="px-5 py-3">50%</td><td class="px-5 py-3">76%</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E3F4E8] text-[#168A3A]">Up to date</span></td><td class="px-5 py-3 text-right"></td></tr>
+          <tr class="border-t border-[#EFEDE7]"><td class="px-5 py-3 font-semibold text-on-surface">Sana K.</td><td class="px-5 py-3 text-secondary">Engineer</td><td class="px-5 py-3">100%</td><td class="px-5 py-3">91%</td><td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FFF4E0] text-[#B26A00]">Pending</span></td><td class="px-5 py-3 text-right"><button class="h-7 px-3 text-[11px] font-semibold border border-outline-variant rounded-md hover:bg-surface-container">Remind</button></td></tr>
+        </tbody>
+      </table>
+    </section>
+
   </div>
 </div>
 
@@ -6177,6 +6367,10 @@ function hideAllViews() {
   if (ap) ap.classList.add('hidden');
   var ov = document.getElementById('opportunities-view');
   if (ov) ov.classList.add('hidden');
+  var pfv = document.getElementById('portfolio-view');
+  if (pfv) pfv.classList.add('hidden');
+  var pdv = document.getElementById('project-detail-view');
+  if (pdv) pdv.classList.add('hidden');
 }
 
 // Show the Opportunities view (iframe to opportunity-dashboard.html)
@@ -6275,6 +6469,86 @@ function showProjects() {
   document.getElementById('projects-view').classList.remove('hidden');
   document.querySelector('header h2').textContent = 'Projects';
   scheduleNPS('Projects');
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Portfolio + Project Detail flow — modelled on command-center-dashboard-six
+   • Portfolio overview: KPIs, revenue pipeline waterfall, leakage breakdown,
+     project health table.
+   • Project detail: metrics row, P&L snapshot, Budget vs Work, Milestone
+     tracker, My Team. Populated from PROJECT_DATA via showProjectDetail(k).
+   ───────────────────────────────────────────────────────────────────────── */
+var PROJECT_DATA = {
+  apex:      { name:'Apex',                 client:'TechCorp',         id:'PRJ-1042', status:'At Risk',  statusClass:'bg-[#FFF4E0] text-[#B26A00]', health:'62%', started:'Mar 18, 2026', owner:'Aarav S.', contract:'$1.4M', recognized:'$880K',  recognizedPct:'63% of contract', billed:'$760K',  billedPct:'54% of contract', collected:'$640K',  collectedPct:'84% of billed', margin:'24%', forecastAcc:'113%', progress:'33%', burn:'73%' },
+  vertex:    { name:'Vertex Capital',       client:'Vertex Holdings',  id:'PRJ-1019', status:'On track', statusClass:'bg-[#E3F4E8] text-[#168A3A]', health:'84%', started:'Feb 02, 2026', owner:'Priya R.', contract:'$2.1M', recognized:'$1.5M',  recognizedPct:'71% of contract', billed:'$1.4M',  billedPct:'67% of contract', collected:'$1.2M',  collectedPct:'86% of billed', margin:'31%', forecastAcc:'98%',  progress:'71%', burn:'62%' },
+  northwind: { name:'Northwind Logistics',  client:'Northwind Inc',    id:'PRJ-1031', status:'At Risk',  statusClass:'bg-[#FFF4E0] text-[#B26A00]', health:'58%', started:'Mar 04, 2026', owner:'Marco D.', contract:'$1.8M', recognized:'$960K',  recognizedPct:'53% of contract', billed:'$880K',  billedPct:'49% of contract', collected:'$720K',  collectedPct:'82% of billed', margin:'19%', forecastAcc:'88%',  progress:'53%', burn:'81%' },
+  lumen:     { name:'Lumen',                client:'Lumen Studios',    id:'PRJ-1058', status:'Watch',    statusClass:'bg-[#E0F2FE] text-[#075985]', health:'73%', started:'Apr 11, 2026', owner:'Sana K.',  contract:'$890K', recognized:'$540K',  recognizedPct:'61% of contract', billed:'$510K',  billedPct:'57% of contract', collected:'$430K',  collectedPct:'84% of billed', margin:'27%', forecastAcc:'104%', progress:'61%', burn:'48%' },
+  orion:     { name:'Orion Health',         client:'Orion Care',       id:'PRJ-1003', status:'On track', statusClass:'bg-[#E3F4E8] text-[#168A3A]', health:'91%', started:'Jan 15, 2026', owner:'Aarav S.', contract:'$3.2M', recognized:'$2.6M',  recognizedPct:'81% of contract', billed:'$2.5M',  billedPct:'78% of contract', collected:'$2.3M',  collectedPct:'92% of billed', margin:'34%', forecastAcc:'102%', progress:'81%', burn:'42%' },
+  beacon:    { name:'Beacon Retail',        client:'Beacon Group',     id:'PRJ-1067', status:'On track', statusClass:'bg-[#E3F4E8] text-[#168A3A]', health:'79%', started:'Apr 02, 2026', owner:'Priya R.', contract:'$1.1M', recognized:'$610K',  recognizedPct:'55% of contract', billed:'$580K',  billedPct:'53% of contract', collected:'$510K',  collectedPct:'88% of billed', margin:'29%', forecastAcc:'99%',  progress:'55%', burn:'55%' }
+};
+
+function showPortfolio() {
+  hideAllViews();
+  document.getElementById('portfolio-view').classList.remove('hidden');
+  document.querySelector('header h2').textContent = 'Portfolio';
+  renderPortfolioRows();
+}
+
+function renderPortfolioRows() {
+  var tbody = document.getElementById('portfolio-projects-tbody');
+  if (!tbody) return;
+  var keys = ['apex','vertex','northwind','lumen','orion','beacon'];
+  tbody.innerHTML = keys.map(function (k) {
+    var p = PROJECT_DATA[k];
+    return ''
+      + '<tr class="border-t border-[#EFEDE7] hover:bg-[#FAF7F0] cursor-pointer transition-colors" onclick="showProjectDetail(\'' + k + '\')">'
+      +   '<td class="px-5 py-3"><div class="font-semibold text-on-surface">' + p.name + '</div><div class="text-[11px] text-secondary">' + p.client + ' · ' + p.id + '</div></td>'
+      +   '<td class="px-5 py-3 text-[12.5px]">' + p.owner + '</td>'
+      +   '<td class="px-5 py-3"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full ' + p.statusClass + '">' + p.status + '</span></td>'
+      +   '<td class="px-5 py-3"><div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-[#F4F0E8] rounded-full overflow-hidden min-w-[80px] max-w-[140px]"><div class="h-full bg-[#FA5D2B]" style="width:' + p.progress + ';"></div></div><span class="text-[11.5px] font-semibold text-on-surface">' + p.progress + '</span></div></td>'
+      +   '<td class="px-5 py-3 text-right font-semibold">' + p.margin + '</td>'
+      +   '<td class="px-5 py-3 text-right font-semibold">' + p.burn + '</td>'
+      +   '<td class="px-5 py-3 text-right"><button onclick="event.stopPropagation();showProjectDetail(\'' + k + '\')" class="h-7 px-3 text-[11px] font-semibold text-primary border border-primary rounded-md hover:bg-primary hover:text-white transition-colors">View</button></td>'
+      + '</tr>';
+  }).join('');
+}
+
+function showProjectDetail(key) {
+  hideAllViews();
+  document.getElementById('project-detail-view').classList.remove('hidden');
+  populateProjectDetail(key);
+  var p = PROJECT_DATA[key] || PROJECT_DATA.apex;
+  document.querySelector('header h2').textContent = 'Project · ' + p.name;
+  // Stash current project key so refreshes / re-opens can restore it.
+  try { sessionStorage.setItem('kebs-active-project', key); } catch (e) {}
+}
+
+function populateProjectDetail(key) {
+  var p = PROJECT_DATA[key] || PROJECT_DATA.apex;
+  var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+  set('pd-title',           p.name + ' — ' + p.client);
+  set('pd-id',              p.id);
+  set('pd-health',          p.health);
+  set('pd-started',         p.started);
+  set('pd-owner',           p.owner);
+  set('pd-contract',        p.contract);
+  set('pd-recognized',      p.recognized);
+  set('pd-recognized-pct',  p.recognizedPct);
+  set('pd-billed',          p.billed);
+  set('pd-billed-pct',      p.billedPct);
+  set('pd-collected',       p.collected);
+  set('pd-collected-pct',   p.collectedPct);
+  set('pd-margin',          p.margin);
+  set('pd-forecast',        p.forecastAcc);
+  var sb = document.getElementById('pd-status');
+  if (sb) {
+    sb.textContent = p.status;
+    sb.className = 'text-[11px] font-bold px-2.5 py-1 rounded-full ' + p.statusClass;
+  }
+}
+
+function backToPortfolio() {
+  showPortfolio();
 }
 
 function switchProjTab(tab, btn) {
