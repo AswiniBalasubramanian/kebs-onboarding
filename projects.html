@@ -6157,7 +6157,38 @@
   /* Align content to the parent dashboard's edges: flush at top + left,
      comfortable horizontal breathing room, generous bottom for scroll */
   .main { padding: 16px 24px 32px !important; }
+
+  /* ─── In-iframe mode (when projects.html is embedded in the
+         executive-dashboard workspace) ───────────────────────────
+     The outer chrome already provides the sidebar + top bar, so the
+     inner copies (.logo, .side, .topbar) get hidden and the grid
+     collapses to a single cell so .main fills the iframe. Removes
+     the fixed 1360x768 design canvas + zoom so the page is fluid. */
+  html.in-iframe body { background: var(--bg, #F5F4F1) !important; }
+  html.in-iframe .app {
+    width: 100% !important;
+    height: 100vh !important;
+    zoom: 1 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: 1fr !important;
+    grid-template-areas: "main" !important;
+  }
+  html.in-iframe .logo,
+  html.in-iframe .side,
+  html.in-iframe .topbar { display: none !important; }
+  html.in-iframe .main {
+    grid-area: main !important;
+    width: 100% !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+  }
 </style>
+<script>
+  // Set early (in <head>) so CSS rule applies before first paint — no flash of duplicated chrome.
+  try { if (window.self !== window.top) document.documentElement.classList.add('in-iframe'); } catch (e) {}
+</script>
 </head>
 <body>
 
